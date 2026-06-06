@@ -1,0 +1,149 @@
+const express = require('express');
+const router = express.Router();
+const Company = require('./company.model');
+const Question = require('../aptitude/question.model');
+const QuizSession = require('../aptitude/quizSession.model');
+const { authenticate, optionalAuth, requirePro } = require('../../middleware/auth');
+const { AppError } = require('../../middleware/errorHandler');
+const { SESSION_STATUS, SESSION_TYPES, REDIS_KEYS } = require('../../shared/constants');
+const { cacheMiddleware } = require('../../middleware/cache');
+
+// ─── GET /v1/companies ────────────────────────────────────────────────────────
+// Cached for 10 minutes — rarely changes
+router.get('/', cacheMiddleware('companies:list', 600), async (req, res, next) => {
+  try {
+    const companies = await Company.find({ isActive: true })
+      .select('name slug logo sector packageInfo.fresher totalQuestions')
+      .lean();
+    res.json({ success: true, data: { companies } });
+  } catch (err) { next(err); }
+});
+
+// ─── GET /v1/companies/:slug ──────────────────────────────────────────────────
+// Cached per slug for 5 minutes
+router.get('/:slug', optionalAuth, cacheMiddleware(req => REDIS_KEYS.companyTrack(req.params.slug), 300), async (req, res, next) => {
+  try {
+    const company = await Company.findOne({ slug: req.params.slug, isActive: true }).lean();
+    if (!company) throw new AppError('Company track not found', 404, 4004);
+
+    const totalQuestions = await Question.countDocuments({ companies: company.slug, isActive: true });
+
+    res.json({ success: true, data: { company, totalQuestions } });
+  } catch (err) { next(err); }
+});
+
+// ─── GET /v1/companies/:slug/questions (Pro only) ─────────────────────────────
+router.get('/:slug/questions', authenticate, requirePro, async (req, res, next) => {
+  try {
+    const limit = parseInt(req.query.limit) || 20;
+    const questions = await Question.aggregate([
+      { $match: { companies: req.params.slug, isActive: true } },
+      { $sample: { size: limit } },
+      { $project: { correctOption: 0, explanation: 0 } }
+    ]);
+    res.json({ success: true, data: { questions } });
+  } catch (err) { next(err); }
+});
+
+// ─── GET /v1/companies/:slug/mock-tests (Pro only) ───────────────────────────
+// Returns available mock tests. For MVP, each company has one standard mock test.
+router.get('/:slug/mock-tests', authenticate, requirePro, async (req, res, next) => {
+  try {
+    const company = await Company.findOne({ slug: req.params.slug, isActive: true })
+      .select('name slug')
+      .lean();
+    if (!company) throw new AppError('Company track not found', 404, 4004);
+
+    const questionCount = await Question.countDocuments({ companies: req.params.slug, isActive: true });
+
+    // Generate a standard mock test descriptor for this company
+    const mockTests = questionCount > 0 ? [
+      {
+        id: `${req.params.slug}-mock-1`,
+        name: `${company.name} Full Mock Test`,
+        description: `Simulates the actual ${company.name} aptitude test pattern`,
+        questionCount: Math.min(30, questionCount),
+        durationMinutes: 60,
+        type: 'full-mock',
+      },
+      ...(questionCount >= 15 ? [{
+        id: `${req.params.slug}-mock-2`,
+        name: `${company.name} Quick Practice`,
+        description: `15-question focused practice set`,
+        questionCount: 15,
+        durationMinutes: 30,
+        type: 'quick',
+      }] : []),
+    ] : [];
+
+    res.json({ success: true, data: { mockTests, company: company.name } });
+  } catch (err) { next(err); }
+});
+
+// ─── POST /v1/companies/:slug/mock-tests/:id/start (Pro only) ─────────────────
+router.post('/:slug/mock-tests/:mockId/start', authenticate, requirePro, async (req, res, next) => {
+  try {
+    const company = await Company.findOne({ slug: req.params.slug, isActive: true })
+      .select('name slug')
+      .lean();
+    if (!company) throw new AppError('Company track not found', 404, 4004);
+
+    // Determine question count and time from mock test ID suffix
+    const isQuick = req.params.mockId.endsWith('-mock-2');
+    const questionCount = isQuick ? 15 : 30;
+    const timeLimitSeconds = isQuick ? 30 * 60 : 60 * 60;
+
+    const questions = await Question.aggregate([
+      { $match: { companies: req.params.slug, isActive: true } },
+      { $sample: { size: questionCount } },
+      { $project: { _id: 1 } }
+    ]);
+
+    if (questions.length === 0) {
+      throw new AppError('No questions available for this company mock test yet', 404, 4004);
+    }
+
+    const session = await QuizSession.create({
+      userId: req.user._id,
+      sessionType: SESSION_TYPES.COMPANY_MOCK,
+      companySlug: req.params.slug,
+      status: SESSION_STATUS.IN_PROGRESS,
+      questions: questions.map(q => ({ questionId: q._id })),
+      timeLimitSeconds,
+    });
+
+    res.status(201).json({ success: true, data: { sessionId: session._id } });
+  } catch (err) { next(err); }
+});
+
+// ─── GET /v1/companies/:slug/progress ────────────────────────────────────────
+// Returns user's progress on a company track (sessions completed + readiness score)
+router.get('/:slug/progress', authenticate, async (req, res, next) => {
+  try {
+    const UserAnalytics = require('../aptitude/userAnalytics.model');
+
+    const [completedSessions, analytics, totalQuestions] = await Promise.all([
+      QuizSession.countDocuments({
+        userId: req.user._id,
+        companySlug: req.params.slug,
+        status: SESSION_STATUS.COMPLETED,
+      }),
+      UserAnalytics.findOne({ userId: req.user._id }).select('companyReadiness').lean(),
+      Question.countDocuments({ companies: req.params.slug, isActive: true }),
+    ]);
+
+    const readinessScore = analytics?.companyReadiness?.[req.params.slug] || 0;
+
+    res.json({
+      success: true,
+      data: {
+        slug: req.params.slug,
+        completedSessions,
+        readinessScore,
+        totalQuestionsAvailable: totalQuestions,
+      },
+    });
+  } catch (err) { next(err); }
+});
+
+module.exports = router;

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /blogs
+Allow: /jobs
+Allow: /companies
+Allow: /aptitude
+Allow: /roadmap
+Disallow: /admin
+Disallow: /profile
+Disallow: /auth
+
+# Sitemap
+Sitemap: https://prepster.in/sitemap.xml
