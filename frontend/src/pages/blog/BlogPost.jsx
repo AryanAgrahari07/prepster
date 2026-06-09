@@ -6,6 +6,12 @@ import { Button } from '@/components/ui/Button';
 import SEO from '@/components/seo/SEO';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 
+const getDefaultImage = (slug) => {
+  // Using Picsum with the blog slug as a seed guarantees a unique, 
+  // consistent, high-quality image for every single blog post.
+  return `https://picsum.photos/seed/${slug}/1200/600?grayscale&blur=2`;
+};
+
 // Very basic Markdown parser for bold, italics, headings, and lists
 const MarkdownRenderer = ({ content }) => {
   const parseMarkdown = (text) => {
@@ -157,11 +163,9 @@ export default function BlogPost() {
         </div>
       </header>
 
-      {blog.coverImage && (
-        <div className="w-full aspect-[21/9] md:aspect-[2.5/1] bg-secondary rounded-3xl overflow-hidden shadow-lg border border-border">
-          <img src={blog.coverImage} alt={blog.title} className="w-full h-full object-cover" />
-        </div>
-      )}
+      <div className="w-full aspect-[21/9] md:aspect-[2.5/1] bg-secondary rounded-3xl overflow-hidden shadow-lg border border-border">
+        <img src={blog.coverImage || getDefaultImage(blog.slug)} alt={blog.title} className="w-full h-full object-cover" />
+      </div>
 
       <AdPlaceholder slot="6281633625" className="h-[90px] max-w-3xl mx-auto" />
 

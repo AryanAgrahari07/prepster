@@ -99,7 +99,12 @@ const SUBTOPICS = {
     'closet_test', 'ordering_words',
   ],
   di: ['tabular', 'bar_graphs', 'line_charts', 'pie_charts'],
-  dsa: ['arrays', 'strings', 'linked_list', 'trees', 'graphs', 'sorting', 'searching', 'dynamic_programming', 'recursion', 'stack_queue', 'heap'],
+  dsa: [
+    'arrays', 'strings', 'linked_list', 'trees', 'graphs', 'sorting',
+    'searching', 'dynamic_programming', 'recursion', 'stack_queue', 'heap',
+    'bit_manipulation', 'two_pointers', 'sliding_window', 'backtracking',
+    'greedy', 'hashing', 'tries', 'segment_tree', 'matrix',
+  ],
   os: ['processes', 'threads', 'scheduling', 'memory_management', 'deadlocks', 'paging', 'file_systems'],
   dbms: ['normalization', 'sql_queries', 'transactions', 'indexing', 'er_diagrams', 'concurrency'],
   sql: ['joins', 'subqueries', 'views', 'indexes', 'triggers', 'aggregate_functions', 'window_functions'],

@@ -42,6 +42,19 @@ function mapTopic(topic, subTopic, tagsArray = []) {
   if (topic === 'verbal')       return TOPICS.VERBAL;
   if (topic === 'data_interpretation') return TOPICS.DI;
 
+  // Direct CS topics from IndiaBIX scraper
+  if (topic === 'dbms') return TOPICS.DBMS;
+  if (topic === 'os') return TOPICS.OS;
+  if (topic === 'oops') return TOPICS.OOPS;
+  if (topic === 'sql') return TOPICS.SQL;
+  if (topic === 'se') return TOPICS.SE;
+  if (topic === 'system-design') return TOPICS.SYSTEM_DESIGN;
+  if (topic === 'cn') return TOPICS.CN;
+  if (topic === 'dsa') return TOPICS.DSA;
+  if (topic === 'web') return TOPICS.WEB;
+  if (topic === 'ml') return TOPICS.ML;
+  if (topic === 'cloud') return TOPICS.CLOUD;
+
   if (topic === 'cs_sde') {
     const st = (subTopic || '').toLowerCase();
     const tags = tagsArray.map(t => t.toLowerCase());

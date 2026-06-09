@@ -6,6 +6,12 @@ import { Clock, Tag as TagIcon } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 
+const getDefaultImage = (slug) => {
+  // Using Picsum with the blog slug as a seed guarantees a unique, 
+  // consistent, high-quality image for every single blog post.
+  return `https://picsum.photos/seed/${slug}/1200/600?grayscale&blur=2`;
+};
+
 export default function BlogList() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -87,9 +93,11 @@ export default function BlogList() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/20">
-                    <span className="font-bold text-2xl tracking-widest">PREPSTER</span>
-                  </div>
+                  <img 
+                    src={getDefaultImage(blog.slug)} 
+                    alt={blog.title} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
                 )}
                 <div className="absolute top-4 right-4 bg-background/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-sm">
                   <Clock className="w-3.5 h-3.5 text-primary" /> {blog.readTime || 5} min read
