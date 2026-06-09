@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getTopics, startSession } from '@/api/aptitude';
 import { APTITUDE_TOPICS, CS_TOPICS, DIFF_CONFIG } from './PracticeHub';
+import { SUBTOPIC_LABELS } from '@/constants';
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import toast from '@/utils/toast';
 import useAuthStore from '@/store/authStore';
@@ -154,7 +155,7 @@ export default function TopicDetail() {
                     >
                       <div className="flex justify-between items-start mb-5">
                         <h3 className="font-bold text-base text-card-foreground capitalize leading-tight">
-                          {st.name}
+                          {SUBTOPIC_LABELS[st.name] || st.name.replace(/_/g, ' ')}
                         </h3>
                         <span className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-full whitespace-nowrap">
                           {st.count} Qs

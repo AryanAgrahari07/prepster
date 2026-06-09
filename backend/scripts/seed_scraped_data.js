@@ -36,8 +36,7 @@ function parseCSVLine(text) {
   return result;
 }
 
-// ── Map scraper topic strings to backend TOPICS enum ─────────────────────────
-function mapTopic(topic, subTopic) {
+function mapTopic(topic, subTopic, tagsArray = []) {
   if (topic === 'quantitative') return TOPICS.QUANTITATIVE;
   if (topic === 'logical')      return TOPICS.LOGICAL;
   if (topic === 'verbal')       return TOPICS.VERBAL;
@@ -45,11 +44,19 @@ function mapTopic(topic, subTopic) {
 
   if (topic === 'cs_sde') {
     const st = (subTopic || '').toLowerCase();
-    if (st.includes('dbms'))                      return TOPICS.DBMS;
-    if (st.includes('os'))                        return TOPICS.OS;
-    if (st.includes('oops'))                      return TOPICS.OOPS;
-    if (st.includes('network') || st.includes('cn')) return TOPICS.CN;
-    if (st.includes('sql'))                       return TOPICS.SQL;
+    const tags = tagsArray.map(t => t.toLowerCase());
+    
+    if (tags.includes('dbms') || st.includes('dbms')) return TOPICS.DBMS;
+    if (tags.includes('os') || st.includes('os')) return TOPICS.OS;
+    if (tags.includes('oops') || st.includes('oops')) return TOPICS.OOPS;
+    if (tags.includes('networks') || tags.includes('cn') || st.includes('network')) return TOPICS.CN;
+    if (tags.includes('sql') || st.includes('sql')) return TOPICS.SQL;
+    if (tags.includes('system_design') || tags.includes('system-design') || st.includes('system-design')) return TOPICS.SYSTEM_DESIGN;
+    if (tags.includes('software_engineering') || tags.includes('se') || st.includes('software-engineering')) return TOPICS.SE;
+    if (tags.includes('web_technologies') || tags.includes('web') || st.includes('web')) return TOPICS.WEB;
+    if (tags.includes('cloud_computing') || tags.includes('cloud') || st.includes('cloud')) return TOPICS.CLOUD;
+    if (tags.includes('machine_learning') || tags.includes('ml') || st.includes('machine-learning') || st.includes('ml')) return TOPICS.ML;
+    
     return TOPICS.DSA; // Default CS fallback
   }
   return TOPICS.QUANTITATIVE; // Absolute fallback
@@ -144,7 +151,7 @@ async function seedQuestions() {
       options,
       correctOption: row.correctOption || 'A',
       explanation: row.explanation || 'No explanation provided.',
-      topic: mapTopic(row.topic, row.subTopic),
+      topic: mapTopic(row.topic, row.subTopic, tagsArray),
       subTopic: row.subTopic || 'General',
       difficulty: ['easy', 'medium', 'hard'].includes(row.difficulty) ? row.difficulty : 'medium',
       companies: compArray,
@@ -173,7 +180,7 @@ async function seedQuestions() {
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function run() {
   try {
-    const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/prepster';
+    const uri = process.env.MONGODB_URI || 'mongodb+srv://dinzsoftwares_db_user:cKB7TkiaYcVDsk94@cluster0prepster.gsmpyba.mongodb.net/?appName=Cluster0prepster';
     console.log(`🔌 Connecting to MongoDB: ${uri}`);
     await mongoose.connect(uri);
     console.log('Connected ✓\n');

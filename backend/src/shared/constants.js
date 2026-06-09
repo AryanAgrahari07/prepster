@@ -55,12 +55,61 @@ const TOPICS = {
   CN: 'cn',
   OOPS: 'oops',
   SQL: 'sql',
+  SE: 'se',
+  WEB: 'web',
+  CLOUD: 'cloud',
+  ML: 'ml',
 };
 
 const DIFFICULTY = {
   EASY: 'easy',
   MEDIUM: 'medium',
   HARD: 'hard',
+};
+
+// ─── Subtopics per Topic ──────────────────────────────────────────────────────
+const SUBTOPICS = {
+  quantitative: [
+    'number_system', 'hcf_lcm', 'percentages', 'profit_loss',
+    'simple_compound_interest', 'compound_interest', 'ratio_proportion',
+    'averages', 'mixtures_alligations', 'time_work', 'time_speed_distance',
+    'permutation_combination', 'probability', 'boats_streams',
+    'pipes_cistern', 'problems_on_trains', 'partnership', 'area',
+    'volume_surface_area', 'surds_indices', 'simplification',
+    'square_cube_root', 'problems_on_ages', 'banker_discount',
+    'true_discount', 'odd_man_out', 'height_distance', 'stocks_shares',
+  ],
+  logical: [
+    'coding_decoding', 'blood_relations', 'direction_sense', 'syllogisms',
+    'seating_arrangement', 'number_series', 'letter_series', 'clocks',
+    'calendars', 'venn_diagrams', 'statement_assumption', 'course_of_action',
+    'statement_conclusion', 'cause_effect', 'logical_problems',
+    'statement_argument', 'cube_dice', 'mirror_water_images',
+    'embedded_figures', 'figure_matrix', 'grouping_of_figures',
+    'paper_folding', 'verbal_reasoning', 'puzzles', 'data_sufficiency',
+    'input_output', 'ranking_arrangement', 'alphanumeric_series',
+    'analogy', 'classification',
+  ],
+  verbal: [
+    'reading_comprehension', 'sentence_correction', 'synonyms', 'antonyms',
+    'idioms_phrases', 'fill_in_blanks', 'para_jumbles',
+    'one_word_substitution', 'spellings', 'sentence_improvement',
+    'change_of_voice', 'selecting_words', 'active_passive_voice',
+    'direct_indirect_speech', 'articles', 'prepositions', 'conjunctions',
+    'closet_test', 'ordering_words',
+  ],
+  di: ['tabular', 'bar_graphs', 'line_charts', 'pie_charts'],
+  dsa: ['arrays', 'strings', 'linked_list', 'trees', 'graphs', 'sorting', 'searching', 'dynamic_programming', 'recursion', 'stack_queue', 'heap'],
+  os: ['processes', 'threads', 'scheduling', 'memory_management', 'deadlocks', 'paging', 'file_systems'],
+  dbms: ['normalization', 'sql_queries', 'transactions', 'indexing', 'er_diagrams', 'concurrency'],
+  sql: ['joins', 'subqueries', 'views', 'indexes', 'triggers', 'aggregate_functions', 'window_functions'],
+  cn: ['osi_model', 'tcp_ip', 'http_https', 'dns', 'routing', 'subnetting'],
+  oops: ['inheritance', 'polymorphism', 'encapsulation', 'abstraction', 'design_patterns'],
+  'system-design': ['scalability', 'load_balancing', 'caching', 'databases', 'microservices', 'cap_theorem'],
+  se: ['sdlc', 'agile', 'testing', 'software_models', 'project_management'],
+  web: ['html_css', 'javascript', 'react', 'nodejs', 'dom', 'rest_api'],
+  cloud: ['aws', 'azure', 'virtualization', 'saas_paas_iaas', 'cloud_security'],
+  ml: ['supervised_learning', 'unsupervised_learning', 'neural_networks', 'deep_learning', 'statistics'],
 };
 
 // ─── Companies ────────────────────────────────────────────────────────────────
@@ -131,7 +180,7 @@ const FREE_DAILY_QUESTION_LIMIT = parseInt(process.env.FREE_DAILY_QUESTION_LIMIT
 
 module.exports = {
   ROLES, PLANS, PLAN_DETAILS, SUBSCRIPTION_STATUS,
-  SESSION_TYPES, SESSION_STATUS, TOPICS, DIFFICULTY,
+  SESSION_TYPES, SESSION_STATUS, TOPICS, SUBTOPICS, DIFFICULTY,
   COMPANIES, APPLICATION_STATUS, JOB_TYPES, WORK_MODES, JOB_STATUS,
   APP_ERRORS, REDIS_KEYS, FREE_DAILY_QUESTION_LIMIT,
 };

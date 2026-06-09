@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { ArrowRight, Clock, FileText, BookOpen } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
+import { SUBTOPIC_LABELS } from '@/constants';
 
 // ─── Topic config ─────────────────────────────────────────────────────────────
 export const APTITUDE_TOPICS = {
@@ -22,6 +23,10 @@ export const CS_TOPICS = {
   cn:            { label: 'Computer Networks',             icon: '🌐', desc: 'TCP/IP, HTTP, DNS, OSI model, routing & switching.' },
   oops:          { label: 'OOP Concepts',                  icon: '🧱', desc: 'Encapsulation, inheritance, polymorphism, abstraction, design patterns.' },
   'system-design':{ label: 'System Design',               icon: '🏗️', desc: 'Scalable system architecture, load balancing, caching, databases.' },
+  se:            { label: 'Software Engineering',          icon: '🛠️', desc: 'SDLC, Agile, testing, software development models.' },
+  web:           { label: 'Web Technologies',              icon: '🕸️', desc: 'HTML, CSS, JavaScript, React, Node.js fundamentals.' },
+  cloud:         { label: 'Cloud Computing',               icon: '☁️', desc: 'AWS, Azure, virtualization, cloud architecture.' },
+  ml:            { label: 'Machine Learning',              icon: '🤖', desc: 'Supervised/Unsupervised learning, neural networks, AI basics.' },
 };
 
 // ─── Mock test configs ────────────────────────────────────────────────────────
@@ -141,7 +146,7 @@ function TopicCard({ topicKey, config, topicData }) {
           <div className="flex flex-wrap gap-1.5">
             {data.subTopics.slice(0, 4).map(st => (
               <span key={st.name} className="text-[11px] font-medium bg-secondary px-2.5 py-1 rounded-lg text-secondary-foreground">
-                {st.name}
+                {SUBTOPIC_LABELS[st.name] || st.name.replace(/_/g, ' ')}
               </span>
             ))}
             {data.subTopics.length > 4 && (
