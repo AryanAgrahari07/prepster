@@ -31,6 +31,11 @@ const startServer = async () => {
       const scrapeJobsCron = require('./jobs/scrapeJobsCron');
       scrapeJobsCron.start();
       logger.info('🌐 Job scraper cron started (01:00 IST daily)');
+
+      // Prevent Render from sleeping
+      const pingerJob = require('./jobs/pingerJob');
+      pingerJob.start();
+      logger.info('⚡ Keep-awake pinger started (every 14 mins)');
     }
   });
 
