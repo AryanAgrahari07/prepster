@@ -48,7 +48,7 @@ export default function Roadmap() {
         </p>
       </div>
 
-      <AdPlaceholder slot="roadmap-top" className="h-[90px] max-w-4xl mx-auto mb-8" />
+      <AdPlaceholder slot="9265516467" className="h-[90px] max-w-4xl mx-auto mb-8" />
 
       {/* Grid Section */}
       <div>

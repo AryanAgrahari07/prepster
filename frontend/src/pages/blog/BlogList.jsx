@@ -58,7 +58,7 @@ export default function BlogList() {
         </p>
       </div>
 
-      <AdPlaceholder slot="blog-list-top" className="h-[90px] md:h-[120px] max-w-4xl mx-auto" />
+      <AdPlaceholder slot="8790873741" className="h-[90px] md:h-[120px] max-w-4xl mx-auto" />
 
       {loading && blogs.length === 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">

@@ -142,7 +142,7 @@ export default function JobFeed() {
           </div>
         </form>
 
-        <AdPlaceholder slot="job-feed-top" className="h-[90px]" />
+        <AdPlaceholder slot="8437360387" className="h-[90px]" />
 
         {/* Results */}
         <div className="space-y-4">

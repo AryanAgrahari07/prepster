@@ -291,7 +291,7 @@ export default function PracticeHub() {
         </Link>
       </div>
 
-      <AdPlaceholder slot="practice-hub-top" className="h-[90px] mb-2" />
+      <AdPlaceholder slot="7946069083" className="h-[90px] mb-2" />
 
       {/* Tabs — horizontal scroll on mobile */}
       <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">

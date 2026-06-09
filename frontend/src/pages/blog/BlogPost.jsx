@@ -163,7 +163,7 @@ export default function BlogPost() {
         </div>
       )}
 
-      <AdPlaceholder slot="blog-post-top" className="h-[90px] max-w-3xl mx-auto" />
+      <AdPlaceholder slot="6281633625" className="h-[90px] max-w-3xl mx-auto" />
 
       <div className="max-w-3xl mx-auto">
         <div className="flex justify-end mb-8">
@@ -177,7 +177,7 @@ export default function BlogPost() {
 
         <MarkdownRenderer content={blog.content} />
 
-        <AdPlaceholder slot="blog-post-bottom" className="h-[90px] mt-12" />
+        <AdPlaceholder slot="7377719724" className="h-[90px] mt-12" />
       </div>
     </article>
   );
