@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 const useThemeStore = create(
   persist(
     (set) => ({
-      theme: 'dark', // Default to dark as per original design
+      theme: 'light', // Default to light
       setTheme: (theme) => {
         set({ theme });
         if (theme === 'dark') {
@@ -44,16 +44,16 @@ if (typeof window !== 'undefined') {
   if (savedTheme) {
     try {
       const parsed = JSON.parse(savedTheme);
-      if (parsed.state && parsed.state.theme === 'light') {
-        document.documentElement.classList.remove('dark');
-      } else {
+      if (parsed.state && parsed.state.theme === 'dark') {
         document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
       }
     } catch (e) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('dark');
     }
   } else {
-    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('dark');
   }
 }
 
