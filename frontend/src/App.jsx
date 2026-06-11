@@ -61,6 +61,7 @@ import UserManagement from './pages/admin/UserManagement';
 import UserDetail from './pages/admin/UserDetail';
 import CompanyManager from './pages/admin/CompanyManager';
 import CompanyEditor from './pages/admin/CompanyEditor';
+import CompanyQuestionBank from './pages/admin/CompanyQuestionBank';
 import MockTestManager from './pages/admin/MockTestManager';
 import MockTestEditor from './pages/admin/MockTestEditor';
 import JobManager from './pages/admin/JobManager';
@@ -236,6 +237,7 @@ function App() {
             <Route path="/admin/companies" element={<CompanyManager />} />
             <Route path="/admin/companies/new" element={<CompanyEditor />} />
             <Route path="/admin/companies/:id/edit" element={<CompanyEditor />} />
+            <Route path="/admin/companies/:slug/questions" element={<CompanyQuestionBank />} />
             
             <Route path="/admin/mock-tests" element={<MockTestManager />} />
             <Route path="/admin/mock-tests/new" element={<MockTestEditor />} />

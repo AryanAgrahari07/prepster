@@ -333,6 +333,89 @@ router.delete('/companies/:id', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// ─── COMPANY-SPECIFIC QUESTION BANK ──────────────────────────────────────────
+
+// GET /v1/admin/companies/:slug/questions — list questions tagged to a company
+router.get('/companies/:slug/questions', async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    const filter = { companies: slug, isActive: true };
+    if (req.query.topic) filter.topic = req.query.topic;
+    if (req.query.difficulty) filter.difficulty = req.query.difficulty;
+    if (req.query.search) filter.text = new RegExp(req.query.search, 'i');
+
+    const [questions, total] = await Promise.all([
+      Question.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
+      Question.countDocuments(filter),
+    ]);
+
+    res.json({
+      success: true,
+      data: { questions, slug },
+      pagination: { page, limit, total, hasNext: skip + limit < total },
+    });
+  } catch (err) { next(err); }
+});
+
+// POST /v1/admin/companies/:slug/questions/bulk — bulk import questions for a company
+router.post('/companies/:slug/questions/bulk', async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+
+    if (!Array.isArray(req.body.questions)) {
+      return res.status(400).json({ success: false, error: { code: 4008, message: 'Expected an array of questions' } });
+    }
+
+    // Verify company exists
+    const company = await Company.findOne({ slug });
+    if (!company) {
+      return res.status(404).json({ success: false, error: { code: 4004, message: `Company with slug "${slug}" not found` } });
+    }
+
+    const REQUIRED = ['text', 'correctOption', 'explanation', 'topic', 'difficulty'];
+    const validRows = [];
+    const errors = [];
+
+    req.body.questions.forEach((q, i) => {
+      const missing = REQUIRED.filter(f => !q[f]);
+      const hasOptions = Array.isArray(q.options) && q.options.length >= 2;
+      if (missing.length || !hasOptions) {
+        errors.push({ row: i + 1, missing: missing.concat(!hasOptions ? ['options (need at least 2)'] : []) });
+      } else {
+        // Ensure this company slug is included in the companies array
+        const companiesArr = Array.isArray(q.companies) ? q.companies : [];
+        if (!companiesArr.includes(slug)) companiesArr.push(slug);
+
+        validRows.push({
+          ...q,
+          companies: companiesArr,
+          createdBy: req.user._id,
+        });
+      }
+    });
+
+    if (validRows.length === 0) {
+      return res.status(400).json({ success: false, error: { code: 4009, message: 'No valid rows to import' }, errors });
+    }
+
+    const result = await Question.insertMany(validRows);
+
+    // Update denormalized totalQuestions count on the company document
+    const newTotal = await Question.countDocuments({ companies: slug, isActive: true });
+    await Company.findOneAndUpdate({ slug }, { totalQuestions: newTotal });
+
+    res.status(201).json({
+      success: true,
+      message: `${result.length} questions imported for ${company.name}`,
+      data: { imported: result.length, skipped: errors.length, errors, companyName: company.name },
+    });
+  } catch (err) { next(err); }
+});
+
 // ─── MOCK TESTS ───────────────────────────────────────────────────────────────
 const MockTest = require('./mockTest.model');
 

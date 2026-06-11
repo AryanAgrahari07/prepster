@@ -210,6 +210,17 @@ export const deleteAnnouncement = async (id) => {
   return data;
 };
 
+// ─── COMPANY-SPECIFIC QUESTIONS ───────────────────────────────────────────────
+export const getAdminCompanyQuestions = async (slug, params) => {
+  const { data } = await api.get(`/admin/companies/${slug}/questions`, { params });
+  return data;
+};
+
+export const bulkImportCompanyQuestions = async (slug, questions) => {
+  const { data } = await api.post(`/admin/companies/${slug}/questions/bulk`, { questions });
+  return data;
+};
+
 // ─── BLOGS ────────────────────────────────────────────────────────────────────
 export const getAdminBlogs = async (params) => {
   const { data } = await api.get('/admin/blogs', { params });

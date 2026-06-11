@@ -10,7 +10,7 @@ export default function QuestionBank() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({});
-  const [filters, setFilters] = useState({ topic: '', difficulty: '', search: '' });
+  const [filters, setFilters] = useState({ topic: '', difficulty: '', search: '', company: '' });
   const [searchInput, setSearchInput] = useState('');
 
   const fetchQuestions = async () => {
@@ -67,7 +67,7 @@ export default function QuestionBank() {
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <div>
             <label className="text-sm text-muted-foreground mb-1 block">Topic</label>
             <select 
@@ -104,6 +104,26 @@ export default function QuestionBank() {
               <option value="easy">Easy</option>
               <option value="medium">Medium</option>
               <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Company</label>
+            <select 
+              className="w-full h-10 rounded-md border border-input bg-background px-2 text-sm focus:ring-2 focus:ring-ring"
+              value={filters.company}
+              onChange={(e) => { setFilters({...filters, company: e.target.value}); setPage(1); }}
+            >
+              <option value="">All Companies</option>
+              <option value="tcs">TCS</option>
+              <option value="infosys">Infosys</option>
+              <option value="wipro">Wipro</option>
+              <option value="accenture">Accenture</option>
+              <option value="cognizant">Cognizant</option>
+              <option value="hcl">HCL</option>
+              <option value="capgemini">Capgemini</option>
+              <option value="tech_mahindra">Tech Mahindra</option>
+              <option value="amazon">Amazon</option>
+              <option value="zoho">Zoho</option>
             </select>
           </div>
         </div>

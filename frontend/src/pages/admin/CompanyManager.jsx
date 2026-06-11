@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Building2, Plus, Edit, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { Building2, Plus, Edit, Trash2, CheckCircle, XCircle, BookOpen } from 'lucide-react';
 
 export default function CompanyManager() {
   const [companies, setCompanies] = useState([]);
@@ -54,7 +54,7 @@ export default function CompanyManager() {
               <tr>
                 <th className="px-6 py-4">Company</th>
                 <th className="px-6 py-4">Sector</th>
-                <th className="px-6 py-4">Total Questions</th>
+                <th className="px-6 py-4">Questions</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
@@ -83,7 +83,12 @@ export default function CompanyManager() {
                       </div>
                     </td>
                     <td className="px-6 py-4">{company.sector || '—'}</td>
-                    <td className="px-6 py-4">{company.totalQuestions || 0}</td>
+                    <td className="px-6 py-4">
+                      <Link to={`/admin/companies/${company.slug}/questions`} className="inline-flex items-center gap-1.5 text-primary hover:underline font-medium">
+                        <BookOpen className="w-3.5 h-3.5" />
+                        {company.totalQuestions || 0} Qs
+                      </Link>
+                    </td>
                     <td className="px-6 py-4">
                       {company.isActive !== false ? (
                         <span className="inline-flex items-center gap-1 text-xs font-medium bg-green-500/10 text-green-500 px-2 py-1 rounded-full border border-green-500/20">
@@ -95,15 +100,22 @@ export default function CompanyManager() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-right space-x-2">
-                      <Button variant="outline" size="sm" onClick={() => toggleActive(company._id, company.isActive !== false)}>
-                        Toggle
-                      </Button>
-                      <Link to={`/admin/companies/${company._id}/edit`}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                          <Edit className="w-4 h-4" />
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Link to={`/admin/companies/${company.slug}/questions`}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" title="Manage Questions">
+                            <BookOpen className="w-4 h-4" />
+                          </Button>
+                        </Link>
+                        <Button variant="outline" size="sm" onClick={() => toggleActive(company._id, company.isActive !== false)}>
+                          Toggle
                         </Button>
-                      </Link>
+                        <Link to={`/admin/companies/${company._id}/edit`}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))
