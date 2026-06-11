@@ -4,18 +4,12 @@ import { Button } from '@/components/ui/Button';
 import SEO from '@/components/seo/SEO';
 import toast from '@/utils/toast';
 
-// Smart formatter: detects rounds, numbered items, TR/MR/HR sections
+// Smart formatter: formats numbered lists and preserves paragraphs
 function ExperienceRenderer({ content }) {
   if (!content) return null;
 
   const lines = content
     .replace(/(\d+\.\s+)/g, '\n$1')
-    .replace(/(Round\s*[-–]?\s*\d+\s*[:\-–]?\s*)/gi, '\n\n**$1**\n')
-    .replace(/(Technical Round|Technical Interview|Tech Round)/gi, '\n\n**$1:**\n')
-    .replace(/(Managerial Round|MR Round|Managerial Interview)/gi, '\n\n**$1:**\n')
-    .replace(/(HR Round|HR Interview|Human Resource)/gi, '\n\n**$1:**\n')
-    .replace(/(Aptitude Round|Online Test|Written Test|Aptitude Test)/gi, '\n\n**$1:**\n')
-    .replace(/(TR\s*[&:]\s*|MR\s*[&:]\s*)/gi, '\n\n**$1**\n')
     .split('\n');
 
   return (
@@ -23,17 +17,6 @@ function ExperienceRenderer({ content }) {
       {lines.map((line, i) => {
         const trimmed = line.trim();
         if (!trimmed) return null;
-
-        // Section heading (wrapped in **)
-        if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
-          const label = trimmed.replace(/\*\*/g, '').replace(/:$/, '');
-          return (
-            <div key={i} className="flex items-center gap-2 mt-5 sm:mt-7 mb-1">
-              <div className="w-1 h-5 sm:h-6 rounded-full bg-primary shrink-0" />
-              <p className="text-primary font-bold text-xs sm:text-sm uppercase tracking-widest">{label}</p>
-            </div>
-          );
-        }
 
         // Numbered list item
         if (/^\d+\./.test(trimmed)) {
