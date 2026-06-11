@@ -8,9 +8,7 @@ import toast from '@/utils/toast';
 function ExperienceRenderer({ content }) {
   if (!content) return null;
 
-  const lines = content
-    .replace(/(\d+\.\s+)/g, '\n$1')
-    .split('\n');
+  const lines = content.split('\n');
 
   return (
     <div className="space-y-2.5 sm:space-y-3 text-[13px] sm:text-[15px] text-foreground/90 leading-[1.8] sm:leading-[1.85]">
@@ -18,10 +16,10 @@ function ExperienceRenderer({ content }) {
         const trimmed = line.trim();
         if (!trimmed) return null;
 
-        // Numbered list item
-        if (/^\d+\./.test(trimmed)) {
+        // Numbered list item (only 1 or 2 digits to prevent years/random numbers)
+        if (/^\d{1,2}\.\s/.test(trimmed)) {
           const num = trimmed.match(/^(\d+)/)[1];
-          const text = trimmed.replace(/^\d+\.\s*/, '');
+          const text = trimmed.replace(/^\d{1,2}\.\s*/, '');
           return (
             <div key={i} className="flex gap-2.5 sm:gap-3 items-start">
               <span className="shrink-0 mt-0.5 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold flex items-center justify-center">
