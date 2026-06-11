@@ -182,8 +182,8 @@ export default function ExperienceDetail() {
         <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">
           Practice with company-specific questions, mock tests, and round-by-round guides.
         </p>
-        <Link to={`/companies/${slug}`}>
-          <Button className="mt-1 sm:mt-2 font-semibold px-6 sm:px-8 text-sm">
+        <Link to={`/companies/${slug}`} className="inline-block w-full sm:w-auto mt-3 sm:mt-4">
+          <Button className="w-full sm:w-auto font-semibold px-6 sm:px-8 text-sm h-auto py-3 sm:py-2.5 whitespace-normal">
             Go to {companyName} Prep Track →
           </Button>
         </Link>
