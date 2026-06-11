@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getCompanyTrack, getCompanyMockTests, getCompanyProgress, startCompanyMockTest, getCompanyQuestions } from '@/api/company';
 import { Button } from '@/components/ui/Button';
-import { Building2, ArrowLeft, Target, GraduationCap, Briefcase, PlayCircle, Clock, Zap, CheckCircle2, Lock, MessageSquare, X } from 'lucide-react';
+import { Building2, ArrowLeft, Target, GraduationCap, Briefcase, PlayCircle, Clock, Zap, CheckCircle2, Lock, MessageSquare } from 'lucide-react';
 import useAuthStore from '@/store/authStore';
 import toast from '@/utils/toast';
 import SEO from '@/components/seo/SEO';
@@ -18,18 +18,6 @@ export default function CompanyTrack() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [starting, setStarting] = useState(null); // stores mockId being started
-  const [selectedExperience, setSelectedExperience] = useState(null);
-
-  useEffect(() => {
-    if (selectedExperience) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [selectedExperience]);
 
   useEffect(() => {
     Promise.all([
@@ -368,8 +356,8 @@ export default function CompanyTrack() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {company.interviewExperiences.map((exp, idx) => (
               <div key={idx} className="bg-background border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-primary/40 transition-all flex flex-col group">
-                <h3 className="text-lg font-bold text-foreground mb-3">{exp.title}</h3>
-                <div className="relative">
+                <h3 className="text-lg font-bold text-foreground mb-3 line-clamp-2">{exp.title || 'Interview Experience'}</h3>
+                <div className="relative flex-1">
                   <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
                     {exp.content}
                   </p>
@@ -378,13 +366,16 @@ export default function CompanyTrack() {
                 
                 <div className="mt-4 pt-4 border-t border-border/50 flex justify-between items-center">
                   <span className="text-xs text-muted-foreground">
-                    {new Date(exp.dateScraped || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    {new Date(exp.dateScraped || Date.now()).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
                   </span>
                   <button
-                    onClick={() => setSelectedExperience(exp)}
-                    className="text-xs font-semibold text-primary hover:underline focus:outline-none"
+                    onClick={() => navigate(
+                      `/companies/${slug}/experiences/${idx}`,
+                      { state: { experience: exp, companyName: company.name, companyLogo: company.logo, companySlug: slug } }
+                    )}
+                    className="text-xs font-semibold text-primary hover:underline focus:outline-none flex items-center gap-1"
                   >
-                    Read Full Experience &rarr;
+                    Read Full Experience →
                   </button>
                 </div>
               </div>
@@ -392,58 +383,7 @@ export default function CompanyTrack() {
           </div>
         </div>
       )}
-
-      {/* Experience Modal */}
-      {selectedExperience && (
-        <div
-          id="experience-modal-overlay"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm"
-          onClick={(e) => e.target.id === 'experience-modal-overlay' && setSelectedExperience(null)}
-        >
-          <div className="relative w-full max-w-3xl bg-background border border-border rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200">
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedExperience(null)}
-              className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-full transition-colors"
-              aria-label="Close modal"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Modal Header */}
-            <div className="mb-4 pr-8">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20">
-                  Interview Experience
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {new Date(selectedExperience.dateScraped || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                </span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                {selectedExperience.title}
-              </h2>
-            </div>
-
-            {/* Separator */}
-            <div className="h-px bg-border w-full mb-6" />
-
-            {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto pr-2 min-h-0 space-y-4">
-              <div className="text-sm sm:text-base text-foreground leading-relaxed whitespace-pre-wrap font-normal">
-                {selectedExperience.content}
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="mt-6 pt-4 border-t border-border/50 flex justify-end">
-              <Button onClick={() => setSelectedExperience(null)} className="px-6 font-semibold">
-                Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+

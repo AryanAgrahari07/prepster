@@ -35,6 +35,7 @@ import RoadmapDetail from './pages/roadmap/RoadmapDetail';
 // Companies
 import CompanyList from './pages/company/CompanyList';
 import CompanyTrack from './pages/company/CompanyTrack';
+import ExperienceDetail from './pages/company/ExperienceDetail';
 
 // Jobs
 import JobFeed from './pages/jobs/JobFeed';
@@ -162,6 +163,7 @@ function App() {
             
             <Route path="/companies" element={<CompanyList />} />
             <Route path="/companies/:slug" element={<CompanyTrack />} />
+            <Route path="/companies/:slug/experiences/:idx" element={<ExperienceDetail />} />
             
             <Route path="/jobs" element={<JobFeed />} />
             <Route path="/jobs/:id" element={<JobDetail />} />
