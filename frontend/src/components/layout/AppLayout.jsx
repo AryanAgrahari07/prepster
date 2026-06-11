@@ -263,22 +263,24 @@ export default function AppLayout() {
       {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Mobile header */}
-        <header className="md:hidden flex h-14 sm:h-16 items-center justify-between border-b border-border bg-card px-2 sm:px-4 shrink-0">
-          <button
-            id="mobile-menu-toggle"
-            onClick={() => setMobileOpen(true)}
-            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors shrink-0"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
-          <Link to="/" className="text-base sm:text-lg font-bold text-foreground flex items-center gap-1.5 sm:gap-2">
-            <span className="w-6 h-6 sm:w-7 sm:h-7 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-xs font-black">P</span>
-            Prepster
-          </Link>
-          <div className="flex items-center gap-1">
+        <header className="md:hidden flex h-14 sm:h-16 items-center justify-between border-b border-border bg-card px-3 sm:px-4 shrink-0 gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 overflow-hidden">
+            <button
+              id="mobile-menu-toggle"
+              onClick={() => setMobileOpen(true)}
+              className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors shrink-0 -ml-1"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <Link to="/" className="text-base sm:text-lg font-bold text-foreground flex items-center gap-1.5 sm:gap-2 truncate">
+              <span className="w-6 h-6 sm:w-7 sm:h-7 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-xs font-black shrink-0">P</span>
+              <span className="truncate">Prepster</span>
+            </Link>
+          </div>
+          <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
             <NotificationBell announcements={visibleAnnouncements} dismissAnnouncement={dismissAnnouncement} direction="down" align="mobile-header" />
             <ThemeToggle />
-            <Link to="/profile" className="hidden sm:flex w-9 h-9 rounded-full bg-secondary items-center justify-center text-foreground font-bold text-sm overflow-hidden border border-border">
+            <Link to="/profile" className="hidden sm:flex w-9 h-9 rounded-full bg-secondary items-center justify-center text-foreground font-bold text-sm overflow-hidden border border-border shrink-0 ml-1">
               {user?.profile?.avatar ? (
                 <img src={user.profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
               ) : (

@@ -614,7 +614,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 40, filter: 'blur(20px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display text-[clamp(2.8rem,8vw,6rem)] font-bold tracking-tight leading-[1.05] mb-4"
+              className="font-display text-[clamp(2.2rem,8vw,6rem)] font-bold tracking-tight leading-[1.05] mb-4"
             >
               <span className="block">Get Placed.</span>
               <span className="block bg-gradient-to-r from-primary via-purple-400 to-blue-400 bg-clip-text text-transparent animate-gradient-x" style={{ backgroundSize: '200% auto' }}>
@@ -742,7 +742,7 @@ export default function Landing() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {STATS.map((stat, i) => (
               <SectionReveal key={stat.label} delay={i * 0.08}>
-                <div className="group relative rounded-2xl border border-border/30 bg-card/20 backdrop-blur-sm p-6 md:p-8 text-center hover:border-primary/20 transition-all duration-500 overflow-hidden">
+                <div className="group relative rounded-2xl border border-border/30 bg-card/20 backdrop-blur-sm p-4 sm:p-6 md:p-8 text-center hover:border-primary/20 transition-all duration-500 overflow-hidden">
                   {/* Background glow */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500`} />
 
@@ -750,7 +750,7 @@ export default function Landing() {
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}>
                       <stat.icon className="w-6 h-6 text-white" />
                     </div>
-                    <p className="text-3xl md:text-4xl lg:text-5xl font-bold font-display text-foreground mb-1.5">
+                    <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-display text-foreground mb-1.5">
                       <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                     </p>
                     <p className="text-sm text-muted-foreground font-medium">{stat.label}</p>
@@ -783,7 +783,7 @@ export default function Landing() {
             {FEATURES.map((feature, i) => (
               <SectionReveal key={feature.title} delay={i * 0.08}>
                 <TiltCard>
-                  <div className="group relative rounded-3xl border border-border/30 bg-card/20 backdrop-blur-sm p-7 overflow-hidden h-full hover:border-border/60 transition-all duration-500">
+                  <div className="group relative rounded-3xl border border-border/30 bg-card/20 backdrop-blur-sm p-5 sm:p-7 overflow-hidden h-full hover:border-border/60 transition-all duration-500">
                     {/* Corner glow */}
                     <div className={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${feature.gradient} rounded-full blur-[60px] opacity-0 group-hover:opacity-20 transition-opacity duration-700`} />
 

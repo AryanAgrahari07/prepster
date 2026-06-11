@@ -84,33 +84,33 @@ export default function Dashboard() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="grid grid-cols-2 lg:grid-cols-4 gap-4"
         >
-          <div className="app-card p-5">
+          <div className="app-card p-4 sm:p-5">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-muted-foreground">Questions Solved</p>
-              <Target className="w-5 h-5 text-primary" />
+              <p className="text-sm font-medium text-muted-foreground truncate mr-2">Questions</p>
+              <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
             </div>
-            <p className="text-2xl sm:text-3xl font-extrabold">{stats.totalQuestionsAttempted ?? 0}</p>
+            <p className="text-xl sm:text-2xl md:text-3xl font-extrabold">{stats.totalQuestionsAttempted ?? 0}</p>
           </div>
-          <div className="app-card p-5">
+          <div className="app-card p-4 sm:p-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-medium text-muted-foreground">Accuracy</p>
-              <TrendingUp className="w-5 h-5 text-green-500" />
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 shrink-0" />
             </div>
-            <p className="text-2xl sm:text-3xl font-extrabold text-green-500">{stats.accuracy ?? 0}%</p>
+            <p className="text-xl sm:text-2xl md:text-3xl font-extrabold text-green-500">{stats.accuracy ?? 0}%</p>
           </div>
-          <div className="app-card p-5">
+          <div className="app-card p-4 sm:p-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-medium text-muted-foreground">Day Streak</p>
-              <Flame className="w-5 h-5 text-orange-500" />
+              <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 shrink-0" />
             </div>
-            <p className="text-2xl sm:text-3xl font-extrabold text-orange-500">{stats.streak?.current ?? 0}</p>
+            <p className="text-xl sm:text-2xl md:text-3xl font-extrabold text-orange-500">{stats.streak?.current ?? 0}</p>
           </div>
-          <div className="app-card p-5">
+          <div className="app-card p-4 sm:p-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-medium text-muted-foreground">Profile</p>
-              <BookOpen className="w-5 h-5 text-blue-500" />
+              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 shrink-0" />
             </div>
-            <p className="text-2xl sm:text-3xl font-extrabold text-blue-500">{stats.profileCompletion ?? 0}%</p>
+            <p className="text-xl sm:text-2xl md:text-3xl font-extrabold text-blue-500">{stats.profileCompletion ?? 0}%</p>
           </div>
         </motion.div>
       )}
@@ -186,8 +186,8 @@ export default function Dashboard() {
             {stats.recentSessions?.length > 0 ? (
               <div className="space-y-3">
                 {stats.recentSessions.map((session, i) => (
-                  <div key={session._id || i} className="flex items-center gap-4 p-3 rounded-xl bg-secondary/30 hover:bg-secondary/50 transition-colors">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <div key={session._id || i} className="flex items-center gap-2 sm:gap-4 p-3 rounded-xl bg-secondary/30 hover:bg-secondary/50 transition-colors">
+                    <div className="hidden sm:flex w-10 h-10 rounded-xl bg-primary/10 items-center justify-center shrink-0">
                       <Clock className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
