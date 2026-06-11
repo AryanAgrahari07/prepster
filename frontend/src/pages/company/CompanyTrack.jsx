@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getCompanyTrack, getCompanyMockTests, getCompanyProgress, startCompanyMockTest, getCompanyQuestions } from '@/api/company';
 import { Button } from '@/components/ui/Button';
-import { Building2, ArrowLeft, Target, GraduationCap, Briefcase, PlayCircle, Clock, Zap, CheckCircle2, Lock } from 'lucide-react';
+import { Building2, ArrowLeft, Target, GraduationCap, Briefcase, PlayCircle, Clock, Zap, CheckCircle2, Lock, MessageSquare } from 'lucide-react';
 import useAuthStore from '@/store/authStore';
 import toast from '@/utils/toast';
 import SEO from '@/components/seo/SEO';
@@ -343,6 +343,42 @@ export default function CompanyTrack() {
           </div>
         )}
       </div>
+      {/* Interview Experiences Section */}
+      {company.interviewExperiences && company.interviewExperiences.length > 0 && (
+        <div className="space-y-6 pt-6 border-t border-border">
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <MessageSquare className="w-6 h-6 text-primary" />
+              Interview Experiences
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {company.interviewExperiences.map((exp, idx) => (
+              <div key={idx} className="bg-background border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-primary/40 transition-all flex flex-col group">
+                <h3 className="text-lg font-bold text-foreground mb-3">{exp.title}</h3>
+                <div className="relative">
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
+                    {exp.content}
+                  </p>
+                  <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent" />
+                </div>
+                
+                <div className="mt-4 pt-4 border-t border-border/50 flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(exp.dateScraped || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </span>
+                  {exp.sourceUrl && (
+                    <a href={exp.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-primary hover:underline">
+                      Read Full Experience &rarr;
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
