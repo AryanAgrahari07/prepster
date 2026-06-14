@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getCompanyTrack, getCompanyMockTests, getCompanyProgress, startCompanyMockTest, getCompanyQuestions } from '@/api/company';
+import { getCompanyTrack, getCompanyMockTests, getCompanyProgress, startCompanyMockTest, getCompanyQuestions, getCompanyQuestionsPreview } from '@/api/company';
 import { Button } from '@/components/ui/Button';
 import { Building2, ArrowLeft, Target, GraduationCap, Briefcase, PlayCircle, Clock, Zap, CheckCircle2, Lock, MessageSquare, ChevronRight } from 'lucide-react';
 import useAuthStore from '@/store/authStore';
@@ -15,6 +15,7 @@ export default function CompanyTrack() {
   const [mockTests, setMockTests] = useState([]);
   const [progress, setProgress] = useState(null);
   const [questions, setQuestions] = useState([]);
+  const [previewQuestions, setPreviewQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [starting, setStarting] = useState(null);
@@ -25,14 +26,16 @@ export default function CompanyTrack() {
       getCompanyMockTests(slug).catch(() => ({ data: { mockTests: [] } })),
       getCompanyProgress(slug).catch(() => ({ data: null })),
       user?.subscription?.plan === 'pro'
-        ? getCompanyQuestions(slug, 5).catch(() => ({ data: { questions: [] } }))
-        : Promise.resolve({ data: { questions: [] } })
-    ]).then(([trackRes, mocksRes, progRes, questionsRes]) => {
+        ? getCompanyQuestions(slug, 10).catch(() => ({ data: { questions: [] } }))
+        : Promise.resolve({ data: { questions: [] } }),
+      getCompanyQuestionsPreview(slug).catch(() => ({ data: { questions: [] } })),
+    ]).then(([trackRes, mocksRes, progRes, questionsRes, previewRes]) => {
       if (!trackRes) return navigate('/companies');
       setData(trackRes.data);
       setMockTests(mocksRes?.data?.mockTests || []);
       setProgress(progRes?.data || null);
       setQuestions(questionsRes?.data?.questions || []);
+      setPreviewQuestions(previewRes?.data?.questions || []);
       setLoading(false);
     });
   }, [slug, navigate]);
@@ -292,37 +295,66 @@ export default function CompanyTrack() {
       <div className="space-y-4 sm:space-y-6 pt-2 sm:pt-6">
         <div className="flex items-center gap-2 sm:gap-3">
           <h2 className="text-lg sm:text-2xl font-bold">Company Question Bank</h2>
+          <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 text-[10px] sm:text-xs font-bold border border-green-500/20">
+            {totalQuestions} Questions
+          </span>
           {user?.subscription?.plan === 'free' && (
-            <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold border border-primary/20">PRO ONLY</span>
+            <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold border border-primary/20">PRO FULL ACCESS</span>
           )}
         </div>
 
-        {user?.subscription?.plan === 'free' ? (
-          <div className="bg-secondary/10 border border-border p-6 sm:p-8 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center text-center space-y-3 sm:space-y-4">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-background border border-border rounded-full flex items-center justify-center text-muted-foreground">
-              <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
+        {/* Show Pro questions if user is Pro */}
+        {user?.subscription?.plan === 'pro' ? (
+          questions.length === 0 ? (
+            <div className="bg-secondary/20 border border-border p-6 sm:p-8 rounded-xl sm:rounded-2xl text-center text-muted-foreground text-sm">
+              No questions available for {company.name} yet.
             </div>
-            <h3 className="font-bold text-base sm:text-lg">Unlock Question Bank</h3>
-            <p className="text-muted-foreground max-w-sm text-xs sm:text-sm">
-              Get access to {totalQuestions}+ previously asked questions from {company.name} placement drives.
-            </p>
-            <Link to="/upgrade"><Button className="text-sm">Upgrade to Pro</Button></Link>
-          </div>
-        ) : questions.length === 0 ? (
-          <div className="bg-secondary/20 border border-border p-6 sm:p-8 rounded-xl sm:rounded-2xl text-center text-muted-foreground text-sm">
-            No questions available for {company.name} yet.
-          </div>
+          ) : (
+            <div className="space-y-3 sm:space-y-4">
+              {questions.map((q, idx) => (
+                <div key={q._id} className="bg-background border border-border rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-sm">
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded bg-primary/10 text-primary flex items-center justify-center font-bold text-xs sm:text-sm shrink-0 mt-0.5">
+                      Q{idx + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-foreground text-sm sm:text-base">{q.text}</p>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-3">
+                        {q.options?.map((opt) => (
+                          <span key={opt.label} className="text-xs sm:text-sm bg-secondary px-2 sm:px-3 py-1 sm:py-1.5 rounded-md border border-border/50 text-muted-foreground">
+                            {opt.label}. {opt.text}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div className="text-center pt-2 sm:pt-4">
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                  onClick={handleLoadMore}
+                  isLoading={loadingMore}
+                  disabled={questions.length >= totalQuestions}
+                >
+                  {questions.length >= totalQuestions ? 'All Questions Loaded' : 'Load More Questions'}
+                </Button>
+              </div>
+            </div>
+          )
         ) : (
+          /* Free users: show 3 blurred preview questions + upgrade CTA */
           <div className="space-y-3 sm:space-y-4">
-            {questions.map((q, idx) => (
-              <div key={q._id} className="bg-background border border-border rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-sm">
+            {previewQuestions.length > 0 && previewQuestions.map((q, idx) => (
+              <div key={q._id} className="relative overflow-hidden bg-background border border-border rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-sm">
                 <div className="flex items-start gap-3 sm:gap-4">
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded bg-primary/10 text-primary flex items-center justify-center font-bold text-xs sm:text-sm shrink-0 mt-0.5">
                     Q{idx + 1}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-foreground text-sm sm:text-base">{q.text}</p>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-3">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-3 select-none">
                       {q.options?.map((opt) => (
                         <span key={opt.label} className="text-xs sm:text-sm bg-secondary px-2 sm:px-3 py-1 sm:py-1.5 rounded-md border border-border/50 text-muted-foreground">
                           {opt.label}. {opt.text}
@@ -331,18 +363,29 @@ export default function CompanyTrack() {
                     </div>
                   </div>
                 </div>
+                {/* Blur overlay on last preview card */}
+                {idx === previewQuestions.length - 1 && (
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background flex items-end justify-center pb-3" />
+                )}
               </div>
             ))}
-            <div className="text-center pt-2 sm:pt-4">
-              <Button
-                variant="outline"
-                className="w-full sm:w-auto"
-                onClick={handleLoadMore}
-                isLoading={loadingMore}
-                disabled={questions.length >= totalQuestions}
-              >
-                {questions.length >= totalQuestions ? 'All Questions Loaded' : 'Load More Questions'}
-              </Button>
+
+            {/* Upgrade CTA */}
+            <div className="relative bg-gradient-to-br from-primary/5 via-background to-primary/10 border border-primary/30 p-6 sm:p-8 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center text-center space-y-3 sm:space-y-4 mt-2">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-primary">
+                <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold text-base sm:text-lg">Unlock {totalQuestions}+ Questions</h3>
+                <p className="text-muted-foreground max-w-sm text-xs sm:text-sm mt-1">
+                  Access all {company.name} previous year questions with answers, explanations, and full mock tests.
+                </p>
+              </div>
+              <Link to="/upgrade">
+                <Button className="text-sm px-6">
+                  Upgrade to Pro — ₹799/year
+                </Button>
+              </Link>
             </div>
           </div>
         )}

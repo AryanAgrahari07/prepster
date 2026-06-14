@@ -29,3 +29,8 @@ export const getCompanyQuestions = async (slug, limit = 20) => {
   const { data } = await api.get(`/companies/${slug}/questions?limit=${limit}`);
   return data;
 };
+
+export const getCompanyQuestionsPreview = async (slug) => {
+  const { data } = await api.get(`/companies/${slug}/questions/preview`);
+  return data;
+};

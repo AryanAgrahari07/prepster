@@ -26,9 +26,24 @@ router.get('/:slug', optionalAuth, cacheMiddleware(req => REDIS_KEYS.companyTrac
     const company = await Company.findOne({ slug: req.params.slug, isActive: true }).lean();
     if (!company) throw new AppError('Company track not found', 404, 4004);
 
-    const totalQuestions = await Question.countDocuments({ companies: company.slug, isActive: true });
+    // Case-insensitive match so "Infosys", "infosys", "INFOSYS" all match
+    const slugRegex = new RegExp(`^${req.params.slug}$`, 'i');
+    const totalQuestions = await Question.countDocuments({ companies: slugRegex, isActive: true });
 
     res.json({ success: true, data: { company, totalQuestions } });
+  } catch (err) { next(err); }
+});
+
+// ─── GET /v1/companies/:slug/questions/preview (Public — 3 sample Qs) ──────────
+router.get('/:slug/questions/preview', optionalAuth, async (req, res, next) => {
+  try {
+    const slugRegex = new RegExp(`^${req.params.slug}$`, 'i');
+    const questions = await Question.aggregate([
+      { $match: { companies: slugRegex, isActive: true } },
+      { $sample: { size: 3 } },
+      { $project: { correctOption: 0, explanation: 0 } }
+    ]);
+    res.json({ success: true, data: { questions } });
   } catch (err) { next(err); }
 });
 
@@ -36,8 +51,9 @@ router.get('/:slug', optionalAuth, cacheMiddleware(req => REDIS_KEYS.companyTrac
 router.get('/:slug/questions', authenticate, requirePro, async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit) || 20;
+    const slugRegex = new RegExp(`^${req.params.slug}$`, 'i');
     const questions = await Question.aggregate([
-      { $match: { companies: req.params.slug, isActive: true } },
+      { $match: { companies: slugRegex, isActive: true } },
       { $sample: { size: limit } },
       { $project: { correctOption: 0, explanation: 0 } }
     ]);
@@ -54,7 +70,8 @@ router.get('/:slug/mock-tests', authenticate, requirePro, async (req, res, next)
       .lean();
     if (!company) throw new AppError('Company track not found', 404, 4004);
 
-    const questionCount = await Question.countDocuments({ companies: req.params.slug, isActive: true });
+    const slugRegex = new RegExp(`^${req.params.slug}$`, 'i');
+    const questionCount = await Question.countDocuments({ companies: slugRegex, isActive: true });
 
     // Generate a standard mock test descriptor for this company
     const mockTests = questionCount > 0 ? [
@@ -93,8 +110,9 @@ router.post('/:slug/mock-tests/:mockId/start', authenticate, requirePro, async (
     const questionCount = isQuick ? 15 : 30;
     const timeLimitSeconds = isQuick ? 30 * 60 : 60 * 60;
 
+    const slugRegex = new RegExp(`^${req.params.slug}$`, 'i');
     const questions = await Question.aggregate([
-      { $match: { companies: req.params.slug, isActive: true } },
+      { $match: { companies: slugRegex, isActive: true } },
       { $sample: { size: questionCount } },
       { $project: { _id: 1 } }
     ]);
