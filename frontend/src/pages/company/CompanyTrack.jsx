@@ -295,9 +295,6 @@ export default function CompanyTrack() {
       <div className="space-y-4 sm:space-y-6 pt-2 sm:pt-6">
         <div className="flex items-center gap-2 sm:gap-3">
           <h2 className="text-lg sm:text-2xl font-bold">Company Question Bank</h2>
-          <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 text-[10px] sm:text-xs font-bold border border-green-500/20">
-            {totalQuestions} Questions
-          </span>
           {user?.subscription?.plan === 'free' && (
             <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold border border-primary/20">PRO FULL ACCESS</span>
           )}
@@ -376,7 +373,7 @@ export default function CompanyTrack() {
                 <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <h3 className="font-bold text-base sm:text-lg">Unlock {totalQuestions}+ Questions</h3>
+                <h3 className="font-bold text-base sm:text-lg">Unlock Full Question Bank</h3>
                 <p className="text-muted-foreground max-w-sm text-xs sm:text-sm mt-1">
                   Access all {company.name} previous year questions with answers, explanations, and full mock tests.
                 </p>

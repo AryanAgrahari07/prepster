@@ -8,6 +8,18 @@ const { AppError } = require('../../middleware/errorHandler');
 const { SESSION_STATUS, SESSION_TYPES, REDIS_KEYS } = require('../../shared/constants');
 const { cacheMiddleware } = require('../../middleware/cache');
 
+// ── Helper: build filter for company-specific PYQ questions only ──────────────
+// We ONLY show TalentBattle_Scraped questions in the company question bank.
+// This avoids the thousands of aptitude questions that are broadly tagged with
+// every company name by the post-processor.
+function companyPYQFilter(slug) {
+  return {
+    source: 'TalentBattle_Scraped',
+    companies: new RegExp(`^${slug}$`, 'i'),
+    isActive: true,
+  };
+}
+
 // ─── GET /v1/companies ────────────────────────────────────────────────────────
 // Cached for 10 minutes — rarely changes
 router.get('/', cacheMiddleware('companies:list', 600), async (req, res, next) => {
@@ -26,20 +38,18 @@ router.get('/:slug', optionalAuth, cacheMiddleware(req => REDIS_KEYS.companyTrac
     const company = await Company.findOne({ slug: req.params.slug, isActive: true }).lean();
     if (!company) throw new AppError('Company track not found', 404, 4004);
 
-    // Case-insensitive match so "Infosys", "infosys", "INFOSYS" all match
-    const slugRegex = new RegExp(`^${req.params.slug}$`, 'i');
-    const totalQuestions = await Question.countDocuments({ companies: slugRegex, isActive: true });
+    // Only count the actual company-specific PYQ questions (not generic aptitude)
+    const totalQuestions = await Question.countDocuments(companyPYQFilter(req.params.slug));
 
     res.json({ success: true, data: { company, totalQuestions } });
   } catch (err) { next(err); }
 });
 
-// ─── GET /v1/companies/:slug/questions/preview (Public — 3 sample Qs) ──────────
+// ─── GET /v1/companies/:slug/questions/preview (Public — 3 sample Qs) ─────────
 router.get('/:slug/questions/preview', optionalAuth, async (req, res, next) => {
   try {
-    const slugRegex = new RegExp(`^${req.params.slug}$`, 'i');
     const questions = await Question.aggregate([
-      { $match: { companies: slugRegex, isActive: true } },
+      { $match: companyPYQFilter(req.params.slug) },
       { $sample: { size: 3 } },
       { $project: { correctOption: 0, explanation: 0 } }
     ]);
@@ -51,9 +61,8 @@ router.get('/:slug/questions/preview', optionalAuth, async (req, res, next) => {
 router.get('/:slug/questions', authenticate, requirePro, async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit) || 20;
-    const slugRegex = new RegExp(`^${req.params.slug}$`, 'i');
     const questions = await Question.aggregate([
-      { $match: { companies: slugRegex, isActive: true } },
+      { $match: companyPYQFilter(req.params.slug) },
       { $sample: { size: limit } },
       { $project: { correctOption: 0, explanation: 0 } }
     ]);
@@ -62,7 +71,6 @@ router.get('/:slug/questions', authenticate, requirePro, async (req, res, next) 
 });
 
 // ─── GET /v1/companies/:slug/mock-tests (Pro only) ───────────────────────────
-// Returns available mock tests. For MVP, each company has one standard mock test.
 router.get('/:slug/mock-tests', authenticate, requirePro, async (req, res, next) => {
   try {
     const company = await Company.findOne({ slug: req.params.slug, isActive: true })
@@ -70,8 +78,7 @@ router.get('/:slug/mock-tests', authenticate, requirePro, async (req, res, next)
       .lean();
     if (!company) throw new AppError('Company track not found', 404, 4004);
 
-    const slugRegex = new RegExp(`^${req.params.slug}$`, 'i');
-    const questionCount = await Question.countDocuments({ companies: slugRegex, isActive: true });
+    const questionCount = await Question.countDocuments(companyPYQFilter(req.params.slug));
 
     // Generate a standard mock test descriptor for this company
     const mockTests = questionCount > 0 ? [
@@ -105,14 +112,12 @@ router.post('/:slug/mock-tests/:mockId/start', authenticate, requirePro, async (
       .lean();
     if (!company) throw new AppError('Company track not found', 404, 4004);
 
-    // Determine question count and time from mock test ID suffix
     const isQuick = req.params.mockId.endsWith('-mock-2');
     const questionCount = isQuick ? 15 : 30;
     const timeLimitSeconds = isQuick ? 30 * 60 : 60 * 60;
 
-    const slugRegex = new RegExp(`^${req.params.slug}$`, 'i');
     const questions = await Question.aggregate([
-      { $match: { companies: slugRegex, isActive: true } },
+      { $match: companyPYQFilter(req.params.slug) },
       { $sample: { size: questionCount } },
       { $project: { _id: 1 } }
     ]);
@@ -135,7 +140,6 @@ router.post('/:slug/mock-tests/:mockId/start', authenticate, requirePro, async (
 });
 
 // ─── GET /v1/companies/:slug/progress ────────────────────────────────────────
-// Returns user's progress on a company track (sessions completed + readiness score)
 router.get('/:slug/progress', authenticate, async (req, res, next) => {
   try {
     const UserAnalytics = require('../aptitude/userAnalytics.model');
@@ -147,7 +151,7 @@ router.get('/:slug/progress', authenticate, async (req, res, next) => {
         status: SESSION_STATUS.COMPLETED,
       }),
       UserAnalytics.findOne({ userId: req.user._id }).select('companyReadiness').lean(),
-      Question.countDocuments({ companies: req.params.slug, isActive: true }),
+      Question.countDocuments(companyPYQFilter(req.params.slug)),
     ]);
 
     const readinessScore = analytics?.companyReadiness?.[req.params.slug] || 0;
