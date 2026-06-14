@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getCompanyTrack, getCompanyMockTests, getCompanyProgress, startCompanyMockTest, getCompanyQuestions, getCompanyQuestionsPreview } from '@/api/company';
 import { Button } from '@/components/ui/Button';
-import { Building2, ArrowLeft, GraduationCap, Briefcase, PlayCircle, Clock, Zap, CheckCircle2, Lock, MessageSquare, ChevronRight } from 'lucide-react';
+import { Building2, ArrowLeft, Target, GraduationCap, Briefcase, PlayCircle, Clock, Zap, CheckCircle2, Lock, MessageSquare, ChevronRight } from 'lucide-react';
 import useAuthStore from '@/store/authStore';
 import toast from '@/utils/toast';
 import SEO from '@/components/seo/SEO';
