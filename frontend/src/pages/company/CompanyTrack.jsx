@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getCompanyTrack, getCompanyMockTests, getCompanyProgress, startCompanyMockTest, getCompanyQuestions, getCompanyQuestionsPreview } from '@/api/company';
 import { Button } from '@/components/ui/Button';
-import { Building2, ArrowLeft, Target, GraduationCap, Briefcase, PlayCircle, Clock, Zap, CheckCircle2, Lock, MessageSquare, ChevronRight } from 'lucide-react';
+import { Building2, ArrowLeft, GraduationCap, Briefcase, PlayCircle, Clock, Zap, CheckCircle2, Lock, MessageSquare, ChevronRight } from 'lucide-react';
 import useAuthStore from '@/store/authStore';
 import toast from '@/utils/toast';
 import SEO from '@/components/seo/SEO';
@@ -148,16 +148,7 @@ export default function CompanyTrack() {
       </div>
 
       {/* ── Stats Cards ──────────────────────────────────────────── */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4">
-        <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 p-3 sm:p-5 rounded-xl sm:rounded-2xl hover:scale-[1.02] transition-transform">
-          <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 text-green-500">
-            <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 shrink-0" />
-            <h3 className="font-semibold text-[11px] sm:text-sm truncate">Questions</h3>
-          </div>
-          <p className="text-xl sm:text-3xl font-bold text-foreground">{totalQuestions}</p>
-          <p className="text-[10px] sm:text-sm text-muted-foreground mt-0.5 hidden sm:block">Targeted questions</p>
-        </div>
-
+      <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/5 border border-blue-500/20 p-3 sm:p-5 rounded-xl sm:rounded-2xl hover:scale-[1.02] transition-transform">
           <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 text-blue-500">
             <Briefcase className="w-3.5 h-3.5 sm:w-5 sm:h-5 shrink-0" />
