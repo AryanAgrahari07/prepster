@@ -24,8 +24,16 @@ function companyPYQFilter(slug) {
 // Cached for 10 minutes — rarely changes
 router.get('/', cacheMiddleware('companies:list', 600), async (req, res, next) => {
   try {
-    const companies = await Company.find({ isActive: true })
-      .select('name slug logo sector packageInfo.fresher totalQuestions')
+    const filter = { isActive: true };
+    // Optional stream filter: ?stream=engineering | mba | both
+    if (req.query.stream && ['engineering', 'mba'].includes(req.query.stream)) {
+      filter.$or = [
+        { targetStream: req.query.stream },
+        { targetStream: 'both' },
+      ];
+    }
+    const companies = await Company.find(filter)
+      .select('name slug logo sector targetStream packageInfo.fresher totalQuestions')
       .lean();
     res.json({ success: true, data: { companies } });
   } catch (err) { next(err); }
@@ -136,6 +144,39 @@ router.post('/:slug/mock-tests/:mockId/start', authenticate, requirePro, async (
     });
 
     res.status(201).json({ success: true, data: { sessionId: session._id } });
+  } catch (err) { next(err); }
+});
+
+// ─── POST /v1/companies/:slug/experiences ──────────────────────────────────────
+router.post('/:slug/experiences', authenticate, async (req, res, next) => {
+  try {
+    const { title, content, roleOffered, offerStatus } = req.body;
+    
+    if (!title || !content) {
+      throw new AppError('Title and content are required', 400, 4000);
+    }
+
+    const company = await Company.findOneAndUpdate(
+      { slug: req.params.slug, isActive: true },
+      {
+        $push: {
+          interviewExperiences: {
+            userId: req.user._id,
+            title,
+            content,
+            roleOffered,
+            offerStatus,
+            status: 'approved', // Auto-approve for MVP
+            submittedAt: new Date()
+          }
+        }
+      },
+      { new: true }
+    );
+
+    if (!company) throw new AppError('Company track not found', 404, 4004);
+
+    res.status(201).json({ success: true, message: 'Experience submitted successfully' });
   } catch (err) { next(err); }
 });
 

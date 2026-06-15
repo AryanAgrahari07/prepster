@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getJobById, applyForJob, uploadResume } from '@/api/jobs';
 import { Button } from '@/components/ui/Button';
+import BookmarkButton from '@/components/ui/BookmarkButton';
 import { Input } from '@/components/ui/Input';
 import { Building, MapPin, Briefcase, Calendar, GraduationCap, CheckCircle2, Zap } from 'lucide-react';
 import useAuthStore from '@/store/authStore';
@@ -113,11 +114,19 @@ export default function JobDetail() {
                 job.companyName.charAt(0)
               )}
             </div>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-foreground">{job.title}</h1>
-              <div className="flex items-center gap-3 mt-2 text-muted-foreground">
-                <span className="flex items-center font-medium text-sm"><Building className="w-4 h-4 mr-1" /> {job.companyName}</span>
+            <div className="min-w-0 flex-1 flex justify-between items-start">
+              <div>
+                <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-foreground pr-4">{job.title}</h1>
+                <div className="flex items-center gap-3 mt-2 text-muted-foreground">
+                  <span className="flex items-center font-medium text-sm"><Building className="w-4 h-4 mr-1" /> {job.companyName}</span>
+                </div>
               </div>
+              <BookmarkButton 
+                itemType="job" 
+                itemId={job._id} 
+                snapshot={{ title: job.title, subtitle: job.companyName, href: `/jobs/${job._id}` }} 
+                className="shrink-0 mt-1"
+              />
             </div>
           </div>
           <div className="w-full">

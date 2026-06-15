@@ -66,8 +66,7 @@ export default function QuizSession() {
     const interval = setInterval(() => {
       setTimeLeft(prev => {
         if (prev === null) return null; // Wait until initialized by the fetch effect
-        if (prev <= 0) return 0;
-        if (prev === 1) {
+        if (prev <= 1) {
           clearInterval(interval);
           if (handleFinishRef.current) handleFinishRef.current(true); // force auto-submit
           return 0;
@@ -107,11 +106,15 @@ export default function QuizSession() {
     setAnswers(prev => ({ ...prev, [currentIndex]: optionLabel }));
 
     try {
-      await submitAnswer(id, {
+      const res = await submitAnswer(id, {
         questionId: questionData._id,
         selectedOption: optionLabel,
         timeTakenSeconds,
       });
+      // Update session if adaptive engine swapped future questions
+      if (res.data?.session) {
+        setSession(res.data.session);
+      }
     } catch (err) {
       console.error('Failed to submit answer', err);
     }

@@ -55,11 +55,16 @@ router.post('/:id/apply', authenticate, requirePro, async (req, res, next) => {
     const existingApp = await Application.findOne({ jobId: job._id, userId: req.user._id });
     if (existingApp) throw new AppError('You have already applied for this job', 400, 4009);
 
+    const resumeUrl = req.user.profile?.resumeUrl || req.body.resumeUrl;
+    if (!resumeUrl) {
+      throw new AppError('Resume is required to apply. Please upload your resume in your profile first.', 400, 4010);
+    }
+
     const application = await Application.create({
       jobId: job._id,
       userId: req.user._id,
       employerId: job.postedBy,   // Required for employer-side applicant lookup
-      resumeUrl: req.user.profile?.resumeUrl || req.body.resumeUrl || null,
+      resumeUrl,
       status: 'applied',
     });
 

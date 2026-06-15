@@ -788,4 +788,140 @@ router.delete('/blogs/:id', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// ─── MBA CONTENT MANAGEMENT ───────────────────────────────────────────────────
+const GdTopic      = require('../mba/models/gdTopic.model');
+const PiQuestion   = require('../mba/models/piQuestion.model');
+const CaseStudy    = require('../mba/models/caseStudy.model');
+const WatTopic     = require('../mba/models/watTopic.model');
+const Guesstimate  = require('../mba/models/guesstimate.model');
+const Sector       = require('../mba/models/sector.model');
+
+// Helper: generic list handler (avoids duplication)
+function mbaList(Model, extraFilter = {}) {
+  return async (req, res, next) => {
+    try {
+      const page  = parseInt(req.query.page)  || 1;
+      const limit = parseInt(req.query.limit) || 20;
+      const skip  = (page - 1) * limit;
+      const filter = { ...extraFilter };
+      if (req.query.difficulty) filter.difficulty = req.query.difficulty;
+      if (req.query.category)   filter.category   = req.query.category;
+
+      const [items, total] = await Promise.all([
+        Model.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+        Model.countDocuments(filter),
+      ]);
+      res.json({ success: true, data: { items }, pagination: { page, limit, total, hasNext: skip + limit < total } });
+    } catch (err) { next(err); }
+  };
+}
+
+// ── GD Topics ──────────────────────────────────────────────────────────────────
+router.get('/mba/gd',          mbaList(GdTopic));
+router.get('/mba/gd/:id',      async (req, res, next) => {
+  try { const d = await GdTopic.findById(req.params.id).lean(); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.post('/mba/gd',         async (req, res, next) => {
+  try { const d = await GdTopic.create(req.body); res.status(201).json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.put('/mba/gd/:id',      async (req, res, next) => {
+  try { const d = await GdTopic.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.patch('/mba/gd/:id',    async (req, res, next) => {
+  try { const d = await GdTopic.findByIdAndUpdate(req.params.id, { isActive: req.body.isActive }, { new: true }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.delete('/mba/gd/:id',   async (req, res, next) => {
+  try { await GdTopic.findByIdAndUpdate(req.params.id, { isActive: false }); res.json({ success: true, message: 'Deactivated' }); } catch (err) { next(err); }
+});
+
+// ── PI Questions ───────────────────────────────────────────────────────────────
+router.get('/mba/pi',          mbaList(PiQuestion));
+router.get('/mba/pi/:id',      async (req, res, next) => {
+  try { const d = await PiQuestion.findById(req.params.id).lean(); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.post('/mba/pi',         async (req, res, next) => {
+  try { const d = await PiQuestion.create(req.body); res.status(201).json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.put('/mba/pi/:id',      async (req, res, next) => {
+  try { const d = await PiQuestion.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.patch('/mba/pi/:id',    async (req, res, next) => {
+  try { const d = await PiQuestion.findByIdAndUpdate(req.params.id, { isActive: req.body.isActive }, { new: true }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.delete('/mba/pi/:id',   async (req, res, next) => {
+  try { await PiQuestion.findByIdAndUpdate(req.params.id, { isActive: false }); res.json({ success: true, message: 'Deactivated' }); } catch (err) { next(err); }
+});
+
+// ── Case Studies ───────────────────────────────────────────────────────────────
+router.get('/mba/cases',         mbaList(CaseStudy));
+router.get('/mba/cases/:id',     async (req, res, next) => {
+  try { const d = await CaseStudy.findById(req.params.id).lean(); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.post('/mba/cases',        async (req, res, next) => {
+  try { const d = await CaseStudy.create(req.body); res.status(201).json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.put('/mba/cases/:id',     async (req, res, next) => {
+  try { const d = await CaseStudy.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.patch('/mba/cases/:id',   async (req, res, next) => {
+  try { const d = await CaseStudy.findByIdAndUpdate(req.params.id, { isActive: req.body.isActive }, { new: true }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.delete('/mba/cases/:id',  async (req, res, next) => {
+  try { await CaseStudy.findByIdAndUpdate(req.params.id, { isActive: false }); res.json({ success: true, message: 'Deactivated' }); } catch (err) { next(err); }
+});
+
+// ── WAT Topics ─────────────────────────────────────────────────────────────────
+router.get('/mba/wat',           mbaList(WatTopic));
+router.get('/mba/wat/:id',       async (req, res, next) => {
+  try { const d = await WatTopic.findById(req.params.id).lean(); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.post('/mba/wat',          async (req, res, next) => {
+  try { const d = await WatTopic.create(req.body); res.status(201).json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.put('/mba/wat/:id',       async (req, res, next) => {
+  try { const d = await WatTopic.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.patch('/mba/wat/:id',     async (req, res, next) => {
+  try { const d = await WatTopic.findByIdAndUpdate(req.params.id, { isActive: req.body.isActive }, { new: true }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.delete('/mba/wat/:id',    async (req, res, next) => {
+  try { await WatTopic.findByIdAndUpdate(req.params.id, { isActive: false }); res.json({ success: true, message: 'Deactivated' }); } catch (err) { next(err); }
+});
+
+// ── Guesstimates ───────────────────────────────────────────────────────────────
+router.get('/mba/guesstimates',        mbaList(Guesstimate));
+router.get('/mba/guesstimates/:id',    async (req, res, next) => {
+  try { const d = await Guesstimate.findById(req.params.id).lean(); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.post('/mba/guesstimates',       async (req, res, next) => {
+  try { const d = await Guesstimate.create(req.body); res.status(201).json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.put('/mba/guesstimates/:id',    async (req, res, next) => {
+  try { const d = await Guesstimate.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.patch('/mba/guesstimates/:id',  async (req, res, next) => {
+  try { const d = await Guesstimate.findByIdAndUpdate(req.params.id, { isActive: req.body.isActive }, { new: true }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.delete('/mba/guesstimates/:id', async (req, res, next) => {
+  try { await Guesstimate.findByIdAndUpdate(req.params.id, { isActive: false }); res.json({ success: true, message: 'Deactivated' }); } catch (err) { next(err); }
+});
+
+// ── Sectors ────────────────────────────────────────────────────────────────────
+router.get('/mba/sectors',        mbaList(Sector));
+router.get('/mba/sectors/:id',    async (req, res, next) => {
+  try { const d = await Sector.findById(req.params.id).lean(); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.post('/mba/sectors',       async (req, res, next) => {
+  try { const d = await Sector.create(req.body); res.status(201).json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.put('/mba/sectors/:id',    async (req, res, next) => {
+  try { const d = await Sector.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }); if (!d) return res.status(404).json({ success: false, error: { message: 'Not found' } }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.patch('/mba/sectors/:id',  async (req, res, next) => {
+  try { const d = await Sector.findByIdAndUpdate(req.params.id, { isActive: req.body.isActive }, { new: true }); res.json({ success: true, data: d }); } catch (err) { next(err); }
+});
+router.delete('/mba/sectors/:id', async (req, res, next) => {
+  try { await Sector.findByIdAndUpdate(req.params.id, { isActive: false }); res.json({ success: true, message: 'Deactivated' }); } catch (err) { next(err); }
+});
+
 module.exports = router;

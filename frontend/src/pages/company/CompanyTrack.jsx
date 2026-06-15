@@ -6,6 +6,7 @@ import { Building2, ArrowLeft, Target, GraduationCap, Briefcase, PlayCircle, Clo
 import useAuthStore from '@/store/authStore';
 import toast from '@/utils/toast';
 import SEO from '@/components/seo/SEO';
+import SubmitExperienceModal from './SubmitExperienceModal';
 
 export default function CompanyTrack() {
   const { slug } = useParams();
@@ -19,6 +20,11 @@ export default function CompanyTrack() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [starting, setStarting] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchTrack = () => {
+    getCompanyTrack(slug).then(res => setData(res.data)).catch(() => null);
+  };
 
   useEffect(() => {
     Promise.all([
@@ -380,16 +386,27 @@ export default function CompanyTrack() {
       </div>
 
       {/* ── Interview Experiences ─────────────────────────────────── */}
-      {company.interviewExperiences && company.interviewExperiences.length > 0 && (
+      {company.interviewExperiences !== undefined && (
         <div className="space-y-4 sm:space-y-6 pt-4 sm:pt-6 border-t border-border">
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
             <h2 className="text-lg sm:text-2xl font-bold flex items-center gap-2">
               <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-primary shrink-0" />
               Interview Experiences
             </h2>
+            <Button size="sm" onClick={() => {
+              if (!user) return toast.error('Please log in to share your experience');
+              setIsModalOpen(true);
+            }}>
+              Share Experience
+            </Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
+          {company.interviewExperiences.length === 0 ? (
+            <div className="bg-secondary/20 border border-border p-6 sm:p-8 rounded-xl sm:rounded-2xl text-center text-muted-foreground text-sm">
+              No interview experiences shared yet. Be the first to help out!
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
             {company.interviewExperiences.map((exp, idx) => (
               <div
                 key={idx}
@@ -421,6 +438,13 @@ export default function CompanyTrack() {
           </div>
         </div>
       )}
+
+      <SubmitExperienceModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        slug={slug} 
+        onSuccess={fetchTrack} 
+      />
     </div>
   );
 }

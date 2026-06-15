@@ -92,6 +92,8 @@ app.use('/v1/admin', require('./modules/admin/admin.routes'));
 app.use('/v1/webhooks', require('./modules/subscription/webhooks.routes'));
 app.use('/v1/notifications', require('./modules/notifications/announcements.routes'));
 app.use('/v1/blogs', require('./modules/blog/blog.routes'));
+app.use('/v1/mba', require('./modules/mba/mba.routes'));
+app.use('/v1/bookmarks', require('./modules/bookmarks/bookmarks.routes'));
 
 // ─── 404 Handler ─────────────────────────────────────────────────────────────
 app.use((req, res) => {

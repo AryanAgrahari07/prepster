@@ -6,6 +6,7 @@ const companySchema = new mongoose.Schema(
     slug: { type: String, required: true, unique: true, index: true },
     logo: { type: String }, // Cloudinary URL
     sector: { type: String },
+    targetStream: { type: String, enum: ['engineering', 'mba', 'both'], default: 'engineering' },
     hiringProcess: {
       overview: { type: String },
       rounds: [{
@@ -31,10 +32,15 @@ const companySchema = new mongoose.Schema(
       notes: { type: String },
     },
     interviewExperiences: [{
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       title: { type: String },
       content: { type: String },
       sourceUrl: { type: String },
-      dateScraped: { type: Date, default: Date.now }
+      dateScraped: { type: Date, default: Date.now },
+      roleOffered: { type: String },
+      offerStatus: { type: String, enum: ['Offered', 'Rejected', 'Pending'] },
+      status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'approved' },
+      submittedAt: { type: Date, default: Date.now }
     }],
     isActive: { type: Boolean, default: true },
   },

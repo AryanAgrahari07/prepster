@@ -21,20 +21,43 @@ router.get('/me', authenticate, async (req, res, next) => {
 // PATCH /v1/users/me
 router.patch('/me', authenticate, async (req, res, next) => {
   try {
-    const allowed = ['profile.firstName','profile.lastName','profile.college','profile.branch',
-      'profile.graduationYear','profile.cgpa','profile.targetCompanies','profile.phone'];
     const updates = {};
-    // Flatten profile fields
-    if (req.body.firstName) updates['profile.firstName'] = req.body.firstName;
-    if (req.body.lastName)  updates['profile.lastName']  = req.body.lastName;
-    if (req.body.college)   updates['profile.college']   = req.body.college;
-    if (req.body.branch)    updates['profile.branch']    = req.body.branch;
-    if (req.body.graduationYear) updates['profile.graduationYear'] = req.body.graduationYear;
-    if (req.body.cgpa !== undefined) updates['profile.cgpa'] = req.body.cgpa;
-    if (req.body.targetCompanies) updates['profile.targetCompanies'] = req.body.targetCompanies;
-    if (req.body.phone)     updates['profile.phone']     = req.body.phone;
 
-    const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true, runValidators: true })
+    // ─── Engineering & General profile fields ─────────────────────────────────
+    if (req.body.firstName)       updates['profile.firstName']       = req.body.firstName;
+    if (req.body.lastName)        updates['profile.lastName']        = req.body.lastName;
+    if (req.body.college)         updates['profile.college']         = req.body.college;
+    if (req.body.branch)          updates['profile.branch']          = req.body.branch;
+    if (req.body.graduationYear)  updates['profile.graduationYear']  = req.body.graduationYear;
+    if (req.body.cgpa !== undefined) updates['profile.cgpa']         = req.body.cgpa;
+    if (req.body.targetCompanies) updates['profile.targetCompanies'] = req.body.targetCompanies;
+    if (req.body.phone)           updates['profile.phone']           = req.body.phone;
+    
+    if (req.body.resumeUrl === null) updates['profile.resumeUrl'] = null;
+    if (req.body.resumeFileName === null) updates['profile.resumeFileName'] = null;
+
+    // ─── Stream & Onboarding ──────────────────────────────────────────────────
+    if (req.body.stream && ['engineering', 'mba'].includes(req.body.stream)) {
+      updates.stream = req.body.stream;
+    }
+    if (typeof req.body.onboardingCompleted === 'boolean') {
+      updates.onboardingCompleted = req.body.onboardingCompleted;
+    }
+
+    // ─── MBA profile fields ───────────────────────────────────────────────────
+    if (req.body.instituteType)           updates['mbaProfile.instituteType']           = req.body.instituteType;
+    if (req.body.mbaProgramme)            updates['mbaProfile.mbaProgramme']            = req.body.mbaProgramme;
+    if (req.body.specialization)          updates['mbaProfile.specialization']          = req.body.specialization;
+    if (req.body.workExperienceMonths !== undefined) updates['mbaProfile.workExperienceMonths'] = req.body.workExperienceMonths;
+    if (req.body.undergraduateDegree)     updates['mbaProfile.undergraduateDegree']     = req.body.undergraduateDegree;
+    if (req.body.targetSectors)           updates['mbaProfile.targetSectors']           = req.body.targetSectors;
+    if (req.body.targetRoles)             updates['mbaProfile.targetRoles']             = req.body.targetRoles;
+    if (req.body.catScore !== undefined)  updates['mbaProfile.catScore']                = req.body.catScore;
+    if (req.body.xatScore !== undefined)  updates['mbaProfile.xatScore']                = req.body.xatScore;
+    if (req.body.gmatScore !== undefined) updates['mbaProfile.gmatScore']               = req.body.gmatScore;
+    if (req.body.summerInternship)        updates['mbaProfile.summerInternship']        = req.body.summerInternship;
+
+    const user = await User.findByIdAndUpdate(req.user._id, { $set: updates }, { new: true, runValidators: true })
       .select('-passwordHash -__v');
     res.json({ success: true, message: 'Profile updated', data: { user } });
   } catch (err) { next(err); }
@@ -68,7 +91,10 @@ router.post('/me/resume', authenticate, upload.single('resume'), async (req, res
     });
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { 'profile.resumeUrl': result.secure_url },
+      { 
+        'profile.resumeUrl': result.secure_url,
+        'profile.resumeFileName': req.file.originalname 
+      },
       { new: true }
     ).select('-passwordHash -__v');
     res.json({ success: true, data: { resumeUrl: result.secure_url, user } });

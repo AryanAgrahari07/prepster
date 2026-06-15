@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { ROLES, PLANS } = require('../../shared/constants');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema(
   {
@@ -37,7 +38,41 @@ const userSchema = new mongoose.Schema(
       targetCompanies: [{ type: String }],
       phone: { type: String, trim: true },
       resumeUrl: { type: String, default: null },
+      resumeFileName: { type: String, default: null },
     },
+    // ─── Stream & Onboarding ──────────────────────────────────────────────────
+    stream: {
+      type: String,
+      enum: ['engineering', 'mba'],
+      default: 'engineering',
+    },
+    onboardingCompleted: { type: Boolean, default: false },
+    // ─── MBA Profile (only populated when stream === 'mba') ───────────────────
+    mbaProfile: {
+      instituteType: {
+        type: String,
+        enum: ['iim', 'xlri', 'fms', 'nmims', 'spjimr', 'iift', 'mdi', 'tier2', 'other'],
+        default: null,
+      },
+      mbaProgramme: { type: String, trim: true },         // 'PGDM', 'MBA', 'PGP'
+      specialization: {
+        type: String,
+        enum: ['marketing', 'finance', 'hr', 'operations', 'strategy', 'general', null],
+        default: null,
+      },
+      workExperienceMonths: { type: Number, min: 0, max: 600 },
+      undergraduateDegree: { type: String, trim: true },  // 'B.Tech CSE', 'B.Com'
+      targetSectors: [{ type: String }],
+      targetRoles: [{ type: String }],
+      catScore: { type: Number },
+      xatScore: { type: Number },
+      gmatScore: { type: Number },
+      summerInternship: { type: String, trim: true },
+    },
+    // ─── Referral ─────────────────────────────────────────────────────────────
+    referralCode: { type: String, unique: true, sparse: true },
+    referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    referralCount: { type: Number, default: 0 },
     subscription: {
       plan: { type: String, enum: Object.values(PLANS), default: PLANS.FREE },
       status: {
@@ -69,11 +104,21 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// ─── Auto-generate referral code before save ─────────────────────────────────
+userSchema.pre('save', function (next) {
+  if (!this.referralCode) {
+    this.referralCode = crypto.randomBytes(3).toString('hex').toUpperCase(); // e.g. 'A3F9B2'
+  }
+  next();
+});
+
 // ─── Indexes ──────────────────────────────────────────────────────────────────
 userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ 'subscription.expiresAt': 1 });
 userSchema.index({ 'profile.graduationYear': 1 });
 userSchema.index({ role: 1 });
+userSchema.index({ stream: 1 });
+userSchema.index({ referralCode: 1 }, { unique: true, sparse: true });
 
 // ─── Virtual: full name ───────────────────────────────────────────────────────
 userSchema.virtual('fullName').get(function () {
@@ -91,6 +136,21 @@ userSchema.virtual('isPro').get(function () {
 
 // ─── Virtual: profileCompletionScore ─────────────────────────────────────────
 userSchema.virtual('profileCompletionScore').get(function () {
+  if (this.stream === 'mba') {
+    const fields = [
+      this.profile?.firstName,
+      this.profile?.lastName,
+      this.profile?.phone,
+      this.profile?.avatar,
+      this.mbaProfile?.specialization,
+      this.mbaProfile?.workExperienceMonths !== undefined,
+      this.mbaProfile?.undergraduateDegree,
+      this.mbaProfile?.targetSectors?.length > 0,
+      this.mbaProfile?.instituteType,
+      this.isEmailVerified,
+    ];
+    return Math.round((fields.filter(Boolean).length / fields.length) * 100);
+  }
   const fields = [
     this.profile?.firstName,
     this.profile?.lastName,

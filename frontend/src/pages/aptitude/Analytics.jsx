@@ -7,7 +7,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend
 } from 'recharts';
-import { Target, TrendingUp, AlertTriangle, Zap } from 'lucide-react';
+import { Target, TrendingUp, AlertTriangle, Zap, CalendarDays } from 'lucide-react';
 
 const PIE_COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981', '#06b6d4'];
 
@@ -306,6 +306,61 @@ export default function AnalyticsDashboard() {
         </div>
 
       </div>
+
+      {/* ── 30-Day Activity Heatmap ───────────────────────────────── */}
+      {(() => {
+        // Build last-30-days heatmap from analytics.dailyActivity
+        const today = new Date();
+        const days = Array.from({ length: 30 }, (_, i) => {
+          const d = new Date(today);
+          d.setDate(today.getDate() - (29 - i));
+          const key = d.toISOString().split('T')[0];
+          const entry = (analytics.dailyActivity || []).find(a => a.date?.startsWith(key));
+          return { date: d, key, count: entry?.questionsAttempted || 0, accuracy: entry?.accuracy || 0 };
+        });
+        const maxCount = Math.max(...days.map(d => d.count), 1);
+
+        return (
+          <div className="bg-secondary/10 p-6 rounded-2xl border border-border">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-bold text-lg flex items-center gap-2">
+                <CalendarDays className="w-5 h-5 text-primary" />
+                30-Day Activity
+              </h3>
+              <span className="text-xs font-semibold px-2 py-1 bg-orange-500/10 text-orange-400 rounded">Streak</span>
+            </div>
+            <div className="flex gap-1.5 flex-wrap">
+              {days.map(({ key, count, accuracy, date }) => {
+                const intensity = count === 0 ? 0 : Math.ceil((count / maxCount) * 4);
+                const colors = [
+                  'bg-secondary/50 border-border/50',
+                  'bg-primary/20 border-primary/20',
+                  'bg-primary/35 border-primary/30',
+                  'bg-primary/55 border-primary/40',
+                  'bg-primary/80 border-primary/60',
+                ];
+                return (
+                  <div
+                    key={key}
+                    title={`${date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}: ${count} questions${count ? ` · ${accuracy}% accuracy` : ''}`}
+                    className={`w-7 h-7 rounded-md border cursor-default transition-transform hover:scale-110 ${colors[intensity]}`}
+                  />
+                );
+              })}
+            </div>
+            <div className="flex items-center justify-between mt-4">
+              <p className="text-xs text-muted-foreground">Last 30 days of practice activity</p>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-muted-foreground">Less</span>
+                {['bg-secondary/50', 'bg-primary/20', 'bg-primary/35', 'bg-primary/55', 'bg-primary/80'].map((c, i) => (
+                  <div key={i} className={`w-3 h-3 rounded-sm ${c}`} />
+                ))}
+                <span className="text-xs text-muted-foreground">More</span>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Readiness Full Width Chart */}
       {readinessData.length > 0 && (

@@ -6,6 +6,8 @@ import { ArrowRight, Clock, FileText, BookOpen } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 import { SUBTOPIC_LABELS } from '@/constants';
+import useAuthStore from '@/store/authStore';
+import MbaPracticeHub from './MbaPracticeHub';
 
 // ─── Topic config ─────────────────────────────────────────────────────────────
 export const APTITUDE_TOPICS = {
@@ -216,10 +218,12 @@ function MockTestCard({ test, onStart, starting }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function PracticeHub() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState('aptitude');
   const [topicData, setTopicData] = useState({});
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
+
 
   useEffect(() => {
     getTopics()
@@ -233,6 +237,11 @@ export default function PracticeHub() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  // Route MBA students to dedicated hub (after hooks)
+  if (user?.stream === 'mba') {
+    return <MbaPracticeHub />;
+  }
 
   const handleStartPractice = async (topic, difficulty, subTopic) => {
     try {

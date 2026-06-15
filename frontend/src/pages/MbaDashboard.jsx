@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import { api } from '@/store/authStore';
 import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
-import { BookOpen, Briefcase, Building2, Zap, Target, TrendingUp, ArrowRight, Flame, Clock, AlertCircle, Share2, Copy, CheckCircle2 } from 'lucide-react';
+import { BookOpen, Briefcase, Building2, Zap, Target, TrendingUp, ArrowRight, Flame, Clock, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SEO from '@/components/seo/SEO';
-import MbaDashboard from './MbaDashboard';
 
 const SESSION_TYPE_LABELS = {
   'practice': 'Practice',
@@ -15,11 +14,10 @@ const SESSION_TYPE_LABELS = {
   'company-mock': 'Company Mock',
 };
 
-export default function Dashboard() {
+export default function MbaDashboard() {
   const { user } = useAuthStore();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     api.get('/users/me/stats').then(res => {
@@ -31,25 +29,9 @@ export default function Dashboard() {
   const firstName = user?.profile?.firstName || 'there';
   const isPro = user?.subscription?.plan === 'pro';
 
-  if (user?.stream === 'mba') {
-    return <MbaDashboard />;
-  }
-
-  const handleShare = () => {
-    const text = `🔥 I'm on a ${stats?.streak?.current || 0}-day practice streak on Prepster! Join me and let's crack our placements together: https://prepster.in`;
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleWhatsApp = () => {
-    const text = `🔥 I'm on a ${stats?.streak?.current || 0}-day practice streak on Prepster! Join me and let's crack our placements together: https://prepster.in`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-  };
-
   return (
     <div className="space-y-8">
-      <SEO title="Dashboard" description="View your performance and activities." />
+      <SEO title="MBA Dashboard" description="View your MBA preparation progress." />
       
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -58,8 +40,8 @@ export default function Dashboard() {
         </h1>
         <p className="text-muted-foreground mt-1 text-sm sm:text-base">
           {isPro
-            ? 'You\'re on Pro — all features unlocked. Keep the momentum going!'
-            : 'Free plan · Upgrade to Pro to unlock unlimited practice & direct apply.'}
+            ? 'You\'re on Pro — all MBA features unlocked. Keep the momentum going!'
+            : 'Free plan · Upgrade to Pro to unlock unlimited CAT mocks & direct apply.'}
         </p>
       </motion.div>
 
@@ -77,7 +59,7 @@ export default function Dashboard() {
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-base text-foreground">Upgrade to Prepster Pro</h3>
             <p className="text-muted-foreground text-sm mt-0.5">
-              Unlock unlimited practice, all company tracks, direct job apply, and analytics. Starting ₹299/month.
+              Unlock unlimited CAT practice, all consulting tracks, direct job apply, and analytics. Starting ₹299/month.
             </p>
           </div>
           <Link to="/upgrade" className="shrink-0 w-full sm:w-auto">
@@ -135,28 +117,28 @@ export default function Dashboard() {
 
       {/* Quick Actions */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
-        <h2 className="text-lg sm:text-xl font-bold mb-4">Quick Start</h2>
+        <h2 className="text-lg sm:text-xl font-bold mb-4">MBA Quick Start</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             {
-              title: 'Practice Aptitude',
-              description: 'Start a quick practice session on any topic',
+              title: 'CAT/XAT Mocks',
+              description: 'Practice DILR, VARC, and Quants',
               href: '/aptitude',
               icon: BookOpen,
               color: 'bg-primary/10 text-primary',
               cta: 'Start Practicing',
             },
             {
-              title: 'Company Tracks',
-              description: 'Prepare for specific company hiring rounds',
+              title: 'Consulting Frameworks',
+              description: 'Prepare for Case Interviews & GD',
               href: '/companies',
               icon: Building2,
               color: 'bg-blue-500/10 text-blue-500',
-              cta: 'Browse Companies',
+              cta: 'View Frameworks',
             },
             {
-              title: 'Browse Jobs',
-              description: 'See latest fresher openings and internships',
+              title: 'Management Jobs',
+              description: 'Roles in Product, Consulting, Marketing',
               href: '/jobs',
               icon: Briefcase,
               color: 'bg-green-500/10 text-green-500',
@@ -286,29 +268,6 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-muted-foreground">{stats.profileCompletion}% complete</span>
                   <Link to="/profile" className="text-xs text-primary hover:underline font-medium">Update →</Link>
-                </div>
-              </div>
-            )}
-
-            {/* Share Your Streak */}
-            {stats.streak?.current > 0 && (
-              <div className="mt-6 pt-5 border-t border-border">
-                <div className="flex items-center gap-2 mb-3">
-                  <Flame className="w-4 h-4 text-orange-500" />
-                  <p className="text-sm font-bold">Share Your Streak</p>
-                </div>
-                <p className="text-xs text-muted-foreground mb-4">
-                  You're on a {stats.streak.current}-day streak! Challenge your friends to beat your consistency.
-                </p>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1 text-xs h-8" onClick={handleShare}>
-                    {copied ? <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-500" /> : <Copy className="w-3.5 h-3.5 mr-1.5" />}
-                    {copied ? 'Copied!' : 'Copy Link'}
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1 text-xs h-8 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 border-[#25D366]/20 hover:text-[#25D366]" onClick={handleWhatsApp}>
-                    <Share2 className="w-3.5 h-3.5 mr-1.5" />
-                    WhatsApp
-                  </Button>
                 </div>
               </div>
             )}

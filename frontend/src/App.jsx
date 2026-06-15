@@ -17,7 +17,9 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 // Profile & Settings
 import Profile from './pages/profile/Profile';
+import Resume from './pages/profile/Resume';
 import Settings from './pages/profile/Settings';
+import SavedItems from './pages/profile/SavedItems';
 
 // Aptitude
 import PracticeHub from './pages/aptitude/PracticeHub';
@@ -31,6 +33,16 @@ import TopicDetail from './pages/aptitude/TopicDetail';
 // Roadmap
 import Roadmap from './pages/roadmap/Roadmap';
 import RoadmapDetail from './pages/roadmap/RoadmapDetail';
+
+// MBA
+import GdPracticeHub from './pages/mba/GdPracticeHub';
+import PiPrepHub from './pages/mba/PiPrepHub';
+import CaseStudyLibrary from './pages/mba/CaseStudyLibrary';
+import WatPractice from './pages/mba/WatPractice';
+import SectorExplore from './pages/mba/SectorExplore';
+import GuesstimatePractice from './pages/mba/GuesstimatePractice';
+import MbaAnalytics from './pages/mba/MbaAnalytics';
+import MockInterviewSession from './pages/mba/MockInterviewSession';
 
 // Companies
 import CompanyList from './pages/company/CompanyList';
@@ -72,6 +84,8 @@ import CouponManager from './pages/admin/CouponManager';
 import Announcements from './pages/admin/Announcements';
 import BlogManager from './pages/admin/BlogManager';
 import BlogEditor from './pages/admin/BlogEditor';
+import MbaContentManager from './pages/admin/MbaContentManager';
+import MbaContentEditor from './pages/admin/MbaContentEditor';
 
 // Blog (Public)
 import BlogList from './pages/blog/BlogList';
@@ -87,15 +101,10 @@ import Contact from './pages/static/Contact';
 import Privacy from './pages/static/Privacy';
 import Terms from './pages/static/Terms';
 import FAQ from './pages/static/FAQ';
+import NotFound from './pages/static/NotFound';
 import StaticLayout from './components/layout/StaticLayout';
 
 // ─── Placeholders ─────────────────────────────────────────────────────────────
-const NotFound = () => (
-  <div className="flex flex-col items-center justify-center h-screen text-center">
-    <h1 className="text-6xl font-bold text-primary mb-4">404</h1>
-    <p className="text-muted-foreground">Page not found.</p>
-  </div>
-);
 
 const ComingSoon = ({ label }) => (
   <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -176,7 +185,9 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/resume" element={<Resume />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/saved" element={<SavedItems />} />
               <Route path="/applications" element={<Applications />} />
               
               <Route path="/aptitude/daily" element={<DailyChallenge />} />
@@ -184,6 +195,15 @@ function App() {
               <Route path="/aptitude/results/:id" element={<QuizResult />} />
               <Route path="/aptitude/analytics" element={<AnalyticsDashboard />} />
               <Route path="/aptitude/leaderboard" element={<Leaderboard />} />
+              
+              <Route path="/mba/gd" element={<GdPracticeHub />} />
+              <Route path="/mba/pi" element={<PiPrepHub />} />
+              <Route path="/mba/cases" element={<CaseStudyLibrary />} />
+              <Route path="/mba/wat" element={<WatPractice />} />
+              <Route path="/mba/sectors" element={<SectorExplore />} />
+              <Route path="/mba/guesstimates" element={<GuesstimatePractice />} />
+              <Route path="/mba/analytics" element={<MbaAnalytics />} />
+              <Route path="/mba/mock-interview" element={<MockInterviewSession />} />
               
               <Route path="/upgrade" element={<Upgrade />} />
             </Route>
@@ -258,6 +278,10 @@ function App() {
             <Route path="/admin/blogs" element={<BlogManager />} />
             <Route path="/admin/blogs/new" element={<BlogEditor />} />
             <Route path="/admin/blogs/:id/edit" element={<BlogEditor />} />
+
+            <Route path="/admin/mba" element={<MbaContentManager />} />
+            <Route path="/admin/mba/new" element={<MbaContentEditor />} />
+            <Route path="/admin/mba/:id/edit" element={<MbaContentEditor />} />
           </Route>
 
           {/* Fallback */}

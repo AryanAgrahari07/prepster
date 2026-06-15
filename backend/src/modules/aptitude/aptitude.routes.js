@@ -190,7 +190,7 @@ router.patch('/sessions/:id', authenticate, async (req, res, next) => {
     if (!session) throw new AppError('Session not found', 404, 4004);
     if (session.status !== SESSION_STATUS.IN_PROGRESS) throw new AppError('Session is already completed', 400, 4008);
 
-    const question = await Question.findById(questionId).select('correctOption').lean();
+    const question = await Question.findById(questionId).select('correctOption topic').lean();
     if (!question) throw new AppError('Question not found', 404, 4004);
 
     const isCorrect = selectedOption === question.correctOption;
@@ -200,10 +200,62 @@ router.patch('/sessions/:id', authenticate, async (req, res, next) => {
       session.questions[questionIndex].selectedOption = selectedOption;
       session.questions[questionIndex].isCorrect = isCorrect;
       session.questions[questionIndex].timeTakenSeconds = timeTakenSeconds || 0;
+
+      // ─── Adaptive Engine Logic ───
+      // Adjust difficulty of future questions based on last 3 answers
+      if (['practice', 'daily-challenge'].includes(session.sessionType)) {
+        const answeredIndexes = session.questions
+          .map((q, i) => q.selectedOption !== null ? i : -1)
+          .filter(i => i !== -1)
+          .sort((a, b) => a - b);
+          
+        if (answeredIndexes.length >= 3) {
+          const lastThree = answeredIndexes.slice(-3).map(i => session.questions[i]);
+          const allCorrect = lastThree.every(q => q.isCorrect);
+          const allWrong = lastThree.every(q => !q.isCorrect);
+          
+          let targetDifficulty = null;
+          if (allCorrect) targetDifficulty = 'hard';
+          else if (allWrong) targetDifficulty = 'easy';
+          
+          if (targetDifficulty) {
+            const unattemptedIndexes = session.questions
+              .map((q, i) => q.selectedOption === null && i > questionIndex ? i : -1)
+              .filter(i => i !== -1);
+              
+            if (unattemptedIndexes.length > 0) {
+              const mongoose = require('mongoose');
+              const usedIds = session.questions.map(q => new mongoose.Types.ObjectId(q.questionId.toString()));
+              
+              const matchFilter = { 
+                isActive: true, 
+                difficulty: targetDifficulty,
+                _id: { $nin: usedIds }
+              };
+              if (question.topic) matchFilter.topic = question.topic;
+
+              const newQs = await Question.aggregate([
+                { $match: matchFilter },
+                { $sample: { size: unattemptedIndexes.length } },
+                { $project: { _id: 1 } }
+              ]);
+              
+              newQs.forEach((newQ, idx) => {
+                const targetIdx = unattemptedIndexes[idx];
+                if (targetIdx !== undefined) {
+                  session.questions[targetIdx].questionId = newQ._id;
+                }
+              });
+            }
+          }
+        }
+      }
+
       await session.save();
     }
 
-    res.json({ success: true, message: 'Answer recorded' });
+    await session.populate('questions.questionId', 'text options correctOption explanation topic subTopic difficulty');
+    res.json({ success: true, message: 'Answer recorded', data: { session } });
   } catch (err) { next(err); }
 });
 

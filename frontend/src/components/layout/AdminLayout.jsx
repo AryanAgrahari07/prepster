@@ -4,7 +4,7 @@ import useAuthStore from '@/store/authStore';
 import {
   LayoutDashboard, BookOpen, Upload, Building2, ClipboardList,
   Briefcase, FileText, Users, CreditCard, Tag, Megaphone,
-  ChevronLeft, ChevronRight, LogOut, ArrowLeft, Shield, Menu, X
+  ChevronLeft, ChevronRight, LogOut, ArrowLeft, Shield, Menu, X, GraduationCap
 } from 'lucide-react';
 
 const navSections = [
@@ -22,6 +22,12 @@ const navSections = [
       { to: '/admin/companies', label: 'Company Tracks', icon: Building2 },
       { to: '/admin/mock-tests', label: 'Mock Tests', icon: ClipboardList },
       { to: '/admin/blogs', label: 'Blog Posts', icon: FileText },
+    ],
+  },
+  {
+    label: 'MBA Content',
+    items: [
+      { to: '/admin/mba', label: 'MBA Manager', icon: GraduationCap },
     ],
   },
   {

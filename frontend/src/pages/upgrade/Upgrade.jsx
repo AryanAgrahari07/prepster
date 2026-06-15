@@ -1,240 +1,297 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getPlans, createOrder, verifyPayment, getMySubscription, validateCoupon } from '@/api/subscription';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Check, Star, Zap, Tag, CheckCircle2, Crown } from 'lucide-react';
+import { api } from '@/store/authStore';
 import useAuthStore from '@/store/authStore';
-import toast from '@/utils/toast';
+import { Check, Shield, Zap, Target, BookOpen, Crown, Building2, Briefcase } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/seo/SEO';
+import { motion } from 'framer-motion';
+
+const PLANS = [
+  {
+    id: 'free',
+    name: 'Free',
+    price: '₹0',
+    duration: 'Forever',
+    description: 'Perfect for getting started.',
+    features: [
+      '20 practice questions daily',
+      '1 Company track unlocked (read-only)',
+      'Basic analytics',
+      'View job board',
+    ],
+    cta: 'Current Plan',
+  },
+  {
+    id: 'pro_monthly',
+    name: 'Pro Monthly',
+    price: '₹299',
+    duration: '/ month',
+    description: 'Full access for your placement season.',
+    features: [
+      'Unlimited practice questions',
+      'All company & MBA tracks unlocked',
+      'Full performance analytics & radar',
+      'Direct apply to job listings',
+      'Company specific mock tests',
+      'Ad-free experience',
+    ],
+    cta: 'Subscribe Monthly',
+    popular: false,
+  },
+  {
+    id: 'pro_annual',
+    name: 'Pro Annual',
+    price: '₹799',
+    duration: '/ year',
+    description: 'Best value for 2nd & 3rd year students.',
+    features: [
+      'Everything in Pro Monthly',
+      'Save ₹2,789 annually (77% off)',
+      'Priority application sorting',
+      'Early access to new tracks',
+    ],
+    cta: 'Subscribe Annually',
+    popular: true,
+  },
+];
 
 export default function Upgrade() {
-  const [plans, setPlans] = useState([]);
-  const [currentSub, setCurrentSub] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
-  const [couponCode, setCouponCode] = useState('');
-  const [coupon, setCoupon] = useState(null);           // validated coupon object
-  const [couponError, setCouponError] = useState('');
-  const [validatingCoupon, setValidatingCoupon] = useState(false);
   const { user, checkAuth } = useAuthStore();
   const navigate = useNavigate();
+  const [loadingPlan, setLoadingPlan] = useState(null);
 
+  // Dynamically load Razorpay SDK script
   useEffect(() => {
-    Promise.all([getPlans(), getMySubscription()])
-      .then(([plansRes, subRes]) => {
-        setPlans(plansRes.data?.plans || []);
-        setCurrentSub(subRes.data?.subscription || { plan: 'free' });
-      })
-      .catch((err) => {
-        console.error('Failed to load plans:', err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
 
-  const handleSubscribe = async (plan) => {
-    if (plan.price === 0) return;
-    const discount = coupon
-      ? coupon.type === 'percent'
-        ? Math.round(plan.price * coupon.discount / 100)
-        : Math.min(coupon.discount, plan.price)
-      : 0;
-    const finalPrice = Math.max(0, plan.price - discount);
-    try {
-      setProcessing(true);
-      const orderRes = await createOrder(plan.id);
-      
-      const { orderId, amount, currency } = orderRes.data;
+  const handleSubscribe = async (planId) => {
+    if (planId === 'free') return;
+    setLoadingPlan(planId);
 
-      // Mock checkout if keys are missing on backend
+    try {
+      // 1. Create order on backend
+      const orderRes = await api.post('/subscriptions/create-order', { planId });
+      const { orderId, amount, currency } = orderRes.data.data;
+
+      // 2. If it's a mock order (dev env without Razorpay keys), skip checkout and verify immediately
       if (orderId.startsWith('mock_order_')) {
-        await handleMockPayment(orderId, plan.id);
+        toast.success('Development Mode: Simulating successful payment...');
+        await verifyPayment({
+          razorpay_order_id: orderId,
+          razorpay_payment_id: `mock_pay_${Date.now()}`,
+          razorpay_signature: 'mock_signature',
+        }, planId);
         return;
       }
 
+      // 3. Open Razorpay Checkout Modal
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_mock', 
-        amount: amount,
-        currency: currency,
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Use public key from env
+        amount,
+        currency,
         name: 'Prepster',
-        description: `${plan.name} Subscription`,
+        description: 'Upgrade to Prepster Pro',
+        image: 'https://prepster.in/logo.png', // Fallback placeholder
         order_id: orderId,
         handler: async function (response) {
-          try {
-            await verifyPayment({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              planId: plan.id
-            });
-            await checkAuth(); // Refresh user context
-            toast.success('Payment successful! Welcome to Pro.');
-            navigate('/dashboard');
-          } catch (err) {
-            toast.error('Verification failed');
-            setProcessing(false);
-          }
+          await verifyPayment(response, planId);
         },
         prefill: {
-          name: user?.profile?.firstName ? `${user.profile.firstName} ${user.profile.lastName}` : 'Student Name',
-          email: user?.email || 'student@example.com',
-          contact: user?.profile?.phone || ''
+          name: `${user?.profile?.firstName || ''} ${user?.profile?.lastName || ''}`,
+          email: user?.email,
+          contact: user?.profile?.phone || '',
         },
         theme: {
-          color: '#6366f1' // Primary color
-        }
+          color: '#8b5cf6', // primary violet
+        },
       };
 
+      if (!window.Razorpay) {
+        toast.error('Payment gateway failed to load. Please check your connection.');
+        setLoadingPlan(null);
+        return;
+      }
+
       const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function (response){
-        toast.error('Payment Failed');
-        setProcessing(false);
+      rzp.on('payment.failed', function (response) {
+        toast.error('Payment failed or was cancelled.');
+        setLoadingPlan(null);
       });
       rzp.open();
+
     } catch (err) {
-      toast.error(err.response?.data?.error?.message || 'Failed to initiate payment');
-      setProcessing(false);
+      toast.error(err.response?.data?.error?.message || 'Failed to initialize payment.');
+      setLoadingPlan(null);
     }
   };
 
-  const handleMockPayment = async (orderId, planId) => {
+  const verifyPayment = async (paymentData, planId) => {
     try {
-      await verifyPayment({
-        razorpay_order_id: orderId,
-        razorpay_payment_id: `mock_pay_${Date.now()}`,
-        razorpay_signature: 'mock_sig',
+      const res = await api.post('/subscriptions/verify', {
+        ...paymentData,
         planId
       });
-      await checkAuth(); // Refresh user context
-      toast.success('Mock Payment successful! Welcome to Pro.');
+      
+      toast.success(res.data.message || 'Pro activated successfully!');
+      await checkAuth(); // Refresh user state
       navigate('/dashboard');
     } catch (err) {
-      toast.error('Mock Verification failed');
+      toast.error(err.response?.data?.error?.message || 'Payment verification failed.');
     } finally {
-      setProcessing(false);
+      setLoadingPlan(null);
     }
   };
 
-  const handleValidateCoupon = async () => {
-    if (!couponCode.trim()) return;
-    setValidatingCoupon(true);
-    setCouponError('');
-    setCoupon(null);
-    try {
-      const res = await validateCoupon(couponCode.trim());
-      setCoupon(res.data.coupon);
-    } catch (err) {
-      setCouponError(err.response?.data?.error?.message || 'Invalid coupon code');
-    } finally {
-      setValidatingCoupon(false);
-    }
-  };
-
-  if (loading) return <div className="p-8 text-center text-muted-foreground">Loading plans...</div>;
+  const currentPlan = user?.subscription?.plan || 'free';
 
   return (
-    <div className="max-w-6xl mx-auto space-y-12 pb-12">
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Level up your preparation</h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Get unlimited mock tests, company-specific tracks, and direct application access to secure your dream job.
-        </p>
-      </div>
+    <>
+      <SEO title="Upgrade to Pro | Prepster" description="Unlock unlimited practice, company tracks, and direct job applications with Prepster Pro." />
+      <div className="max-w-6xl mx-auto py-8 sm:py-12 space-y-12">
+        
+        {/* Header */}
+        <div className="text-center max-w-2xl mx-auto space-y-4">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-2">
+              <Crown className="w-8 h-8" />
+            </div>
+          </motion.div>
+          <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            Supercharge Your Placements
+          </motion.h1>
+          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-muted-foreground text-lg">
+            Join thousands of students who cracked their dream companies with Prepster Pro.
+          </motion.p>
+        </div>
 
-      <div className={`grid grid-cols-1 gap-6 mx-auto pt-8 ${
-          plans.length === 1 ? "max-w-sm" : plans.length === 2 ? "md:grid-cols-2 max-w-3xl" : "lg:grid-cols-3 max-w-6xl"
-      }`}>
-        {plans.map((plan) => {
-          const isPro = plan.price > 0;
-          const isCurrent = currentSub?.plan === (isPro ? 'pro' : 'free');
-          const isPopular = plan.id === 'pro_annual';
+        {/* Pricing Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto px-4">
+          {PLANS.map((plan, index) => {
+            const isCurrent = currentPlan === 'free' ? plan.id === 'free' : currentPlan === 'pro' && plan.id !== 'free';
+            const isProAnnual = plan.id === 'pro_annual';
+            const isProMonthly = plan.id === 'pro_monthly';
 
-          let PlanIcon = <CheckCircle2 className="h-5 w-5 text-green-500" />;
-          if (plan.id === 'pro_monthly') PlanIcon = <Zap className="h-5 w-5 text-blue-500" />;
-          if (plan.id === 'pro_annual') PlanIcon = <Crown className="h-5 w-5 text-amber-500" />;
-
-          return (
-            <div 
-              key={plan.id} 
-              className={`bg-card rounded-2xl shadow-sm border p-6 flex flex-col ${
-                isPopular ? "border-primary ring-1 ring-primary" : "border-border"
-              }`}
-            >
-              {isPopular && (
-                <div className="flex justify-center -mt-10 mb-6">
-                    <span className="bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-full">
-                        Most Popular
-                    </span>
-                </div>
-              )}
-              
-              <div className="flex items-center space-x-3 mb-4">
-                  {PlanIcon}
-                  <h3 className="text-xl font-bold text-card-foreground">{plan.name}</h3>
-              </div>
-              
-              <div className="mb-6">
-                <span className="text-4xl font-extrabold text-card-foreground">₹{plan.price}</span>
-                <span className="text-base font-medium text-muted-foreground ml-1">
-                    {plan.id === 'pro_annual' ? '/yr' : plan.id === 'pro_monthly' ? '/mo' : ''}
-                </span>
-              </div>
-
-              <ul className="space-y-4 mb-8 flex-1">
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mr-2" />
-                    <span className="text-sm text-card-foreground/80">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <Button 
-                variant={isPopular ? "default" : "outline"} 
-                size="lg" 
-                className="w-full font-bold"
-                disabled={isCurrent || (isPro && processing)}
-                onClick={() => handleSubscribe(plan)}
-                isLoading={isPro && processing && !isCurrent}
+            return (
+              <motion.div 
+                key={plan.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className={`relative bg-background rounded-3xl p-6 sm:p-8 border-2 transition-transform hover:-translate-y-1 ${
+                  plan.popular 
+                    ? 'border-primary shadow-xl shadow-primary/10' 
+                    : 'border-border shadow-sm hover:border-primary/50'
+                }`}
               >
-                {isCurrent ? 'Current Plan' : isPro ? `Choose ${plan.name}` : 'Downgrade'}
-              </Button>
-            </div>
-          );
-        })}
-      </div>
+                {plan.popular && (
+                  <div className="absolute -top-4 left-0 right-0 flex justify-center">
+                    <span className="bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-full">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+                
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold">{plan.name}</h3>
+                  <p className="text-sm text-muted-foreground mt-1 h-10">{plan.description}</p>
+                </div>
+                
+                <div className="mb-8">
+                  <span className="text-4xl font-extrabold">{plan.price}</span>
+                  <span className="text-muted-foreground font-medium">{plan.duration}</span>
+                </div>
+                
+                <ul className="space-y-4 mb-8 flex-1">
+                  {plan.features.map((feat, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm">
+                      <Check className="w-5 h-5 text-green-500 shrink-0" />
+                      <span className={plan.id === 'free' ? 'text-muted-foreground' : 'text-foreground font-medium'}>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <div className="mt-auto pt-4">
+                  {isCurrent && plan.id === 'free' ? (
+                    <Button variant="outline" className="w-full font-bold h-12" disabled>Current Plan</Button>
+                  ) : currentPlan === 'pro' && plan.id !== 'free' ? (
+                    <Button variant="outline" className="w-full font-bold h-12 text-primary border-primary/50 bg-primary/5" disabled>Active Subscription</Button>
+                  ) : currentPlan === 'pro' && plan.id === 'free' ? (
+                    <Button variant="ghost" className="w-full h-12 text-muted-foreground" disabled>Downgrade</Button>
+                  ) : (
+                    <Button 
+                      className={`w-full font-bold h-12 ${plan.popular ? 'shadow-lg shadow-primary/20' : ''}`}
+                      variant={plan.popular ? 'default' : 'secondary'}
+                      onClick={() => handleSubscribe(plan.id)}
+                      isLoading={loadingPlan === plan.id}
+                      disabled={loadingPlan !== null}
+                    >
+                      {plan.cta}
+                    </Button>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
 
-      {/* Coupon Code Section */}
-      <div className="max-w-md mx-auto">
-        <div className="bg-secondary/10 border border-border rounded-xl p-6 space-y-4">
-          <h3 className="font-bold flex items-center gap-2"><Tag className="w-4 h-4 text-primary" /> Have a coupon code?</h3>
-          {coupon ? (
-            <div className="flex items-center gap-3 bg-green-500/10 border border-green-500/20 rounded-lg p-3">
-              <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-              <div>
-                <p className="text-sm font-bold text-green-500">{coupon.code} applied!</p>
-                <p className="text-xs text-muted-foreground">{coupon.description}</p>
+        {/* Feature grid */}
+        <div className="max-w-4xl mx-auto pt-12 border-t border-border mt-16 px-4">
+          <h2 className="text-2xl font-bold text-center mb-10">Why go Pro?</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div className="flex gap-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                <Target className="w-6 h-6 text-blue-500" />
               </div>
-              <button onClick={() => { setCoupon(null); setCouponCode(''); }} className="ml-auto text-xs text-muted-foreground hover:text-foreground">Remove</button>
+              <div>
+                <h4 className="font-bold text-lg">Unlimited Practice</h4>
+                <p className="text-sm text-muted-foreground mt-1">Don't let a 20-question cap slow you down. Practice as much as you need before your test.</p>
+              </div>
             </div>
-          ) : (
-            <div className="flex gap-2">
-              <Input
-                id="coupon-code"
-                placeholder="Enter code (e.g. PREPSTER20)"
-                value={couponCode}
-                onChange={e => setCouponCode(e.target.value.toUpperCase())}
-                onKeyDown={e => e.key === 'Enter' && handleValidateCoupon()}
-                error={couponError}
-              />
-              <Button variant="outline" onClick={handleValidateCoupon} isLoading={validatingCoupon} className="shrink-0">
-                Apply
-              </Button>
+            <div className="flex gap-4">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
+                <Building2 className="w-6 h-6 text-purple-500" />
+              </div>
+              <div>
+                <h4 className="font-bold text-lg">Company Specific Tracks</h4>
+                <p className="text-sm text-muted-foreground mt-1">Unlock tailored mock tests and insights for TCS, Infosys, McKinsey, and BCG.</p>
+              </div>
             </div>
-          )}
+            <div className="flex gap-4">
+              <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
+                <Briefcase className="w-6 h-6 text-green-500" />
+              </div>
+              <div>
+                <h4 className="font-bold text-lg">Direct Job Apply</h4>
+                <p className="text-sm text-muted-foreground mt-1">Apply directly to exclusive listings from the Dinz partner network with one click.</p>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
+                <Zap className="w-6 h-6 text-orange-500" />
+              </div>
+              <div>
+                <h4 className="font-bold text-lg">Deep Analytics</h4>
+                <p className="text-sm text-muted-foreground mt-1">Identify weak areas automatically and view your readiness score for specific companies.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Security badge */}
+        <div className="flex items-center justify-center gap-2 text-muted-foreground pt-8">
+          <Shield className="w-4 h-4" />
+          <span className="text-xs font-medium">Secured by Razorpay. 100% safe and encrypted checkout.</span>
         </div>
       </div>
-    </div>
+    </>
   );
 }

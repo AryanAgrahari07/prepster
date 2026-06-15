@@ -220,8 +220,8 @@ export default function Profile() {
             <div className="flex-1 min-w-0">
               <h3 className="font-medium text-lg">Resume</h3>
               {user?.profile?.resumeUrl ? (
-                <a href={user.profile.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline mt-1 inline-block truncate w-full">
-                  View Current Resume
+                <a href={user.profile.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline mt-1 inline-block truncate w-full max-w-[200px]" title={user.profile.resumeFileName || 'View Current Resume'}>
+                  {user.profile.resumeFileName || 'View Current Resume'}
                 </a>
               ) : (
                 <p className="text-sm text-muted-foreground mt-1">PDF format only. Max 5MB.</p>

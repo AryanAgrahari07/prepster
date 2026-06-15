@@ -6,63 +6,75 @@ import { NotificationBell } from '@/components/ui/NotificationBell';
 import {
   Home, User, Settings, LogOut, BookOpen, Briefcase, BarChart3,
   Building2, Zap, Shield, CalendarDays, Menu, X, Plus, Users,
-  FileText, ChevronRight, Map, Trophy, Bell, Info, AlertTriangle, CheckCircle2, Lock
+  FileText, ChevronRight, Map, Trophy, Bell, Info, AlertTriangle, CheckCircle2, Lock, Calculator, Video, Bookmark
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import ThemeToggle from '../ui/ThemeToggle';
+import OnboardingModal from '../features/OnboardingModal';
 
-// Navigation config — grouped by section
-const NAV = [
-  {
-    group: 'Main',
-    items: [
-      { name: 'Dashboard',     href: '/dashboard',           icon: Home,          roles: ['student', 'employer', 'admin', 'superadmin'] },
-    ],
-  },
-  {
-    group: 'Prepare',
-    items: [
-      { name: 'Practice',       href: '/aptitude',           icon: BookOpen,      roles: ['guest', 'student'] },
-      { name: 'Daily Challenge', href: '/aptitude/daily',    icon: CalendarDays,  roles: ['student'] },
-      { name: 'Analytics',      href: '/aptitude/analytics', icon: BarChart3,     roles: ['student'] },
-      { name: 'Leaderboard',    href: '/aptitude/leaderboard', icon: Trophy,      roles: ['student'] },
-      { name: 'Roadmaps',       href: '/roadmap',            icon: Map,           roles: ['guest', 'student'] },
-      { name: 'Companies',      href: '/companies',          icon: Building2,     roles: ['guest', 'student'] },
-      { name: 'Blog',           href: '/blogs',              icon: FileText,      roles: ['guest', 'student'] },
-    ],
-  },
-  {
-    group: 'Opportunities',
-    items: [
-      { name: 'Jobs',          href: '/jobs',                icon: Briefcase,     roles: ['guest', 'student'] },
-      { name: 'Applications',  href: '/applications',        icon: FileText,      roles: ['student'] },
-    ],
-  },
-  {
-    group: 'Employer',
-    items: [
-      { name: 'Dashboard',     href: '/employer/dashboard',  icon: Home,          roles: ['employer', 'admin', 'superadmin'] },
-      { name: 'Post a Job',    href: '/employer/post-job',   icon: Plus,          roles: ['employer', 'admin', 'superadmin'] },
-    ],
-  },
-  {
-    group: 'Admin',
-    items: [
-      { name: 'Overview',      href: '/admin',               icon: Shield,        roles: ['admin', 'superadmin'] },
-      { name: 'Users',         href: '/admin/users',         icon: Users,         roles: ['admin', 'superadmin'] },
-      { name: 'Questions',     href: '/admin/questions',     icon: BookOpen,      roles: ['admin', 'superadmin'] },
-      { name: 'Companies',     href: '/admin/companies',     icon: Building2,     roles: ['admin', 'superadmin'] },
-      { name: 'Jobs',          href: '/admin/jobs',          icon: Briefcase,     roles: ['admin', 'superadmin'] },
-    ],
-  },
-  {
-    group: 'Account',
-    items: [
-      { name: 'Profile',       href: '/profile',             icon: User,          roles: ['student', 'employer', 'admin', 'superadmin'] },
-      { name: 'Settings',      href: '/settings',            icon: Settings,      roles: ['student', 'employer', 'admin', 'superadmin'] },
-    ],
-  },
-];
+const getNavConfig = (user) => {
+  const isMba = user?.stream === 'mba';
+  
+  return [
+    {
+      group: 'Main',
+      items: [
+        { name: 'Dashboard',     href: '/dashboard',           icon: Home,          roles: ['student', 'employer', 'admin', 'superadmin'] },
+      ],
+    },
+    {
+      group: isMba ? 'MBA Prep' : 'Prepare',
+      items: [
+        { name: isMba ? 'CAT/XAT Prep' : 'Practice', href: '/aptitude',           icon: BookOpen,      roles: ['guest', 'student'] },
+        { name: 'Daily Challenge', href: '/aptitude/daily',    icon: CalendarDays,  roles: ['student'] },
+        { name: 'Analytics',      href: '/aptitude/analytics', icon: BarChart3,     roles: ['student'] },
+        { name: 'Leaderboard',    href: '/aptitude/leaderboard', icon: Trophy,      roles: ['student'] },
+        { name: 'Roadmaps',       href: '/roadmap',            icon: Map,           roles: ['guest', 'student'] },
+        ...(isMba ? [
+          { name: 'Sector Explore',  href: '/mba/sectors',        icon: Briefcase,  roles: ['guest', 'student'] },
+          { name: 'Guesstimates',    href: '/mba/guesstimates',   icon: Calculator, roles: ['student'] },
+          { name: 'Mock Interview',  href: '/mba/mock-interview',  icon: Video,      roles: ['student'] },
+          { name: 'MBA Analytics',   href: '/mba/analytics',      icon: BarChart3,  roles: ['student'] },
+        ] : []),
+        { name: isMba ? 'Consulting Tracks' : 'Companies', href: '/companies', icon: Building2, roles: ['guest', 'student'] },
+        { name: 'Blog',           href: '/blogs',              icon: FileText,      roles: ['guest', 'student'] },
+        { name: 'Saved Items',    href: '/saved',              icon: Bookmark,      roles: ['student'] },
+      ],
+    },
+    {
+      group: 'Opportunities',
+      items: [
+        { name: 'Jobs',          href: '/jobs',                icon: Briefcase,     roles: ['guest', 'student'] },
+        { name: 'Applications',  href: '/applications',        icon: FileText,      roles: ['student'] },
+      ],
+    },
+    {
+      group: 'Employer',
+      items: [
+        { name: 'Dashboard',     href: '/employer/dashboard',  icon: Home,          roles: ['employer', 'admin', 'superadmin'] },
+        { name: 'Post a Job',    href: '/employer/post-job',   icon: Plus,          roles: ['employer', 'admin', 'superadmin'] },
+      ],
+    },
+    {
+      group: 'Admin',
+      items: [
+        { name: 'Overview',      href: '/admin',               icon: Shield,        roles: ['admin', 'superadmin'] },
+        { name: 'Users',         href: '/admin/users',         icon: Users,         roles: ['admin', 'superadmin'] },
+        { name: 'Questions',     href: '/admin/questions',     icon: BookOpen,      roles: ['admin', 'superadmin'] },
+        { name: 'Companies',     href: '/admin/companies',     icon: Building2,     roles: ['admin', 'superadmin'] },
+        { name: 'Jobs',          href: '/admin/jobs',          icon: Briefcase,     roles: ['admin', 'superadmin'] },
+      ],
+    },
+    {
+      group: 'Account',
+      items: [
+        { name: 'Profile',       href: '/profile',             icon: User,          roles: ['student', 'employer', 'admin', 'superadmin'] },
+        { name: 'Resume',        href: '/profile/resume',      icon: FileText,      roles: ['student'] },
+        { name: 'Settings',      href: '/settings',            icon: Settings,      roles: ['student', 'employer', 'admin', 'superadmin'] },
+      ],
+    },
+  ];
+};
 
 function NavGroup({ group, items, userRole, location, onNavClick }) {
   const isGuest = !userRole;
@@ -175,7 +187,7 @@ export default function AppLayout() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-2">
-        {NAV.map(({ group, items }) => (
+        {getNavConfig(user).map(({ group, items }) => (
           <NavGroup
             key={group}
             group={group}
@@ -297,6 +309,9 @@ export default function AppLayout() {
           </div>
         </main>
       </div>
+      
+      {/* Modals & Overlays */}
+      <OnboardingModal />
     </div>
   );
 }
