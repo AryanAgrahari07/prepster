@@ -36,12 +36,68 @@ const MBA_TOPICS = {
 };
 
 // ─── MBA-specific skill topics ─────────────────────────────────────────────────
-const MBA_SKILL_TOPICS = {
-  'case-study':    { label: 'Case Study Frameworks', icon: '🗂️', desc: 'McKinsey, BCG, Bain frameworks — profitability, market entry, pricing, and M&A cases.' },
-  'gd-pi':         { label: 'GD/PI Preparation',     icon: '🎤', desc: 'Group discussion topics, HR interview questions, and MBA PI prep.' },
-  'current-affairs':{ label: 'Current Affairs',      icon: '📰', desc: 'Business news, economic indicators, and current events — essential for WAT/PI rounds.' },
-  'business-math': { label: 'Business Mathematics',  icon: '💹', desc: 'Financial ratios, NPV, IRR, statistics, and quantitative methods for management.' },
-};
+const MBA_SKILL_TOPICS = [
+  {
+    key: 'case-study',
+    label: 'Case Study Library',
+    icon: '🗂️',
+    desc: 'McKinsey, BCG, Bain frameworks — profitability, market entry, pricing, and M&A cases.',
+    href: '/mba/cases',
+    cta: 'Browse Cases',
+    badge: 'Cases',
+    color: 'bg-blue-500/10 text-blue-500',
+  },
+  {
+    key: 'gd-pi',
+    label: 'GD Practice Hub',
+    icon: '🎤',
+    desc: 'Group discussion topics with key arguments, vocabulary, and structured practice.',
+    href: '/mba/gd',
+    cta: 'Practice GD',
+    badge: 'GD',
+    color: 'bg-green-500/10 text-green-500',
+  },
+  {
+    key: 'pi-prep',
+    label: 'PI Question Bank',
+    icon: '🤝',
+    desc: 'HR interview questions, STAR framework answers, and mock interview sessions.',
+    href: '/mba/pi',
+    cta: 'Prep PI',
+    badge: 'PI',
+    color: 'bg-purple-500/10 text-purple-500',
+  },
+  {
+    key: 'guesstimate',
+    label: 'Guesstimate Practice',
+    icon: '🧮',
+    desc: 'Fermi estimation problems — market sizing, back-of-the-envelope calculations.',
+    href: '/mba/guesstimates',
+    cta: 'Estimate Now',
+    badge: 'Quant',
+    color: 'bg-orange-500/10 text-orange-500',
+  },
+  {
+    key: 'wat',
+    label: 'WAT Practice',
+    icon: '✍️',
+    desc: 'Written Ability Test prompts with sample essays and key points for IIM WAT rounds.',
+    href: '/mba/wat',
+    cta: 'Practice WAT',
+    badge: 'WAT',
+    color: 'bg-pink-500/10 text-pink-500',
+  },
+  {
+    key: 'sectors',
+    label: 'Sector Deep-Dives',
+    icon: '🏭',
+    desc: 'Consulting, FMCG, Banking, Tech — understand industries before your PI round.',
+    href: '/mba/sectors',
+    cta: 'Explore Sectors',
+    badge: 'PI Prep',
+    color: 'bg-teal-500/10 text-teal-500',
+  },
+];
 
 // ─── CAT-pattern mock tests ────────────────────────────────────────────────────
 const MBA_MOCK_TESTS = [
@@ -174,21 +230,23 @@ function TopicCard({ topicKey, config, topicData }) {
 // ─── Skill Topic Card ─────────────────────────────────────────────────────────
 function SkillCard({ config }) {
   return (
-    <div className="app-card p-6 flex flex-col gap-3">
+    <Link to={config.href} className="app-card-hover p-6 flex flex-col gap-4 group">
       <div className="flex items-start gap-3">
         <span className="text-3xl shrink-0">{config.icon}</span>
         <div className="min-w-0">
-          <h3 className="font-bold text-base">{config.label}</h3>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-bold text-base group-hover:text-primary transition-colors">{config.label}</h3>
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${config.color}`}>
+              {config.badge}
+            </span>
+          </div>
           <p className="text-sm text-muted-foreground mt-1 leading-relaxed line-clamp-3">{config.desc}</p>
         </div>
       </div>
-      <div className="mt-auto pt-4 border-t border-border">
-        <div className="text-xs text-muted-foreground bg-secondary/50 rounded-lg p-2.5 flex items-center gap-2">
-          <Brain className="w-3.5 h-3.5 shrink-0 text-primary" />
-          <span>Content coming soon — check back for GD topics and case study banks!</span>
-        </div>
-      </div>
-    </div>
+      <span className="mt-auto text-sm font-medium text-primary flex items-center gap-1.5">
+        {config.cta} <ArrowRight className="w-4 h-4" />
+      </span>
+    </Link>
   );
 }
 
@@ -341,9 +399,9 @@ export default function MbaPracticeHub() {
                 <p className="text-sm text-muted-foreground mb-6">
                   Go beyond the entrance exam — prepare for Case Interviews, GD/PI rounds, and WAT.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {Object.entries(MBA_SKILL_TOPICS).map(([key, cfg]) => (
-                    <SkillCard key={key} config={cfg} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {MBA_SKILL_TOPICS.map((cfg) => (
+                    <SkillCard key={cfg.key} config={cfg} />
                   ))}
                 </div>
               </div>
