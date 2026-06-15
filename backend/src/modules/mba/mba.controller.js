@@ -11,7 +11,7 @@ const MockInterview = require('./models/mockInterview.model');
 // --- GD Topics ---
 exports.getGdTopics = async (req, res) => {
   try {
-    const filter = { isActive: true };
+    const filter = { isActive: { $ne: false } };
     if (req.query.category) filter.category = req.query.category;
     if (req.query.difficulty) filter.difficulty = req.query.difficulty;
 
@@ -35,7 +35,7 @@ exports.getGdTopicById = async (req, res) => {
 // --- PI Questions ---
 exports.getPiQuestions = async (req, res) => {
   try {
-    const filter = { isActive: true };
+    const filter = { isActive: { $ne: false } };
     if (req.query.type) filter.type = req.query.type;
 
     const questions = await PiQuestion.find(filter).sort({ createdAt: -1 });
@@ -48,7 +48,7 @@ exports.getPiQuestions = async (req, res) => {
 // --- Case Studies ---
 exports.getCaseStudies = async (req, res) => {
   try {
-    const filter = { isActive: true };
+    const filter = { isActive: { $ne: false } };
     if (req.query.sector) filter.sector = req.query.sector;
     if (req.query.type) filter.type = req.query.type;
 
@@ -83,7 +83,7 @@ exports.getCaseStudyById = async (req, res) => {
 // --- WAT Topics ---
 exports.getWatTopics = async (req, res) => {
   try {
-    const topics = await WatTopic.find({ isActive: true }).select('-sampleEssay').sort({ createdAt: -1 });
+    const topics = await WatTopic.find({ isActive: { $ne: false } }).select('-sampleEssay').sort({ createdAt: -1 });
     res.json({ success: true, data: topics });
   } catch (error) {
     res.status(500).json({ success: false, error: { message: error.message } });
@@ -146,7 +146,7 @@ exports.finishMbaSession = async (req, res) => {
 // --- Sectors ---
 exports.getSectors = async (req, res) => {
   try {
-    const sectors = await Sector.find({ isActive: true }).sort({ name: 1 });
+    const sectors = await Sector.find({ isActive: { $ne: false } }).sort({ name: 1 });
     res.json({ success: true, data: sectors });
   } catch (error) {
     res.status(500).json({ success: false, error: { message: error.message } });
@@ -155,7 +155,7 @@ exports.getSectors = async (req, res) => {
 
 exports.getSectorBySlug = async (req, res) => {
   try {
-    const sector = await Sector.findOne({ slug: req.params.slug, isActive: true });
+    const sector = await Sector.findOne({ slug: req.params.slug, isActive: { $ne: false } });
     if (!sector) return res.status(404).json({ success: false, error: { message: 'Sector not found' } });
     res.json({ success: true, data: sector });
   } catch (error) {
@@ -166,7 +166,7 @@ exports.getSectorBySlug = async (req, res) => {
 // --- Guesstimates ---
 exports.getGuesstimates = async (req, res) => {
   try {
-    const filter = { isActive: true };
+    const filter = { isActive: { $ne: false } };
     if (req.query.category) filter.category = req.query.category;
     if (req.query.difficulty) filter.difficulty = req.query.difficulty;
 
@@ -280,7 +280,7 @@ exports.startMockInterview = async (req, res) => {
 
     // Sample random active PI questions
     const questions = await PiQuestion.aggregate([
-      { $match: { isActive: true } },
+      { $match: { isActive: { $ne: false } } },
       { $sample: { size: count } },
       { $project: { _id: 1, question: 1, type: 1 } },
     ]);
