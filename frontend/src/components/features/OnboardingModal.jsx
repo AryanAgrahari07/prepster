@@ -13,9 +13,15 @@ const streamSchema = z.object({
 });
 
 const mbaSchema = z.object({
-  instituteType: z.enum(['iim', 'xlri', 'fms', 'nmims', 'spjimr', 'iift', 'mdi', 'tier2', 'other']).optional(),
+  instituteType: z.string().optional().refine(
+    (val) => !val || ['iim', 'xlri', 'fms', 'nmims', 'spjimr', 'iift', 'mdi', 'tier2', 'other'].includes(val),
+    'Please select a valid institute type'
+  ),
   mbaProgramme: z.string().min(1, 'Programme is required'),
-  specialization: z.enum(['marketing', 'finance', 'hr', 'operations', 'strategy', 'general']).optional(),
+  specialization: z.string().optional().refine(
+    (val) => !val || ['marketing', 'finance', 'hr', 'operations', 'strategy', 'general'].includes(val),
+    'Please select a valid specialization'
+  ),
 });
 
 const engineeringSchema = z.object({

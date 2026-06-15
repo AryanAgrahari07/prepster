@@ -53,4 +53,4 @@ const guesstimatSchema = new mongoose.Schema({
 
 guesstimatSchema.index({ category: 1, difficulty: 1 });
 
-module.exports = mongoose.model('Guesstimate', guesstimatSchema);
+module.exports = mongoose.model('Guesstimate', guesstimatSchema, 'mbaGuesstimates');

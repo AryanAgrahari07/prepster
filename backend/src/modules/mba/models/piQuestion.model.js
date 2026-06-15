@@ -44,4 +44,4 @@ piQuestionSchema.pre('save', function (next) {
   next();
 });
 
-module.exports = mongoose.model('PiQuestion', piQuestionSchema);
+module.exports = mongoose.model('PiQuestion', piQuestionSchema, 'mbaPiQuestions');

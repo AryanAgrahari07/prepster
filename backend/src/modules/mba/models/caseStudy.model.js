@@ -57,4 +57,4 @@ caseStudySchema.pre('save', function (next) {
   next();
 });
 
-module.exports = mongoose.model('CaseStudy', caseStudySchema);
+module.exports = mongoose.model('CaseStudy', caseStudySchema, 'mbaCases');

@@ -54,4 +54,4 @@ sectorSchema.pre('save', function (next) {
   next();
 });
 
-module.exports = mongoose.model('Sector', sectorSchema);
+module.exports = mongoose.model('Sector', sectorSchema, 'mbaSectors');

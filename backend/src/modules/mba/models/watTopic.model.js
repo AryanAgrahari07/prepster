@@ -41,4 +41,4 @@ watTopicSchema.pre('save', function (next) {
   next();
 });
 
-module.exports = mongoose.model('WatTopic', watTopicSchema);
+module.exports = mongoose.model('WatTopic', watTopicSchema, 'mbaWatTopics');

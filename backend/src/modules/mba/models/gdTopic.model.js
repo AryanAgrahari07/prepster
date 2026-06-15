@@ -57,4 +57,4 @@ gdTopicSchema.pre('save', function (next) {
   next();
 });
 
-module.exports = mongoose.model('GdTopic', gdTopicSchema);
+module.exports = mongoose.model('GdTopic', gdTopicSchema, 'mbaGdTopics');
