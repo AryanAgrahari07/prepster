@@ -40,7 +40,7 @@ const register = async ({ firstName, lastName, email, password, college, branch,
   const user = await User.create({
     email,
     passwordHash,
-    profile: { firstName, lastName, college, branch, graduationYear },
+    profile: { firstName: firstName || '', lastName: lastName || '', college, branch, graduationYear },
   });
 
   // Generate email verification token (stored in Redis for 24h)
@@ -156,7 +156,7 @@ const findOrCreateGoogleUser = async ({ googleId, email, firstName, lastName, av
       email,
       googleId,
       isEmailVerified: true,
-      profile: { firstName, lastName, avatar },
+      profile: { firstName: firstName || '', lastName: lastName || '', avatar },
     });
   }
 

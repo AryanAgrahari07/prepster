@@ -28,8 +28,8 @@ const userSchema = new mongoose.Schema(
       default: ROLES.STUDENT,
     },
     profile: {
-      firstName: { type: String, required: true, trim: true },
-      lastName: { type: String, required: true, trim: true },
+      firstName: { type: String, required: false, trim: true, default: '' },
+      lastName: { type: String, required: false, trim: true, default: '' },
       avatar: { type: String, default: null }, // Cloudinary URL
       college: { type: String, trim: true },
       branch: { type: String, trim: true }, // 'CSE', 'ECE', etc.
