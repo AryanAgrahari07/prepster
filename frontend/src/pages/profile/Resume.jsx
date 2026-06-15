@@ -4,7 +4,7 @@ import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Upload, FileText, Trash2, CheckCircle2 } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
-import { toast } from 'react-hot-toast';
+import toast from '@/utils/toast';
 
 export default function Resume() {
   const { user, checkAuth } = useAuthStore();

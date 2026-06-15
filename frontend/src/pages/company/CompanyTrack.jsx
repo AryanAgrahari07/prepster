@@ -435,7 +435,8 @@ export default function CompanyTrack() {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          )}
         </div>
       )}
 

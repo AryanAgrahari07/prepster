@@ -28,6 +28,7 @@ const profileSchema = z.object({
     .optional(),
   phone: z.string().optional(),
   targetCompanies: z.string().optional(),
+  stream: z.enum(['engineering', 'mba']).optional(),
 });
 
 export default function Profile() {
@@ -41,6 +42,7 @@ export default function Profile() {
     graduationYear: user?.profile?.graduationYear ? String(user.profile.graduationYear) : '',
     cgpa: user?.profile?.cgpa ? String(user.profile.cgpa) : '',
     targetCompanies: user?.profile?.targetCompanies?.join(', ') || '',
+    stream: user?.stream || 'engineering',
   };
 
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -240,6 +242,17 @@ export default function Profile() {
             <Input label="Graduation Year" type="number" {...register('graduationYear')} error={errors.graduationYear?.message} />
             <Input label="CGPA (out of 10)" type="number" step="0.01" {...register('cgpa')} error={errors.cgpa?.message} />
             <Input label="Phone Number" {...register('phone')} error={errors.phone?.message} />
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-foreground">Career Stream</label>
+              <select 
+                {...register('stream')}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="engineering">Engineering / Tech</option>
+                <option value="mba">MBA / Management</option>
+              </select>
+              {errors.stream && <p className="text-sm font-medium text-destructive mt-1.5">{errors.stream.message}</p>}
+            </div>
             <div className="relative">
               <Input label="Email Address" value={user?.email || ''} disabled />
               {user?.isEmailVerified ? (

@@ -3,7 +3,7 @@ import { api } from '@/store/authStore';
 import useAuthStore from '@/store/authStore';
 import { Check, Shield, Zap, Target, BookOpen, Crown, Building2, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { toast } from 'react-hot-toast';
+import toast from '@/utils/toast';
 import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/seo/SEO';
 import { motion } from 'framer-motion';
