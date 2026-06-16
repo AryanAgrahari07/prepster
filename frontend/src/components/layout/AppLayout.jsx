@@ -26,10 +26,10 @@ const getNavConfig = (user) => {
     {
       group: 'Core Preparation',
       items: [
-        { name: isMba ? 'CAT/XAT Prep' : 'Aptitude Practice', href: '/aptitude', icon: BookOpen, roles: ['student'] },
+        { name: 'Aptitude Practice', href: '/aptitude', icon: BookOpen, roles: ['student'] },
         { name: 'Daily Challenge', href: '/aptitude/daily', icon: CalendarDays, roles: ['student'] },
         { name: isMba ? 'Consulting Tracks' : 'Company Tracks', href: '/companies', icon: Building2, roles: ['student'] },
-        { name: 'Roadmaps', href: '/roadmap', icon: Map, roles: ['student'] },
+        ...(!isMba ? [{ name: 'Roadmaps', href: '/roadmap', icon: Map, roles: ['student'] }] : []),
       ],
     },
     ...(isMba ? [{
@@ -47,9 +47,9 @@ const getNavConfig = (user) => {
     {
       group: 'Analytics & Progress',
       items: [
-        { name: 'Performance Analytics', href: '/aptitude/analytics', icon: BarChart3, roles: ['student'] },
-        { name: 'Leaderboard', href: '/aptitude/leaderboard', icon: Trophy, roles: ['student'] },
-        ...(isMba ? [{ name: 'MBA Analytics',  href: '/mba/analytics', icon: BarChart3, roles: ['student'] }] : []),
+        { name: isMba ? 'Aptitude Analytics' : 'Performance Analytics', href: '/aptitude/analytics', icon: BarChart3, roles: ['student'] },
+        ...(!isMba ? [{ name: 'Leaderboard', href: '/aptitude/leaderboard', icon: Trophy, roles: ['student'] }] : []),
+        ...(isMba ? [{ name: 'Interview Analytics',  href: '/mba/analytics', icon: Target, roles: ['student'] }] : []),
       ],
     },
     {
@@ -123,7 +123,15 @@ const ENGINEERING_GUEST_NAV = [
 
 const MBA_GUEST_NAV = [
   {
-    group: 'MBA Prep',
+    group: 'Core Preparation',
+    color: 'blue',
+    items: [
+      { name: 'Aptitude Practice', href: '/aptitude',   icon: BookOpen  },
+      { name: 'Consulting Tracks', href: '/companies',  icon: Building2 },
+    ],
+  },
+  {
+    group: 'MBA Interviews',
     color: 'violet',
     items: [
       { name: 'GD Practice',    href: '/mba/gd',           icon: Users      },

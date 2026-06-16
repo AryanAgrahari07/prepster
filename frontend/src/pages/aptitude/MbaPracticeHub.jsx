@@ -12,26 +12,26 @@ const MBA_TOPICS = {
   quantitative: {
     label: 'Quantitative Aptitude',
     icon: '🔢',
-    desc: 'Number systems, percentages, profit & loss, time & work, speed — the core of CAT Quants.',
-    catSection: 'VARC + QA',
+    desc: 'Number systems, percentages, profit & loss, time & work, speed — the core of Quants.',
+    catSection: 'Quant',
   },
   logical: {
     label: 'Logical Reasoning & DI',
     icon: '🧩',
-    desc: 'Arrangements, puzzles, bar charts, caselets — the complete CAT DILR section.',
-    catSection: 'DILR',
+    desc: 'Arrangements, puzzles, bar charts, caselets — the complete logical section.',
+    catSection: 'Logical & DI',
   },
   verbal: {
     label: 'Verbal Ability & RC',
     icon: '📖',
     desc: 'Reading comprehension, para jumbles, fill in the blanks, para summary.',
-    catSection: 'VARC',
+    catSection: 'Verbal',
   },
   di: {
     label: 'Data Interpretation',
     icon: '📊',
     desc: 'Complex DI sets: tables, pie charts, line graphs — accuracy under time pressure.',
-    catSection: 'DILR',
+    catSection: 'Logical & DI',
   },
 };
 
@@ -102,40 +102,40 @@ const MBA_SKILL_TOPICS = [
 // ─── CAT-pattern mock tests ────────────────────────────────────────────────────
 const MBA_MOCK_TESTS = [
   {
-    id: 'cat-slot-1',
-    title: 'CAT Full Mock — Slot 1',
+    id: 'consulting-full-1',
+    title: 'Consulting Aptitude Mock',
     duration: '120 min',
     durationSeconds: 7200,
     questions: 66,
     topics: ['quantitative', 'logical', 'verbal', 'di'],
     icon: '🎯',
-    badge: 'CAT Pattern',
-    desc: 'Full CAT simulation: 40 min VARC, 40 min DILR, 40 min QA — with on-screen calculator.',
+    badge: 'Full Mock',
+    desc: 'Full placement simulation: 40 min Verbal, 40 min Logical & DI, 40 min Quants — with on-screen calculator.',
   },
   {
-    id: 'cat-varc-40',
-    title: 'VARC Sectional Mock',
+    id: 'verbal-40',
+    title: 'Verbal Sectional Mock',
     duration: '40 min',
     durationSeconds: 2400,
     questions: 24,
     topics: ['verbal'],
     icon: '📖',
     badge: 'Sectional',
-    desc: 'Focused VARC section: RC passages, para jumbles, and odd-one-out questions.',
+    desc: 'Focused Verbal section: RC passages, para jumbles, and odd-one-out questions.',
   },
   {
-    id: 'cat-dilr-40',
-    title: 'DILR Sectional Mock',
+    id: 'logical-40',
+    title: 'Logical & DI Sectional Mock',
     duration: '40 min',
     durationSeconds: 2400,
     questions: 20,
     topics: ['logical', 'di'],
     icon: '🧩',
     badge: 'Sectional',
-    desc: 'Data Interpretation & Logical Reasoning sets — the most challenging CAT section.',
+    desc: 'Data Interpretation & Logical Reasoning sets — the most challenging analytical section.',
   },
   {
-    id: 'cat-qa-40',
+    id: 'quant-40',
     title: 'Quants Sectional Mock',
     duration: '40 min',
     durationSeconds: 2400,
@@ -143,34 +143,34 @@ const MBA_MOCK_TESTS = [
     topics: ['quantitative'],
     icon: '🔢',
     badge: 'Sectional',
-    desc: 'CAT Quant section: Arithmetic, Algebra, Geometry, and Number Systems.',
+    desc: 'Quant section: Arithmetic, Algebra, Geometry, and Number Systems.',
   },
   {
-    id: 'xat-30',
-    title: 'XAT Decision Making Sprint',
+    id: 'decision-making-30',
+    title: 'Decision Making Sprint',
     duration: '30 min',
     durationSeconds: 1800,
     questions: 21,
     topics: ['logical', 'verbal'],
     icon: '💡',
-    badge: 'XAT Pattern',
-    desc: 'XAT-style Decision Making + Verbal — unique to XLRI, XIMB, and TAPMI.',
+    badge: 'Case Prep',
+    desc: 'Decision Making + Verbal — essential for consulting and strategy roles.',
   },
   {
-    id: 'snap-40',
-    title: 'SNAP Analytical Sprint',
+    id: 'analytical-60',
+    title: 'Analytical Sprint',
     duration: '60 min',
     durationSeconds: 3600,
     questions: 60,
     topics: ['quantitative', 'logical', 'verbal'],
     icon: '⚡',
-    badge: 'SNAP Pattern',
-    desc: 'SNAP-pattern mock covering QA, Analytical Reasoning, and GK — for Symbiosis institutes.',
+    badge: 'Speed Test',
+    desc: 'Fast-paced mock covering Quants, Analytical Reasoning, and Verbal — for quick problem solving.',
   },
 ];
 
 const TABS = [
-  { id: 'cat', label: 'CAT/XAT Topics', icon: '🔢' },
+  { id: 'cat', label: 'Aptitude Topics', icon: '🔢' },
   { id: 'skills', label: 'MBA Skills', icon: '💼' },
   { id: 'mock', label: 'Mock Tests', icon: '🏆' },
 ];
@@ -193,7 +193,7 @@ function TopicCard({ topicKey, config, topicData }) {
           </h3>
           {config.catSection && (
             <span className="text-[10px] font-bold uppercase tracking-wider text-primary/70 bg-primary/10 px-2 py-0.5 rounded-md mt-1 inline-block">
-              CAT: {config.catSection}
+              {config.catSection}
             </span>
           )}
           <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed line-clamp-2">{config.desc}</p>
@@ -325,18 +325,18 @@ export default function MbaPracticeHub() {
   return (
     <>
       <SEO
-        title="CAT/XAT & MBA Practice Hub | Prepster"
-        description="Practice CAT, XAT, SNAP pattern questions. Take sectional and full mocks for DILR, VARC, and Quants."
-        keywords="CAT preparation, XAT mocks, MBA entrance, DILR practice, VARC prep, Quants CAT"
+        title="MBA Placement Practice Hub | Prepster"
+        description="Practice placement aptitude questions. Take sectional and full mocks for Logical, Verbal, and Quants."
+        keywords="MBA placement preparation, aptitude mocks, consulting prep, DILR practice, VARC prep, Quants"
         url="https://prepster.in/aptitude"
       />
       <div className="space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">CAT/XAT Practice Hub</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">MBA Placement Practice Hub</h1>
             <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-              Sharpen your MBA entrance skills — DILR, VARC, Quants, and full CAT mocks.
+              Sharpen your aptitude skills for consulting and MBA placements — Logical, Verbal, Quants, and full mocks.
             </p>
           </div>
           <Link
@@ -383,7 +383,7 @@ export default function MbaPracticeHub() {
             {activeTab === 'cat' && (
               <div>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Core CAT/XAT/SNAP topics. Practice section-by-section to build accuracy and speed.
+                  Core aptitude topics for placements. Practice section-by-section to build accuracy and speed.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                   {Object.entries(MBA_TOPICS).map(([key, cfg]) => (
@@ -397,7 +397,7 @@ export default function MbaPracticeHub() {
             {activeTab === 'skills' && (
               <div>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Go beyond the entrance exam — prepare for Case Interviews, GD/PI rounds, and WAT.
+                  Go beyond the aptitude test — prepare for Case Interviews, GD/PI rounds, and WAT.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {MBA_SKILL_TOPICS.map((cfg) => (
@@ -411,7 +411,7 @@ export default function MbaPracticeHub() {
             {activeTab === 'mock' && (
               <div>
                 <p className="text-sm text-muted-foreground mb-6">
-                  CAT, XAT, and SNAP pattern mocks. Sectional tests for targeted improvement.
+                  Placement pattern mocks for top companies. Sectional tests for targeted improvement.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {MBA_MOCK_TESTS.map(test => (
@@ -421,7 +421,7 @@ export default function MbaPracticeHub() {
                 <div className="mt-8 app-card p-5 border-primary/20 bg-primary/5 flex items-start gap-3">
                   <BookOpen className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <p className="text-sm text-muted-foreground">
-                    <strong className="text-foreground">CAT Tip:</strong> Attempt DILR and VARC sections first if you're stronger in those — the CAT scoring rewards strategic section attempts. Use the timer to simulate real exam pressure.
+                    <strong className="text-foreground">Placement Tip:</strong> Attempt your strongest sections first — placement tests reward strategic time management. Use the timer to simulate real interview pressure.
                   </p>
                 </div>
               </div>

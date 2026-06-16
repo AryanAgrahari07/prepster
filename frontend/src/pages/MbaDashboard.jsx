@@ -121,8 +121,8 @@ export default function MbaDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             {
-              title: 'CAT/XAT Mocks',
-              description: 'Practice DILR, VARC, and Quants',
+              title: 'Aptitude Mocks',
+              description: 'Practice Logical, Verbal, and Quants',
               href: '/aptitude',
               icon: BookOpen,
               color: 'bg-primary/10 text-primary',

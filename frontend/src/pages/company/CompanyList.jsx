@@ -44,8 +44,8 @@ export default function CompanyList() {
   const effectiveStream = user ? user.stream : guestStream;
   const isMba = effectiveStream === 'mba';
 
-  const [activeTab, setActiveTab] = useState(isMba ? 'mba' : 'engineering');
   const [searchTerm, setSearchTerm] = useState('');
+  const currentTab = isMba ? 'mba' : 'engineering';
 
   // Fetch all companies — no stream param so we can do client-side tab switching without refetch
   const { data, isLoading: loading } = useQuery({
@@ -58,9 +58,6 @@ export default function CompanyList() {
   // Client-side filtering by tab + search
   const filteredCompanies = useMemo(() => {
     let list = allCompanies;
-
-    // Force engineering tab if not MBA, otherwise use the selected activeTab
-    const currentTab = !isMba ? 'engineering' : activeTab;
 
     if (currentTab !== 'all') {
       list = list.filter(c => {
@@ -78,11 +75,10 @@ export default function CompanyList() {
     }
 
     return list;
-  }, [allCompanies, activeTab, searchTerm, isMba]);
+  }, [allCompanies, currentTab, searchTerm]);
 
   // Use the effective tab for SEO
-  const effectiveTabForSeo = !isMba ? 'engineering' : activeTab;
-  const seo = SEO_META[effectiveTabForSeo] || SEO_META.all;
+  const seo = SEO_META[currentTab] || SEO_META.all;
 
   if (loading) return (
     <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 space-y-6 animate-pulse">
@@ -118,43 +114,15 @@ export default function CompanyList() {
         {/* Page header */}
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            {(!isMba || activeTab === 'engineering') ? 'Company Tracks' : (activeTab === 'mba' ? 'Consulting & MBA Tracks' : 'All Company Tracks')}
+            {!isMba ? 'Company Tracks' : 'Consulting & MBA Tracks'}
           </h1>
           <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-            {(!isMba || activeTab === 'engineering')
+            {!isMba
               ? 'Prepare specifically for your dream companies with targeted insights and mock tests.'
-              : (activeTab === 'mba' 
-                  ? 'Prepare for top consulting firms, FMCG, and management roles with targeted case study and GD/PI tracks.'
-                  : 'Explore all available company preparation tracks.')
+              : 'Prepare for top consulting firms, FMCG, and management roles with targeted case study and GD/PI tracks.'
             }
           </p>
         </div>
-
-        {/* Stream tabs - Only show if in MBA track */}
-        {isMba && (
-          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-            <div className="flex gap-1.5 bg-secondary/50 border border-border rounded-2xl p-1 w-fit min-w-fit">
-              {STREAM_TABS.map(tab => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
-                      activeTab === tab.id
-                        ? 'bg-card text-foreground shadow-sm border border-border'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span className="hidden sm:inline">{tab.label}</span>
-                    <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
         {/* Search bar */}
         <div className="relative max-w-md">
