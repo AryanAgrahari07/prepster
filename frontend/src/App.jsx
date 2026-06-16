@@ -181,6 +181,17 @@ function App() {
             <Route path="/blogs" element={<BlogList />} />
             <Route path="/blogs/:slug" element={<BlogPost />} />
 
+            {/* MBA Public/Browse Routes — accessible without login */}
+            <Route path="/mba/gd" element={<GdPracticeHub />} />
+            <Route path="/mba/pi" element={<PiPrepHub />} />
+            <Route path="/mba/cases" element={<CaseStudyLibrary />} />
+            <Route path="/mba/wat" element={<WatPractice />} />
+            <Route path="/mba/sectors" element={<SectorExplore />} />
+            <Route path="/mba/guesstimates" element={<GuesstimatePractice />} />
+
+            {/* Upgrade — publicly accessible for pricing browsing */}
+            <Route path="/upgrade" element={<Upgrade />} />
+
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
@@ -196,16 +207,9 @@ function App() {
               <Route path="/aptitude/analytics" element={<AnalyticsDashboard />} />
               <Route path="/aptitude/leaderboard" element={<Leaderboard />} />
               
-              <Route path="/mba/gd" element={<GdPracticeHub />} />
-              <Route path="/mba/pi" element={<PiPrepHub />} />
-              <Route path="/mba/cases" element={<CaseStudyLibrary />} />
-              <Route path="/mba/wat" element={<WatPractice />} />
-              <Route path="/mba/sectors" element={<SectorExplore />} />
-              <Route path="/mba/guesstimates" element={<GuesstimatePractice />} />
+              {/* MBA Protected Routes — require login (personal/session-based) */}
               <Route path="/mba/analytics" element={<MbaAnalytics />} />
               <Route path="/mba/mock-interview" element={<MockInterviewSession />} />
-              
-              <Route path="/upgrade" element={<Upgrade />} />
             </Route>
 
             {/* Employer */}
@@ -242,8 +246,6 @@ function App() {
               }
             />
 
-            {/* Subscription */}
-            <Route path="/upgrade" element={<Upgrade />} />
           </Route>
 
           {/* Admin Panel Layout & Routes */}

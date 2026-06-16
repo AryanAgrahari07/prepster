@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import { getGdTopics, startMbaSession, finishMbaSession } from '@/api/mba';
+import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { MessageSquare, Users, Star, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from '@/utils/toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function GdPracticeHub() {
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTopic, setActiveTopic] = useState(null);
@@ -23,6 +28,11 @@ export default function GdPracticeHub() {
   }, []);
 
   const handleStartPractice = async (topic) => {
+    if (!user) {
+      toast.error('Please sign in to start a practice session.');
+      navigate('/auth/register');
+      return;
+    }
     setActiveTopic(topic);
     setNotes('');
     setSession(null);
@@ -41,10 +51,10 @@ export default function GdPracticeHub() {
       await finishMbaSession(session._id, { submission: notes });
       setActiveTopic(null);
       setSession(null);
-      alert('GD Practice session saved!');
+      toast.success('GD session saved! Great work.');
     } catch (err) {
       console.error(err);
-      alert('Failed to save session');
+      toast.error('Failed to save session. Please try again.');
     } finally {
       setSubmitting(false);
     }

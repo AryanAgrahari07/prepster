@@ -1,11 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { getWatTopics, startMbaSession, finishMbaSession } from '@/api/mba';
+import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Loader2, ArrowRight, Save, Clock, PenTool } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
 import { motion } from 'framer-motion';
+import toast from '@/utils/toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function WatPractice() {
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTopic, setActiveTopic] = useState(null);
@@ -46,6 +51,11 @@ export default function WatPractice() {
   }, [timeLeft]);
 
   const handleStartPractice = async (topic) => {
+    if (!user) {
+      toast.error('Please sign in to start a timed WAT session.');
+      navigate('/auth/register');
+      return;
+    }
     setActiveTopic(topic);
     setEssay('');
     setSession(null);
@@ -69,13 +79,13 @@ export default function WatPractice() {
         submission: essay,
         timeTakenSeconds: (activeTopic.timeLimitMinutes * 60) - timeLeft
       });
-      alert(autoSubmit ? 'Time is up! Your essay has been submitted.' : 'WAT Essay saved successfully!');
+      toast.success(autoSubmit ? 'Time is up! Your essay has been submitted.' : 'WAT essay submitted successfully!');
       setActiveTopic(null);
       setSession(null);
       setTimeLeft(null);
     } catch (err) {
       console.error(err);
-      alert('Failed to save session');
+      toast.error('Failed to save your essay. Please try again.');
     } finally {
       setSubmitting(false);
     }

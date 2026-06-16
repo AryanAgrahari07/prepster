@@ -1,12 +1,70 @@
 import { useState, useEffect } from 'react';
 import { api } from '@/store/authStore';
 import useAuthStore from '@/store/authStore';
-import { Check, Shield, Zap, Target, BookOpen, Crown, Building2, Briefcase } from 'lucide-react';
+import { Check, Shield, Zap, Target, BookOpen, Crown, Building2, Briefcase, GraduationCap, Users } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import toast from '@/utils/toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import SEO from '@/components/seo/SEO';
 import { motion } from 'framer-motion';
+
+const ENGINEERING_FEATURES = {
+  free: [
+    '20 practice questions daily',
+    '1 Company track unlocked (read-only)',
+    'Basic analytics',
+    'View job board',
+  ],
+  pro_monthly: [
+    'Unlimited practice questions',
+    'All company & MBA tracks unlocked',
+    'Full performance analytics & radar',
+    'Direct apply to job listings',
+    'Company specific mock tests',
+    'Ad-free experience',
+  ],
+  pro_6months: [
+    'Everything in Pro Monthly',
+    'Save ₹145 vs monthly billing',
+    'Priority application sorting',
+    'Early access to new tracks',
+  ],
+  pro_annual: [
+    'Everything in Pro Monthly',
+    'Save ₹389 vs monthly billing',
+    'Priority application sorting',
+    'Early access to all new tracks & content',
+  ],
+};
+
+const MBA_FEATURES = {
+  free: [
+    'GD topics & case study previews',
+    'PI question bank (read-only)',
+    'Sector exploration',
+    'View WAT prompts',
+  ],
+  pro_monthly: [
+    'Unlimited GD / PI / WAT sessions',
+    'All case study solutions unlocked',
+    'Guesstimate practice with frameworks',
+    'AI Mock Interview access',
+    'MBA performance analytics',
+    'Ad-free experience',
+  ],
+  pro_6months: [
+    'Everything in Pro Monthly',
+    'Save ₹145 vs monthly billing',
+    'Priority application sorting',
+    'Early access to new MBA tracks',
+  ],
+  pro_annual: [
+    'Everything in Pro Monthly',
+    'Save ₹389 vs monthly billing',
+    'Priority application sorting',
+    'Early access to all new tracks & content',
+  ],
+};
 
 const PLANS = [
   {
@@ -14,30 +72,25 @@ const PLANS = [
     name: 'Free',
     price: '₹0',
     duration: 'Forever',
-    description: 'Perfect for getting started.',
-    features: [
-      '20 practice questions daily',
-      '1 Company track unlocked (read-only)',
-      'Basic analytics',
-      'View job board',
-    ],
+    description: 'Explore and get started for free.',
     cta: 'Current Plan',
   },
   {
     id: 'pro_monthly',
     name: 'Pro Monthly',
-    price: '₹299',
+    price: '₹99',
     duration: '/ month',
     description: 'Full access for your placement season.',
-    features: [
-      'Unlimited practice questions',
-      'All company & MBA tracks unlocked',
-      'Full performance analytics & radar',
-      'Direct apply to job listings',
-      'Company specific mock tests',
-      'Ad-free experience',
-    ],
     cta: 'Subscribe Monthly',
+    popular: false,
+  },
+  {
+    id: 'pro_6months',
+    name: 'Pro — 6 Months',
+    price: '₹449',
+    duration: '/ 6 months',
+    description: 'Ideal for a complete placement cycle.',
+    cta: 'Subscribe (6 Months)',
     popular: false,
   },
   {
@@ -45,13 +98,7 @@ const PLANS = [
     name: 'Pro Annual',
     price: '₹799',
     duration: '/ year',
-    description: 'Best value for 2nd & 3rd year students.',
-    features: [
-      'Everything in Pro Monthly',
-      'Save ₹2,789 annually (77% off)',
-      'Priority application sorting',
-      'Early access to new tracks',
-    ],
+    description: 'Best value — pay once, crack placements.',
     cta: 'Subscribe Annually',
     popular: true,
   },
@@ -61,6 +108,10 @@ export default function Upgrade() {
   const { user, checkAuth } = useAuthStore();
   const navigate = useNavigate();
   const [loadingPlan, setLoadingPlan] = useState(null);
+  const isMbaUser = user?.stream === 'mba';
+  const [stream, setStream] = useState(isMbaUser ? 'mba' : 'engineering');
+
+  const features = stream === 'mba' ? MBA_FEATURES : ENGINEERING_FEATURES;
 
   // Dynamically load Razorpay SDK script
   useEffect(() => {
@@ -75,6 +126,13 @@ export default function Upgrade() {
 
   const handleSubscribe = async (planId) => {
     if (planId === 'free') return;
+
+    // If not logged in, redirect to register
+    if (!user) {
+      navigate('/auth/register', { state: { from: '/upgrade' } });
+      return;
+    }
+
     setLoadingPlan(planId);
 
     try {
@@ -95,12 +153,12 @@ export default function Upgrade() {
 
       // 3. Open Razorpay Checkout Modal
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Use public key from env
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount,
         currency,
         name: 'Prepster',
-        description: 'Upgrade to Prepster Pro',
-        image: 'https://prepster.in/logo.png', // Fallback placeholder
+        description: `Upgrade to Prepster Pro (${stream === 'mba' ? 'MBA' : 'Engineering'})`,
+        image: 'https://prepster.in/logo.png',
         order_id: orderId,
         handler: async function (response) {
           await verifyPayment(response, planId);
@@ -111,7 +169,7 @@ export default function Upgrade() {
           contact: user?.profile?.phone || '',
         },
         theme: {
-          color: '#8b5cf6', // primary violet
+          color: '#8b5cf6',
         },
       };
 
@@ -122,7 +180,7 @@ export default function Upgrade() {
       }
 
       const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function (response) {
+      rzp.on('payment.failed', function () {
         toast.error('Payment failed or was cancelled.');
         setLoadingPlan(null);
       });
@@ -142,7 +200,7 @@ export default function Upgrade() {
       });
       
       toast.success(res.data.message || 'Pro activated successfully!');
-      await checkAuth(); // Refresh user state
+      await checkAuth();
       navigate('/dashboard');
     } catch (err) {
       toast.error(err.response?.data?.error?.message || 'Payment verification failed.');
@@ -171,22 +229,52 @@ export default function Upgrade() {
           <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-muted-foreground text-lg">
             Join thousands of students who cracked their dream companies with Prepster Pro.
           </motion.p>
+
+          {/* Stream Toggle */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="inline-flex items-center bg-secondary rounded-xl p-1 mt-4 border border-border"
+          >
+            <button
+              onClick={() => setStream('engineering')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                stream === 'engineering'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <GraduationCap className="w-4 h-4" />
+              Engineering
+            </button>
+            <button
+              onClick={() => setStream('mba')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                stream === 'mba'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              MBA
+            </button>
+          </motion.div>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto px-4">
           {PLANS.map((plan, index) => {
             const isCurrent = currentPlan === 'free' ? plan.id === 'free' : currentPlan === 'pro' && plan.id !== 'free';
-            const isProAnnual = plan.id === 'pro_annual';
-            const isProMonthly = plan.id === 'pro_monthly';
+            const isNotLoggedIn = !user && plan.id !== 'free';
 
             return (
               <motion.div 
                 key={plan.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`relative bg-background rounded-3xl p-6 sm:p-8 border-2 transition-transform hover:-translate-y-1 ${
+                transition={{ delay: index * 0.08 }}
+                className={`relative bg-background rounded-3xl p-6 sm:p-7 border-2 flex flex-col transition-transform hover:-translate-y-1 ${
                   plan.popular 
                     ? 'border-primary shadow-xl shadow-primary/10' 
                     : 'border-border shadow-sm hover:border-primary/50'
@@ -195,25 +283,25 @@ export default function Upgrade() {
                 {plan.popular && (
                   <div className="absolute -top-4 left-0 right-0 flex justify-center">
                     <span className="bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-full">
-                      Most Popular
+                      Best Value
                     </span>
                   </div>
                 )}
                 
-                <div className="mb-6">
+                <div className="mb-5">
                   <h3 className="text-xl font-bold">{plan.name}</h3>
-                  <p className="text-sm text-muted-foreground mt-1 h-10">{plan.description}</p>
+                  <p className="text-sm text-muted-foreground mt-1 min-h-[2.5rem]">{plan.description}</p>
                 </div>
                 
-                <div className="mb-8">
+                <div className="mb-7">
                   <span className="text-4xl font-extrabold">{plan.price}</span>
-                  <span className="text-muted-foreground font-medium">{plan.duration}</span>
+                  <span className="text-muted-foreground font-medium ml-1">{plan.duration}</span>
                 </div>
                 
-                <ul className="space-y-4 mb-8 flex-1">
-                  {plan.features.map((feat, i) => (
+                <ul className="space-y-3.5 mb-8 flex-1">
+                  {(features[plan.id] || []).map((feat, i) => (
                     <li key={i} className="flex items-start gap-3 text-sm">
-                      <Check className="w-5 h-5 text-green-500 shrink-0" />
+                      <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                       <span className={plan.id === 'free' ? 'text-muted-foreground' : 'text-foreground font-medium'}>{feat}</span>
                     </li>
                   ))}
@@ -226,6 +314,17 @@ export default function Upgrade() {
                     <Button variant="outline" className="w-full font-bold h-12 text-primary border-primary/50 bg-primary/5" disabled>Active Subscription</Button>
                   ) : currentPlan === 'pro' && plan.id === 'free' ? (
                     <Button variant="ghost" className="w-full h-12 text-muted-foreground" disabled>Downgrade</Button>
+                  ) : plan.id === 'free' ? (
+                    <Button variant="outline" className="w-full font-bold h-12" disabled>Free Forever</Button>
+                  ) : isNotLoggedIn ? (
+                    <Link to="/auth/register" state={{ from: '/upgrade' }} className="block">
+                      <Button 
+                        className={`w-full font-bold h-12 ${plan.popular ? 'shadow-lg shadow-primary/20' : ''}`}
+                        variant={plan.popular ? 'default' : 'secondary'}
+                      >
+                        Get Started
+                      </Button>
+                    </Link>
                   ) : (
                     <Button 
                       className={`w-full font-bold h-12 ${plan.popular ? 'shadow-lg shadow-primary/20' : ''}`}
@@ -261,8 +360,8 @@ export default function Upgrade() {
                 <Building2 className="w-6 h-6 text-purple-500" />
               </div>
               <div>
-                <h4 className="font-bold text-lg">Company Specific Tracks</h4>
-                <p className="text-sm text-muted-foreground mt-1">Unlock tailored mock tests and insights for TCS, Infosys, McKinsey, and BCG.</p>
+                <h4 className="font-bold text-lg">Company & MBA Tracks</h4>
+                <p className="text-sm text-muted-foreground mt-1">Unlock tailored mock tests and insights for TCS, Infosys, McKinsey, BCG, and more.</p>
               </div>
             </div>
             <div className="flex gap-4">

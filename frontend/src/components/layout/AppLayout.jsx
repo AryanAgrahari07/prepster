@@ -6,7 +6,7 @@ import { NotificationBell } from '@/components/ui/NotificationBell';
 import {
   Home, User, Settings, LogOut, BookOpen, Briefcase, BarChart3,
   Building2, Zap, Shield, CalendarDays, Menu, X, Plus, Users,
-  FileText, ChevronRight, Map, Trophy, Bell, Info, AlertTriangle, CheckCircle2, Lock, Calculator, Video, Bookmark
+  FileText, ChevronRight, Map, Trophy, Bell, Info, AlertTriangle, CheckCircle2, Lock, Calculator, Video, Bookmark, Target
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import ThemeToggle from '../ui/ThemeToggle';
@@ -31,10 +31,14 @@ const getNavConfig = (user) => {
         { name: 'Leaderboard',    href: '/aptitude/leaderboard', icon: Trophy,      roles: ['student'] },
         { name: 'Roadmaps',       href: '/roadmap',            icon: Map,           roles: ['guest', 'student'] },
         ...(isMba ? [
-          { name: 'Sector Explore',  href: '/mba/sectors',        icon: Briefcase,  roles: ['guest', 'student'] },
-          { name: 'Guesstimates',    href: '/mba/guesstimates',   icon: Calculator, roles: ['student'] },
-          { name: 'Mock Interview',  href: '/mba/mock-interview',  icon: Video,      roles: ['student'] },
-          { name: 'MBA Analytics',   href: '/mba/analytics',      icon: BarChart3,  roles: ['student'] },
+          { name: 'GD Practice',     href: '/mba/gd',           icon: Users,      roles: ['guest', 'student'] },
+          { name: 'PI Prep',         href: '/mba/pi',           icon: Target,     roles: ['guest', 'student'] },
+          { name: 'Case Studies',    href: '/mba/cases',        icon: BookOpen,   roles: ['guest', 'student'] },
+          { name: 'WAT Practice',    href: '/mba/wat',          icon: FileText,   roles: ['guest', 'student'] },
+          { name: 'Sector Explore',  href: '/mba/sectors',      icon: Briefcase,  roles: ['guest', 'student'] },
+          { name: 'Guesstimates',    href: '/mba/guesstimates', icon: Calculator, roles: ['guest', 'student'] },
+          { name: 'Mock Interview',  href: '/mba/mock-interview', icon: Video,    roles: ['student'] },
+          { name: 'MBA Analytics',   href: '/mba/analytics',    icon: BarChart3,  roles: ['student'] },
         ] : []),
         { name: isMba ? 'Consulting Tracks' : 'Companies', href: '/companies', icon: Building2, roles: ['guest', 'student'] },
         { name: 'Blog',           href: '/blogs',              icon: FileText,      roles: ['guest', 'student'] },
@@ -240,8 +244,15 @@ export default function AppLayout() {
           </>
         ) : (
           <div className="flex flex-col gap-3 px-1">
+            <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-4 mb-1">
+              <p className="text-xs font-bold text-primary mb-0.5">Start for Free</p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">Join thousands of students prepping for placements.</p>
+            </div>
+            <Link to="/auth/register">
+              <Button className="w-full font-semibold">Create Free Account</Button>
+            </Link>
             <Link to="/auth/login">
-              <Button className="w-full">Log In / Sign Up</Button>
+              <Button variant="outline" className="w-full text-sm">Already have an account? Log in</Button>
             </Link>
             <div className="flex items-center justify-center pt-2 border-t border-border/50">
               <ThemeToggle />

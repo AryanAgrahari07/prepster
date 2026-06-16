@@ -6,9 +6,12 @@ import { Button } from '@/components/ui/Button';
 import { Briefcase, Loader2, Lock, ArrowRight, BookOpen, Star, FileText } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
 import { motion } from 'framer-motion';
+import toast from '@/utils/toast';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function CaseStudyLibrary() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCase, setActiveCase] = useState(null);
@@ -28,6 +31,11 @@ export default function CaseStudyLibrary() {
   const isPro = user?.subscription?.plan === 'pro';
 
   const handleStartCase = async (caseId) => {
+    if (!user) {
+      toast.error('Please sign in to start a case study session.');
+      navigate('/auth/register');
+      return;
+    }
     try {
       const caseRes = await getCaseStudyById(caseId);
       setActiveCase(caseRes.data.data);
@@ -38,7 +46,7 @@ export default function CaseStudyLibrary() {
       setSession(sessionRes.data.data);
     } catch (err) {
       console.error(err);
-      alert('Failed to load case study');
+      toast.error('Failed to load case study. Please try again.');
     }
   };
 
@@ -49,10 +57,10 @@ export default function CaseStudyLibrary() {
       await finishMbaSession(session._id, { submission: notes });
       setActiveCase(null);
       setSession(null);
-      alert('Case Study notes saved!');
+      toast.success('Case notes saved! Keep solving.');
     } catch (err) {
       console.error(err);
-      alert('Failed to save session');
+      toast.error('Failed to save notes. Please try again.');
     } finally {
       setSubmitting(false);
     }

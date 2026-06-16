@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import { getPiQuestions, startMbaSession, finishMbaSession } from '@/api/mba';
+import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Target, Loader2, ArrowRight, Save, Eye, EyeOff } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
 import { motion } from 'framer-motion';
+import toast from '@/utils/toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function PiPrepHub() {
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeQuestion, setActiveQuestion] = useState(null);
@@ -24,6 +29,11 @@ export default function PiPrepHub() {
   }, []);
 
   const handleStartPractice = async (q) => {
+    if (!user) {
+      toast.error('Please sign in to start a practice session.');
+      navigate('/auth/register');
+      return;
+    }
     setActiveQuestion(q);
     setNotes('');
     setShowSample(false);
@@ -43,10 +53,10 @@ export default function PiPrepHub() {
       await finishMbaSession(session._id, { submission: notes });
       setActiveQuestion(null);
       setSession(null);
-      alert('PI Answer saved!');
+      toast.success('PI answer saved! Keep practising.');
     } catch (err) {
       console.error(err);
-      alert('Failed to save session');
+      toast.error('Failed to save answer. Please try again.');
     } finally {
       setSubmitting(false);
     }
