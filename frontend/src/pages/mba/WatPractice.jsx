@@ -126,7 +126,7 @@ export default function WatPractice() {
               </div>
               <h3 className="font-bold text-lg mb-6 flex-1">"{t.prompt}"</h3>
               
-              <Button onClick={() => handleStartPractice(t)} className="w-full bg-orange-500 hover:bg-orange-600 text-white">
+              <Button onClick={() => handleStartPractice(t)} className="w-full">
                 Start Timed Session <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>

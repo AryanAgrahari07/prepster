@@ -38,7 +38,11 @@ const SEO_META = {
 
 export default function CompanyList() {
   const { user } = useAuthStore();
-  const isMba = user?.stream === 'mba';
+  
+  // Determine if the user (or guest) is in the MBA track
+  const guestStream = localStorage.getItem('prepster_guest_stream') || 'engineering';
+  const effectiveStream = user ? user.stream : guestStream;
+  const isMba = effectiveStream === 'mba';
 
   const [activeTab, setActiveTab] = useState(isMba ? 'mba' : 'engineering');
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,9 +59,12 @@ export default function CompanyList() {
   const filteredCompanies = useMemo(() => {
     let list = allCompanies;
 
-    if (activeTab !== 'all') {
+    // Force engineering tab if not MBA, otherwise use the selected activeTab
+    const currentTab = !isMba ? 'engineering' : activeTab;
+
+    if (currentTab !== 'all') {
       list = list.filter(c =>
-        c.targetStream === activeTab || c.targetStream === 'both'
+        c.targetStream === currentTab || c.targetStream === 'both'
       );
     }
 
@@ -70,9 +77,11 @@ export default function CompanyList() {
     }
 
     return list;
-  }, [allCompanies, activeTab, searchTerm]);
+  }, [allCompanies, activeTab, searchTerm, isMba]);
 
-  const seo = SEO_META[activeTab] || SEO_META.all;
+  // Use the effective tab for SEO
+  const effectiveTabForSeo = !isMba ? 'engineering' : activeTab;
+  const seo = SEO_META[effectiveTabForSeo] || SEO_META.all;
 
   if (loading) return (
     <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 space-y-6 animate-pulse">
@@ -108,38 +117,43 @@ export default function CompanyList() {
         {/* Page header */}
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            {activeTab === 'mba' ? 'Consulting & MBA Tracks' : 'Company Tracks'}
+            {(!isMba || activeTab === 'engineering') ? 'Company Tracks' : (activeTab === 'mba' ? 'Consulting & MBA Tracks' : 'All Company Tracks')}
           </h1>
           <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-            {activeTab === 'mba'
-              ? 'Prepare for top consulting firms, FMCG, and management roles with targeted case study and GD/PI tracks.'
-              : 'Prepare specifically for your dream companies with targeted insights and mock tests.'}
+            {(!isMba || activeTab === 'engineering')
+              ? 'Prepare specifically for your dream companies with targeted insights and mock tests.'
+              : (activeTab === 'mba' 
+                  ? 'Prepare for top consulting firms, FMCG, and management roles with targeted case study and GD/PI tracks.'
+                  : 'Explore all available company preparation tracks.')
+            }
           </p>
         </div>
 
-        {/* Stream tabs */}
-        <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-          <div className="flex gap-1.5 bg-secondary/50 border border-border rounded-2xl p-1 w-fit min-w-fit">
-            {STREAM_TABS.map(tab => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? 'bg-card text-foreground shadow-sm border border-border'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
-                </button>
-              );
-            })}
+        {/* Stream tabs - Only show if in MBA track */}
+        {isMba && (
+          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+            <div className="flex gap-1.5 bg-secondary/50 border border-border rounded-2xl p-1 w-fit min-w-fit">
+              {STREAM_TABS.map(tab => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+                      activeTab === tab.id
+                        ? 'bg-card text-foreground shadow-sm border border-border'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Search bar */}
         <div className="relative max-w-md">
