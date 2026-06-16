@@ -125,7 +125,7 @@ export default function Register() {
             <span className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#0f0f12] px-2 text-muted-foreground">
+            <span className="bg-background px-2 text-muted-foreground">
               Or continue with email
             </span>
           </div>
