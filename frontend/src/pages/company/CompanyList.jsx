@@ -63,9 +63,10 @@ export default function CompanyList() {
     const currentTab = !isMba ? 'engineering' : activeTab;
 
     if (currentTab !== 'all') {
-      list = list.filter(c =>
-        c.targetStream === currentTab || c.targetStream === 'both'
-      );
+      list = list.filter(c => {
+        const stream = c.targetStream || 'engineering';
+        return stream === currentTab || stream === 'both';
+      });
     }
 
     if (searchTerm.trim()) {
