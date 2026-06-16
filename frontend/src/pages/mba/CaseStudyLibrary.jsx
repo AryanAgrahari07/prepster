@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getCaseStudies, startMbaSession, finishMbaSession, getCaseStudyById } from '@/api/mba';
 import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
@@ -7,7 +7,7 @@ import { Briefcase, Loader2, Lock, ArrowRight, BookOpen, Star, FileText } from '
 import SEO from '@/components/seo/SEO';
 import { motion } from 'framer-motion';
 import toast from '@/utils/toast';
-import { Link, useNavigate } from 'react-router-dom';
+
 
 export default function CaseStudyLibrary() {
   const { user } = useAuthStore();
