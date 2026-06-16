@@ -128,7 +128,7 @@ export default function CompanyList() {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder={activeTab === 'mba' ? 'Search firm or sector…' : 'Search company or sector…'}
+            placeholder={currentTab === 'mba' ? 'Search firm or sector…' : 'Search company or sector…'}
             className="pl-9 text-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -136,7 +136,7 @@ export default function CompanyList() {
         </div>
 
         {/* MBA info banner */}
-        {activeTab === 'mba' && (
+        {currentTab === 'mba' && (
           <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4 flex items-start gap-3">
             <Briefcase className="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
             <div>
