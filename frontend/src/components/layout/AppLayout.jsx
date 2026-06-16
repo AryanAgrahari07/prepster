@@ -6,12 +6,13 @@ import { NotificationBell } from '@/components/ui/NotificationBell';
 import {
   Home, User, Settings, LogOut, BookOpen, Briefcase, BarChart3,
   Building2, Zap, Shield, CalendarDays, Menu, X, Plus, Users,
-  FileText, ChevronRight, Map, Trophy, Bell, Info, AlertTriangle, CheckCircle2, Lock, Calculator, Video, Bookmark, Target
+  FileText, ChevronRight, Map, Trophy, Bell, Info, AlertTriangle, CheckCircle2, Lock, Calculator, Video, Bookmark, Target, GraduationCap, ArrowRight
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import ThemeToggle from '../ui/ThemeToggle';
 import OnboardingModal from '../features/OnboardingModal';
 
+// ─── Nav config for logged-in users ─────────────────────────────────────────
 const getNavConfig = (user) => {
   const isMba = user?.stream === 'mba';
   
@@ -19,72 +20,126 @@ const getNavConfig = (user) => {
     {
       group: 'Main',
       items: [
-        { name: 'Dashboard',     href: '/dashboard',           icon: Home,          roles: ['student', 'employer', 'admin', 'superadmin'] },
+        { name: 'Dashboard', href: '/dashboard', icon: Home, roles: ['student', 'employer', 'admin', 'superadmin'] },
       ],
     },
     {
-      group: isMba ? 'MBA Prep' : 'Prepare',
+      group: isMba ? 'MBA Prep' : 'Practice',
       items: [
-        { name: isMba ? 'CAT/XAT Prep' : 'Practice', href: '/aptitude',           icon: BookOpen,      roles: ['guest', 'student'] },
-        { name: 'Daily Challenge', href: '/aptitude/daily',    icon: CalendarDays,  roles: ['student'] },
-        { name: 'Analytics',      href: '/aptitude/analytics', icon: BarChart3,     roles: ['student'] },
-        { name: 'Leaderboard',    href: '/aptitude/leaderboard', icon: Trophy,      roles: ['student'] },
-        { name: 'Roadmaps',       href: '/roadmap',            icon: Map,           roles: ['guest', 'student'] },
+        { name: isMba ? 'CAT/XAT Prep' : 'Aptitude Practice', href: '/aptitude', icon: BookOpen, roles: ['student'] },
+        { name: 'Daily Challenge', href: '/aptitude/daily', icon: CalendarDays, roles: ['student'] },
+        { name: 'Analytics', href: '/aptitude/analytics', icon: BarChart3, roles: ['student'] },
+        { name: 'Leaderboard', href: '/aptitude/leaderboard', icon: Trophy, roles: ['student'] },
+        { name: 'Roadmaps', href: '/roadmap', icon: Map, roles: ['student'] },
         ...(isMba ? [
-          { name: 'GD Practice',     href: '/mba/gd',           icon: Users,      roles: ['guest', 'student'] },
-          { name: 'PI Prep',         href: '/mba/pi',           icon: Target,     roles: ['guest', 'student'] },
-          { name: 'Case Studies',    href: '/mba/cases',        icon: BookOpen,   roles: ['guest', 'student'] },
-          { name: 'WAT Practice',    href: '/mba/wat',          icon: FileText,   roles: ['guest', 'student'] },
-          { name: 'Sector Explore',  href: '/mba/sectors',      icon: Briefcase,  roles: ['guest', 'student'] },
-          { name: 'Guesstimates',    href: '/mba/guesstimates', icon: Calculator, roles: ['guest', 'student'] },
-          { name: 'Mock Interview',  href: '/mba/mock-interview', icon: Video,    roles: ['student'] },
-          { name: 'MBA Analytics',   href: '/mba/analytics',    icon: BarChart3,  roles: ['student'] },
+          { name: 'GD Practice',    href: '/mba/gd',             icon: Users,      roles: ['student'] },
+          { name: 'PI Prep',        href: '/mba/pi',             icon: Target,     roles: ['student'] },
+          { name: 'Case Studies',   href: '/mba/cases',          icon: BookOpen,   roles: ['student'] },
+          { name: 'WAT Practice',   href: '/mba/wat',            icon: FileText,   roles: ['student'] },
+          { name: 'Sector Explore', href: '/mba/sectors',        icon: Briefcase,  roles: ['student'] },
+          { name: 'Guesstimates',   href: '/mba/guesstimates',   icon: Calculator, roles: ['student'] },
+          { name: 'Mock Interview', href: '/mba/mock-interview',  icon: Video,      roles: ['student'] },
+          { name: 'MBA Analytics',  href: '/mba/analytics',      icon: BarChart3,  roles: ['student'] },
         ] : []),
-        { name: isMba ? 'Consulting Tracks' : 'Companies', href: '/companies', icon: Building2, roles: ['guest', 'student'] },
-        { name: 'Blog',           href: '/blogs',              icon: FileText,      roles: ['guest', 'student'] },
-        { name: 'Saved Items',    href: '/saved',              icon: Bookmark,      roles: ['student'] },
+        { name: isMba ? 'Consulting Tracks' : 'Companies', href: '/companies', icon: Building2, roles: ['student'] },
+        { name: 'Blog', href: '/blogs', icon: FileText, roles: ['student'] },
+        { name: 'Saved Items', href: '/saved', icon: Bookmark, roles: ['student'] },
       ],
     },
     {
       group: 'Opportunities',
       items: [
-        { name: 'Jobs',          href: '/jobs',                icon: Briefcase,     roles: ['guest', 'student'] },
-        { name: 'Applications',  href: '/applications',        icon: FileText,      roles: ['student'] },
+        { name: 'Jobs', href: '/jobs', icon: Briefcase, roles: ['student'] },
+        { name: 'Applications', href: '/applications', icon: FileText, roles: ['student'] },
       ],
     },
     {
       group: 'Employer',
       items: [
-        { name: 'Dashboard',     href: '/employer/dashboard',  icon: Home,          roles: ['employer', 'admin', 'superadmin'] },
-        { name: 'Post a Job',    href: '/employer/post-job',   icon: Plus,          roles: ['employer', 'admin', 'superadmin'] },
+        { name: 'Dashboard',  href: '/employer/dashboard', icon: Home,     roles: ['employer', 'admin', 'superadmin'] },
+        { name: 'Post a Job', href: '/employer/post-job',  icon: Plus,     roles: ['employer', 'admin', 'superadmin'] },
       ],
     },
     {
       group: 'Admin',
       items: [
-        { name: 'Overview',      href: '/admin',               icon: Shield,        roles: ['admin', 'superadmin'] },
-        { name: 'Users',         href: '/admin/users',         icon: Users,         roles: ['admin', 'superadmin'] },
-        { name: 'Questions',     href: '/admin/questions',     icon: BookOpen,      roles: ['admin', 'superadmin'] },
-        { name: 'Companies',     href: '/admin/companies',     icon: Building2,     roles: ['admin', 'superadmin'] },
-        { name: 'Jobs',          href: '/admin/jobs',          icon: Briefcase,     roles: ['admin', 'superadmin'] },
+        { name: 'Overview',   href: '/admin',           icon: Shield,    roles: ['admin', 'superadmin'] },
+        { name: 'Users',      href: '/admin/users',     icon: Users,     roles: ['admin', 'superadmin'] },
+        { name: 'Questions',  href: '/admin/questions', icon: BookOpen,  roles: ['admin', 'superadmin'] },
+        { name: 'Companies',  href: '/admin/companies', icon: Building2, roles: ['admin', 'superadmin'] },
+        { name: 'Jobs',       href: '/admin/jobs',      icon: Briefcase, roles: ['admin', 'superadmin'] },
       ],
     },
     {
       group: 'Account',
       items: [
-        { name: 'Profile',       href: '/profile',             icon: User,          roles: ['student', 'employer', 'admin', 'superadmin'] },
-        { name: 'Resume',        href: '/profile/resume',      icon: FileText,      roles: ['student'] },
-        { name: 'Settings',      href: '/settings',            icon: Settings,      roles: ['student', 'employer', 'admin', 'superadmin'] },
+        { name: 'Profile',  href: '/profile',        icon: User,     roles: ['student', 'employer', 'admin', 'superadmin'] },
+        { name: 'Resume',   href: '/profile/resume', icon: FileText, roles: ['student'] },
+        { name: 'Settings', href: '/settings',       icon: Settings, roles: ['student', 'employer', 'admin', 'superadmin'] },
       ],
     },
   ];
 };
 
+// ─── Nav configs for guests (Engineering & MBA) ───────────────────────────────
+const ENGINEERING_GUEST_NAV = [
+  {
+    group: 'Practice',
+    color: 'blue',
+    items: [
+      { name: 'Aptitude Practice', href: '/aptitude',   icon: BookOpen  },
+      { name: 'Roadmaps',          href: '/roadmap',    icon: Map       },
+      { name: 'Companies',         href: '/companies',  icon: Building2 },
+    ],
+  },
+  {
+    group: 'Opportunities',
+    color: 'green',
+    items: [
+      { name: 'Jobs',  href: '/jobs',  icon: Briefcase },
+    ],
+  },
+  {
+    group: 'Resources',
+    color: 'purple',
+    items: [
+      { name: 'Blog', href: '/blogs', icon: FileText },
+    ],
+  },
+];
+
+const MBA_GUEST_NAV = [
+  {
+    group: 'MBA Prep',
+    color: 'violet',
+    items: [
+      { name: 'GD Practice',    href: '/mba/gd',           icon: Users      },
+      { name: 'PI Prep',        href: '/mba/pi',           icon: Target     },
+      { name: 'Case Studies',   href: '/mba/cases',        icon: BookOpen   },
+      { name: 'WAT Practice',   href: '/mba/wat',          icon: FileText   },
+      { name: 'Sector Explore', href: '/mba/sectors',      icon: Briefcase  },
+      { name: 'Guesstimates',   href: '/mba/guesstimates', icon: Calculator },
+    ],
+  },
+  {
+    group: 'Opportunities',
+    color: 'green',
+    items: [
+      { name: 'Jobs', href: '/jobs', icon: Briefcase },
+    ],
+  },
+  {
+    group: 'Resources',
+    color: 'purple',
+    items: [
+      { name: 'Blog', href: '/blogs', icon: FileText },
+    ],
+  },
+];
+
+// ─── NavGroup (logged-in users) ───────────────────────────────────────────────
 function NavGroup({ group, items, userRole, location, onNavClick }) {
-  const isGuest = !userRole;
-  const displayRole = userRole || 'student';
-  const visibleItems = items.filter(i => i.roles.includes(displayRole));
-  
+  const visibleItems = items.filter(i => i.roles.includes(userRole));
   if (visibleItems.length === 0) return null;
 
   return (
@@ -94,28 +149,24 @@ function NavGroup({ group, items, userRole, location, onNavClick }) {
       </p>
       <ul className="space-y-0.5 mt-1">
         {visibleItems.map(item => {
-          const isLocked = isGuest && !item.roles.includes('guest');
-          const isActive = !isLocked && (location.pathname === item.href ||
-            (item.href !== '/dashboard' && location.pathname.startsWith(item.href)));
-            
+          const isActive = location.pathname === item.href ||
+            (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
           return (
             <li key={item.href}>
               <Link
-                to={isLocked ? '/auth/login' : item.href}
+                to={item.href}
                 onClick={onNavClick}
                 className={`relative flex items-center gap-3 px-4 py-2.5 rounded-xl text-[14px] font-medium transition-colors ${
                   isActive
                     ? 'bg-primary/10 text-primary'
                     : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-                } ${isLocked ? 'opacity-80' : ''}`}
+                }`}
               >
-                {/* Active indicator */}
                 {isActive && (
                   <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-full" />
                 )}
                 <item.icon className="w-[18px] h-[18px] shrink-0" strokeWidth={isActive ? 2.2 : 1.8} />
                 <span className="flex-1">{item.name}</span>
-                {isLocked && <Lock className="w-4 h-4 opacity-50 shrink-0" />}
               </Link>
             </li>
           );
@@ -125,6 +176,43 @@ function NavGroup({ group, items, userRole, location, onNavClick }) {
   );
 }
 
+// ─── GuestNavGroup (public visitors) ─────────────────────────────────────────
+function GuestNavGroup({ group, items, location, onNavClick }) {
+  return (
+    <div className="mb-4">
+      <p className="px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60 select-none">
+        {group}
+      </p>
+      <ul className="space-y-0.5 mt-1">
+        {items.map(item => {
+          const isActive = location.pathname === item.href ||
+            (location.pathname.startsWith(item.href) && item.href !== '/');
+          return (
+            <li key={item.href}>
+              <Link
+                to={item.href}
+                onClick={onNavClick}
+                className={`relative flex items-center gap-3 px-4 py-2.5 rounded-xl text-[14px] font-medium transition-colors ${
+                  isActive
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                }`}
+              >
+                {isActive && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-full" />
+                )}
+                <item.icon className="w-[18px] h-[18px] shrink-0" strokeWidth={isActive ? 2.2 : 1.8} />
+                <span className="flex-1">{item.name}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+// ─── AppLayout ────────────────────────────────────────────────────────────────
 export default function AppLayout() {
   const { user, logout } = useAuthStore();
   const location = useLocation();
@@ -134,11 +222,20 @@ export default function AppLayout() {
     try { return JSON.parse(sessionStorage.getItem('dismissed_announcements') || '[]'); } catch { return []; }
   });
 
-  // Fetch announcements once on mount
+  // Guest stream preference — persisted in localStorage
+  const [guestStream, setGuestStream] = useState(() => {
+    try { return localStorage.getItem('prepster_guest_stream') || 'engineering'; } catch { return 'engineering'; }
+  });
+
+  const setGuestStreamPersist = (stream) => {
+    setGuestStream(stream);
+    try { localStorage.setItem('prepster_guest_stream', stream); } catch {}
+  };
+
   useEffect(() => {
     getAnnouncements()
       .then(data => setAnnouncements(data.data?.announcements || []))
-      .catch(() => {}); // Silent fail
+      .catch(() => {});
   }, []);
 
   const visibleAnnouncements = announcements.filter(a => !dismissedIds.includes(a._id));
@@ -149,7 +246,6 @@ export default function AppLayout() {
     try { sessionStorage.setItem('dismissed_announcements', JSON.stringify(updated)); } catch {}
   };
 
-  // Close mobile sidebar on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
@@ -158,6 +254,8 @@ export default function AppLayout() {
     user?.subscription?.plan === 'pro' &&
     user?.subscription?.status === 'active' &&
     new Date(user?.subscription?.expiresAt) > new Date();
+
+  const guestNav = guestStream === 'mba' ? MBA_GUEST_NAV : ENGINEERING_GUEST_NAV;
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -175,7 +273,7 @@ export default function AppLayout() {
         </button>
       </div>
 
-      {/* Pro upgrade nudge */}
+      {/* Pro upgrade nudge (logged-in free users) */}
       {!isPro && user?.role === 'student' && (
         <div className="mx-3 mt-4">
           <Link
@@ -189,18 +287,93 @@ export default function AppLayout() {
         </div>
       )}
 
+      {/* ── GUEST: Stream Picker ── */}
+      {!user && (
+        <div className="mx-3 mt-4 shrink-0">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/70 mb-2 px-1">
+            I'm preparing for
+          </p>
+          <div className="grid grid-cols-2 gap-1.5 bg-secondary/60 rounded-xl p-1 border border-border">
+            <button
+              onClick={() => setGuestStreamPersist('engineering')}
+              className={`flex items-center justify-center gap-1.5 rounded-lg py-2 px-2 text-xs font-bold transition-all ${
+                guestStream === 'engineering'
+                  ? 'bg-blue-500 text-white shadow-sm shadow-blue-500/30'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+              }`}
+            >
+              <GraduationCap className="w-3.5 h-3.5 shrink-0" />
+              Engineering
+            </button>
+            <button
+              onClick={() => setGuestStreamPersist('mba')}
+              className={`flex items-center justify-center gap-1.5 rounded-lg py-2 px-2 text-xs font-bold transition-all ${
+                guestStream === 'mba'
+                  ? 'bg-violet-500 text-white shadow-sm shadow-violet-500/30'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5 shrink-0" />
+              MBA
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-2">
-        {getNavConfig(user).map(({ group, items }) => (
-          <NavGroup
-            key={group}
-            group={group}
-            items={items}
-            userRole={user?.role}
-            location={location}
-            onNavClick={() => setMobileOpen(false)}
-          />
-        ))}
+        {user ? (
+          // Logged-in nav
+          getNavConfig(user).map(({ group, items }) => (
+            <NavGroup
+              key={group}
+              group={group}
+              items={items}
+              userRole={user?.role}
+              location={location}
+              onNavClick={() => setMobileOpen(false)}
+            />
+          ))
+        ) : (
+          // Guest nav — stream-specific sections
+          <>
+            {/* Track banner */}
+            <div className={`mx-2 mb-4 px-3 py-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 ${
+              guestStream === 'mba'
+                ? 'bg-violet-500/10 border-violet-500/20 text-violet-500'
+                : 'bg-blue-500/10 border-blue-500/20 text-blue-500'
+            }`}>
+              {guestStream === 'mba'
+                ? <><Users className="w-3.5 h-3.5 shrink-0" /> MBA Placement Track</>
+                : <><GraduationCap className="w-3.5 h-3.5 shrink-0" /> Engineering Placement Track</>
+              }
+            </div>
+
+            {guestNav.map(({ group, items }) => (
+              <GuestNavGroup
+                key={group}
+                group={group}
+                items={items}
+                location={location}
+                onNavClick={() => setMobileOpen(false)}
+              />
+            ))}
+
+            {/* Cross-track discovery nudge */}
+            <div className="mx-2 mt-2 mb-1">
+              <button
+                onClick={() => setGuestStreamPersist(guestStream === 'mba' ? 'engineering' : 'mba')}
+                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border border-dashed border-border text-xs text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
+              >
+                {guestStream === 'mba'
+                  ? <><GraduationCap className="w-3.5 h-3.5 shrink-0" /> Switch to Engineering Track</>
+                  : <><Users className="w-3.5 h-3.5 shrink-0" /> Switch to MBA Track</>
+                }
+                <ArrowRight className="w-3 h-3 ml-auto opacity-50" />
+              </button>
+            </div>
+          </>
+        )}
       </nav>
 
       {/* User / Guest footer */}
@@ -243,18 +416,14 @@ export default function AppLayout() {
             </div>
           </>
         ) : (
-          <div className="flex flex-col gap-3 px-1">
-            <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-4 mb-1">
-              <p className="text-xs font-bold text-primary mb-0.5">Start for Free</p>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">Join thousands of students prepping for placements.</p>
-            </div>
-            <Link to="/auth/register">
-              <Button className="w-full font-semibold">Create Free Account</Button>
+          <div className="flex flex-col gap-2 px-1">
+            <Link to="/auth/register" state={{ stream: guestStream }}>
+              <Button className="w-full font-semibold h-9">Create Free Account</Button>
             </Link>
             <Link to="/auth/login">
-              <Button variant="outline" className="w-full text-sm">Already have an account? Log in</Button>
+              <Button variant="outline" className="w-full text-sm h-9">Log in</Button>
             </Link>
-            <div className="flex items-center justify-center pt-2 border-t border-border/50">
+            <div className="flex items-center justify-center pt-2 border-t border-border/50 mt-1">
               <ThemeToggle />
             </div>
           </div>
