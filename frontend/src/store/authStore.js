@@ -12,7 +12,20 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const isRefreshEndpoint = originalRequest.url?.includes('/auth/refresh');
+    const hasToken = !!useAuthStore.getState().accessToken;
+
+    // Only attempt refresh if:
+    // 1. We got a 401
+    // 2. This isn't already a retry
+    // 3. This isn't the refresh endpoint itself (avoid infinite loop)
+    // 4. We actually had a token in memory (skip for pure guest/unauthenticated requests)
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isRefreshEndpoint &&
+      hasToken
+    ) {
       originalRequest._retry = true;
       try {
         const res = await axios.post(
