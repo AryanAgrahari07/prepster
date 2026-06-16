@@ -24,26 +24,39 @@ const getNavConfig = (user) => {
       ],
     },
     {
-      group: isMba ? 'MBA Prep' : 'Practice',
+      group: 'Core Preparation',
       items: [
         { name: isMba ? 'CAT/XAT Prep' : 'Aptitude Practice', href: '/aptitude', icon: BookOpen, roles: ['student'] },
         { name: 'Daily Challenge', href: '/aptitude/daily', icon: CalendarDays, roles: ['student'] },
-        { name: 'Analytics', href: '/aptitude/analytics', icon: BarChart3, roles: ['student'] },
-        { name: 'Leaderboard', href: '/aptitude/leaderboard', icon: Trophy, roles: ['student'] },
+        { name: isMba ? 'Consulting Tracks' : 'Company Tracks', href: '/companies', icon: Building2, roles: ['student'] },
         { name: 'Roadmaps', href: '/roadmap', icon: Map, roles: ['student'] },
-        ...(isMba ? [
-          { name: 'GD Practice',    href: '/mba/gd',             icon: Users,      roles: ['student'] },
-          { name: 'PI Prep',        href: '/mba/pi',             icon: Target,     roles: ['student'] },
-          { name: 'Case Studies',   href: '/mba/cases',          icon: BookOpen,   roles: ['student'] },
-          { name: 'WAT Practice',   href: '/mba/wat',            icon: FileText,   roles: ['student'] },
-          { name: 'Sector Explore', href: '/mba/sectors',        icon: Briefcase,  roles: ['student'] },
-          { name: 'Guesstimates',   href: '/mba/guesstimates',   icon: Calculator, roles: ['student'] },
-          { name: 'Mock Interview', href: '/mba/mock-interview',  icon: Video,      roles: ['student'] },
-          { name: 'MBA Analytics',  href: '/mba/analytics',      icon: BarChart3,  roles: ['student'] },
-        ] : []),
-        { name: isMba ? 'Consulting Tracks' : 'Companies', href: '/companies', icon: Building2, roles: ['student'] },
-        { name: 'Blog', href: '/blogs', icon: FileText, roles: ['student'] },
+      ],
+    },
+    ...(isMba ? [{
+      group: 'MBA Interviews',
+      items: [
+        { name: 'GD Practice',    href: '/mba/gd',             icon: Users,      roles: ['student'] },
+        { name: 'PI Prep',        href: '/mba/pi',             icon: Target,     roles: ['student'] },
+        { name: 'Case Studies',   href: '/mba/cases',          icon: BookOpen,   roles: ['student'] },
+        { name: 'WAT Practice',   href: '/mba/wat',            icon: FileText,   roles: ['student'] },
+        { name: 'Guesstimates',   href: '/mba/guesstimates',   icon: Calculator, roles: ['student'] },
+        { name: 'Sector Explore', href: '/mba/sectors',        icon: Briefcase,  roles: ['student'] },
+        { name: 'Mock Interview', href: '/mba/mock-interview',  icon: Video,      roles: ['student'] },
+      ]
+    }] : []),
+    {
+      group: 'Analytics & Progress',
+      items: [
+        { name: 'Performance Analytics', href: '/aptitude/analytics', icon: BarChart3, roles: ['student'] },
+        { name: 'Leaderboard', href: '/aptitude/leaderboard', icon: Trophy, roles: ['student'] },
+        ...(isMba ? [{ name: 'MBA Analytics',  href: '/mba/analytics', icon: BarChart3, roles: ['student'] }] : []),
+      ],
+    },
+    {
+      group: 'Resources',
+      items: [
         { name: 'Saved Items', href: '/saved', icon: Bookmark, roles: ['student'] },
+        { name: 'Blog & Insights', href: '/blogs', icon: FileText, roles: ['student'] },
       ],
     },
     {
