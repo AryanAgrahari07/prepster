@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import axios from 'axios';
 
 // Base Axios instance
@@ -54,64 +55,72 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-const useAuthStore = create((set, get) => ({
-  user: null,
-  accessToken: null,
-  isAuthenticated: false,
-  isHydrated: false, // Ensures we don't flash login screen before checking auth
+const useAuthStore = create(
+  persist(
+    (set, get) => ({
+      user: null,
+      accessToken: null,
+      isAuthenticated: false,
+      isHydrated: false, // Ensures we don't flash login screen before checking auth
 
-  setAccessToken: (token) => {
-    set({ accessToken: token, isAuthenticated: !!token });
-  },
+      setAccessToken: (token) => {
+        set({ accessToken: token, isAuthenticated: !!token });
+      },
 
-  setUser: (user) => {
-    set({ user });
-  },
+      setUser: (user) => {
+        set({ user });
+      },
 
-  login: async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
-    const { user, accessToken } = res.data.data;
-    set({ user, accessToken, isAuthenticated: true });
-    return res.data;
-  },
+      login: async (email, password) => {
+        const res = await api.post('/auth/login', { email, password });
+        const { user, accessToken } = res.data.data;
+        set({ user, accessToken, isAuthenticated: true });
+        return res.data;
+      },
 
-  register: async (data) => {
-    const res = await api.post('/auth/register', data);
-    return res.data;
-  },
+      register: async (data) => {
+        const res = await api.post('/auth/register', data);
+        return res.data;
+      },
 
-  logout: async (localOnly = false) => {
-    if (!localOnly) {
-      try {
-        await api.post('/auth/logout');
-      } catch (e) {
-        console.error('Logout API failed', e);
-      }
+      logout: async (localOnly = false) => {
+        if (!localOnly) {
+          try {
+            await api.post('/auth/logout');
+          } catch (e) {
+            console.error('Logout API failed', e);
+          }
+        }
+        set({ user: null, accessToken: null, isAuthenticated: false });
+      },
+
+      checkAuth: async () => {
+        try {
+          let token = get().accessToken;
+          if (!token) {
+            // No token in memory — try to refresh via HttpOnly cookie
+            const res = await axios.post(
+              `${import.meta.env.VITE_API_URL || '/v1'}/auth/refresh`,
+              {},
+              { withCredentials: true }
+            );
+            token = res.data.data.accessToken;
+            set({ accessToken: token, isAuthenticated: true });
+          }
+          // Only fetch profile if we have a valid token
+          const profileRes = await api.get('/users/me');
+          set({ user: profileRes.data.data.user, isHydrated: true, isAuthenticated: true });
+        } catch (e) {
+          // Refresh failed or profile fetch failed — treat as unauthenticated
+          set({ user: null, accessToken: null, isAuthenticated: false, isHydrated: true });
+        }
+      },
+    }),
+    {
+      name: 'prepster-auth-storage',
+      partialize: (state) => ({ accessToken: state.accessToken }),
     }
-    set({ user: null, accessToken: null, isAuthenticated: false });
-  },
-
-  checkAuth: async () => {
-    try {
-      let token = get().accessToken;
-      if (!token) {
-        // No token in memory — try to refresh via HttpOnly cookie
-        const res = await axios.post(
-          `${import.meta.env.VITE_API_URL || '/v1'}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
-        token = res.data.data.accessToken;
-        set({ accessToken: token, isAuthenticated: true });
-      }
-      // Only fetch profile if we have a valid token
-      const profileRes = await api.get('/users/me');
-      set({ user: profileRes.data.data.user, isHydrated: true, isAuthenticated: true });
-    } catch (e) {
-      // Refresh failed or profile fetch failed — treat as unauthenticated
-      set({ user: null, accessToken: null, isAuthenticated: false, isHydrated: true });
-    }
-  },
-}));
+  )
+);
 
 export default useAuthStore;
