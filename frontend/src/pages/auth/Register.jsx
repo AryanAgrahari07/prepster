@@ -64,14 +64,9 @@ export default function Register() {
         <div className="text-center">
           <div className="flex justify-center mb-6">
             <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-xl blur opacity-40 group-hover:opacity-70 transition-opacity" />
-                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-purple-500 to-blue-500 flex items-center justify-center">
-                  <Zap className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <span className="text-2xl font-bold tracking-tight font-display text-foreground">Prepster</span>
-            </Link>
+                <img src="/logo.png" alt="Prepster" className="w-10 h-10 object-contain dark:brightness-[10] dark:saturate-0 group-hover:scale-110 transition-transform" />
+                <span className="text-2xl font-bold tracking-tight font-display text-foreground">Prepster</span>
+              </Link>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Create an account

@@ -14,12 +14,7 @@ export default function StaticLayout({ children }) {
       <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/70 backdrop-blur-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-xl blur opacity-40 group-hover:opacity-70 transition-opacity" />
-              <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary via-purple-500 to-blue-500 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-            </div>
+            <img src="/logo.png" alt="Prepster" className="w-9 h-9 object-contain dark:brightness-[10] dark:saturate-0 group-hover:scale-110 transition-transform" />
             <span className="text-xl font-bold tracking-tight font-display">Prepster</span>
           </Link>
 
@@ -54,9 +49,7 @@ export default function StaticLayout({ children }) {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
-                <Zap className="w-3.5 h-3.5 text-white" />
-              </div>
+              <img src="/logo.png" alt="Prepster" className="w-7 h-7 object-contain dark:brightness-[10] dark:saturate-0" />
               <span className="font-display font-bold">Prepster</span>
             </div>
 
