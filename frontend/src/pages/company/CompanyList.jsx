@@ -186,7 +186,7 @@ export default function CompanyList() {
                   {/* Stream badge + package */}
                   <div className="space-y-2 mb-4 sm:mb-6 flex-1">
                     {/* Only show stream badge when viewing "all" tab */}
-                    {activeTab === 'all' && (
+                    {currentTab === 'all' && (
                       <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border inline-flex ${badge.class}`}>
                         {badge.label}
                       </span>
@@ -194,7 +194,7 @@ export default function CompanyList() {
                     <div className="flex justify-between items-center text-xs sm:text-sm">
                       <span className="flex items-center gap-1.5 text-muted-foreground">
                         <Package className="w-3.5 h-3.5 shrink-0" />
-                        {activeTab === 'mba' ? 'Starting CTC' : 'Fresher Package'}
+                        {currentTab === 'mba' ? 'Starting CTC' : 'Fresher Package'}
                       </span>
                       <span className="font-semibold text-green-500">{company.packageInfo?.fresher || 'Varies'}</span>
                     </div>

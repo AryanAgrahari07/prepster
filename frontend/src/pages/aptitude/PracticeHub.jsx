@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { getTopics, startSession } from '@/api/aptitude';
 import { Button } from '@/components/ui/Button';
-import { ArrowRight, Clock, FileText, BookOpen } from 'lucide-react';
+import { ArrowRight, Clock, FileText, BookOpen, Lock } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 import { SUBTOPIC_LABELS } from '@/constants';
@@ -215,6 +215,19 @@ function MockTestCard({ test, onStart, starting }) {
   );
 }
 
+// ─── Locked Feature Card ────────────────────────────────────────────────────────
+function LockedFeatureCard({ title = "Show More", desc = "Login to unlock all features and analytics." }) {
+  return (
+    <Link to="/auth/login" className="app-card-hover p-6 flex flex-col items-center justify-center gap-3 text-center border-dashed border-2 bg-secondary/5 hover:bg-secondary/10 group min-h-[220px]">
+      <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+        <Lock className="w-5 h-5 text-muted-foreground" />
+      </div>
+      <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors">{title}</h3>
+      <p className="text-xs text-muted-foreground">{desc}</p>
+    </Link>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function PracticeHub() {
   const navigate = useNavigate();
@@ -238,8 +251,11 @@ export default function PracticeHub() {
       .catch(() => setLoading(false));
   }, []);
 
+  const guestStream = localStorage.getItem('prepster_guest_stream') || 'engineering';
+  const effectiveStream = user ? user.stream : guestStream;
+
   // Route MBA students to dedicated hub (after hooks)
-  if (user?.stream === 'mba') {
+  if (effectiveStream === 'mba') {
     return <MbaPracticeHub />;
   }
 
@@ -352,6 +368,7 @@ export default function PracticeHub() {
                     topicData={topicData}
                   />
                 ))}
+                {!user && <LockedFeatureCard title="More Topics" desc="Login to unlock all aptitude topics and analytics." />}
               </div>
             </div>
           )}
@@ -371,6 +388,7 @@ export default function PracticeHub() {
                     topicData={topicData}
                   />
                 ))}
+                {!user && <LockedFeatureCard title="More CS Subjects" desc="Login to unlock all core CS subjects and interview prep." />}
               </div>
             </div>
           )}
@@ -385,6 +403,7 @@ export default function PracticeHub() {
                 {MOCK_TESTS.map(test => (
                   <MockTestCard key={test.id} test={test} onStart={handleStartMock} starting={starting} />
                 ))}
+                {!user && <LockedFeatureCard title="More Mock Tests" desc="Login to access all company-specific mock tests." />}
               </div>
               <div className="mt-8 app-card p-5 border-primary/20 bg-primary/5 flex items-start gap-3">
                 <BookOpen className="w-5 h-5 text-primary shrink-0 mt-0.5" />

@@ -18,7 +18,7 @@ export function AdPlaceholder({ slot, className = '', format = 'auto', responsiv
     }
   }, [isPro, slot]);
 
-  if (isPro) return null;
+  if (true || isPro) return null;
 
   return (
     <div className={`w-full overflow-hidden flex items-center justify-center my-4 ${className}`}>

@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { getTopics, startSession } from '@/api/aptitude';
 import { Button } from '@/components/ui/Button';
-import { ArrowRight, Clock, FileText, BookOpen, Brain } from 'lucide-react';
+import { ArrowRight, Clock, FileText, BookOpen, Brain, Lock } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 import { SUBTOPIC_LABELS } from '@/constants';
+import useAuthStore from '@/store/authStore';
 
 // ─── MBA Topic config ──────────────────────────────────────────────────────────
 const MBA_TOPICS = {
@@ -285,9 +286,23 @@ function MockTestCard({ test, onStart, starting }) {
   );
 }
 
+// ─── Locked Feature Card ────────────────────────────────────────────────────────
+function LockedFeatureCard({ title = "Show More", desc = "Login to unlock all features and analytics." }) {
+  return (
+    <Link to="/auth/login" className="app-card-hover p-6 flex flex-col items-center justify-center gap-3 text-center border-dashed border-2 bg-secondary/5 hover:bg-secondary/10 group min-h-[220px]">
+      <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+        <Lock className="w-5 h-5 text-muted-foreground" />
+      </div>
+      <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors">{title}</h3>
+      <p className="text-xs text-muted-foreground">{desc}</p>
+    </Link>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function MbaPracticeHub() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState('cat');
   const [topicData, setTopicData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -389,6 +404,7 @@ export default function MbaPracticeHub() {
                   {Object.entries(MBA_TOPICS).map(([key, cfg]) => (
                     <TopicCard key={key} topicKey={key} config={cfg} topicData={topicData} />
                   ))}
+                  {!user && <LockedFeatureCard title="More Topics" desc="Login to unlock all aptitude topics and analytics." />}
                 </div>
               </div>
             )}
@@ -403,6 +419,7 @@ export default function MbaPracticeHub() {
                   {MBA_SKILL_TOPICS.map((cfg) => (
                     <SkillCard key={cfg.key} config={cfg} />
                   ))}
+                  {!user && <LockedFeatureCard title="More Skills" desc="Login to unlock all MBA skills and interview prep." />}
                 </div>
               </div>
             )}
@@ -417,6 +434,7 @@ export default function MbaPracticeHub() {
                   {MBA_MOCK_TESTS.map(test => (
                     <MockTestCard key={test.id} test={test} onStart={handleStartMock} starting={starting} />
                   ))}
+                  {!user && <LockedFeatureCard title="More Mock Tests" desc="Login to access all consulting mock tests." />}
                 </div>
                 <div className="mt-8 app-card p-5 border-primary/20 bg-primary/5 flex items-start gap-3">
                   <BookOpen className="w-5 h-5 text-primary shrink-0 mt-0.5" />

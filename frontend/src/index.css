@@ -8,7 +8,8 @@
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
-    --primary: 262 80% 50%; /* Vibrant Purple/Indigo */
+    --primary: 262 80% 50%;
+    /* Vibrant Purple/Indigo */
     --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222 47% 11%;
@@ -75,12 +76,15 @@
     width: 6px;
     height: 6px;
   }
+
   ::-webkit-scrollbar-track {
     @apply bg-transparent;
   }
+
   ::-webkit-scrollbar-thumb {
     @apply bg-border rounded-full;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-muted-foreground/30;
   }
@@ -92,10 +96,12 @@
 }
 
 @layer components {
+
   /* Consistent card used across the entire app */
   .app-card {
     @apply bg-card border border-border rounded-2xl;
   }
+
   .app-card-hover {
     @apply app-card hover:border-primary/30 transition-colors duration-200;
   }
@@ -104,6 +110,7 @@
   .glass-card {
     @apply bg-card/30 backdrop-blur-xl border border-border/50 rounded-3xl;
   }
+
   .glass-card:hover {
     @apply border-primary/20 shadow-xl shadow-primary/5;
   }
@@ -111,12 +118,18 @@
 
 /* Smooth gradient animation for hero text */
 @keyframes gradient-x {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .animate-gradient-x {
   background-size: 200% auto;
   animation: gradient-x 6s ease infinite;
 }
-
