@@ -78,6 +78,26 @@ export default function QuizSession() {
     return () => clearInterval(interval);
   }, [submitting]);
 
+  // Ensure all hooks are declared before any early returns!
+  const answeredCount = Object.keys(answers).length;
+
+  const handleFinish = async (autoSubmit = false) => {
+    const totalQs = session?.questions?.length || 0;
+    if (!autoSubmit && !window.confirm(`You've answered ${answeredCount} of ${totalQs} questions. Submit the test?`)) return;
+    try {
+      setSubmitting(true);
+      await finishSession(id);
+      navigate(`/aptitude/results/${id}`, { replace: true });
+    } catch (err) {
+      console.error(err);
+      if (!autoSubmit) setSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    handleFinishRef.current = handleFinish;
+  }, [handleFinish]);
+
   const formatTime = (secs) => {
     if (secs === null) return null;
     const m = Math.floor(secs / 60);
@@ -93,11 +113,10 @@ export default function QuizSession() {
       </div>
     );
   }
-  if (!session) return null;
+  if (!session || !session.questions || session.questions.length === 0) return null;
 
-  const currentQ = session.questions[currentIndex];
-  const questionData = currentQ?.questionId;
-  const answeredCount = Object.keys(answers).length;
+  const currentQ = session.questions[currentIndex] || {};
+  const questionData = currentQ.questionId || {};
 
   const handleSelectOption = async (optionLabel) => {
     // Measure actual elapsed time since question was displayed
@@ -140,22 +159,7 @@ export default function QuizSession() {
     // Timer resets via the useEffect above
   };
 
-  const handleFinish = async (autoSubmit = false) => {
-    if (!autoSubmit && !window.confirm(`You've answered ${answeredCount} of ${session.questions.length} questions. Submit the test?`)) return;
-    try {
-      setSubmitting(true);
-      await finishSession(id);
-      navigate(`/aptitude/results/${id}`, { replace: true });
-    } catch (err) {
-      console.error(err);
-      if (!autoSubmit) setSubmitting(false);
-    }
-  };
-
-  useEffect(() => {
-    handleFinishRef.current = handleFinish;
-  }, [handleFinish]);
-
+  // handleFinish and its useEffect were moved up to avoid Rule of Hooks violation
   return (
     <div className="max-w-4xl mx-auto flex flex-col h-full">
       {/* Header */}
