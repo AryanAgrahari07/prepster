@@ -634,7 +634,7 @@ router.get('/revenue', async (req, res, next) => {
       success: true,
       data: {
         activeProCount,
-        estimatedMRR: activeProCount * 299, // Rs. 299/month (monthly plan assumed)
+        estimatedMRR: activeProCount * 99, // Rs. 99/month (monthly plan assumed)
         monthlyConversions,
       },
     });

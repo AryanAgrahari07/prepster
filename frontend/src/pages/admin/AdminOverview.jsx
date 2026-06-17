@@ -46,7 +46,7 @@ export default function AdminOverview() {
   }, []);
 
   const conversionRate = stats ? ((stats.proUsers / (stats.totalUsers || 1)) * 100).toFixed(1) : '0';
-  const mrr = stats ? stats.proUsers * 299 : 0; // rough estimate
+  const mrr = stats ? stats.proUsers * 99 : 0; // rough estimate
 
   const pieData = stats ? [
     { name: 'Pro Users', value: stats.proUsers },

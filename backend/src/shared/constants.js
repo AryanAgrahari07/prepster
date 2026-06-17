@@ -14,7 +14,7 @@ const PLANS = {
 
 const PLAN_DETAILS = {
   free: { label: 'Free', price: 0, dailyQuestionLimit: 20 },
-  'pro-monthly': { label: 'Pro Monthly', price: 29900, durationDays: 30 },
+  'pro-monthly': { label: 'Pro Monthly', price: 9900, durationDays: 30 },
   'pro-annual': { label: 'Pro Annual', price: 79900, durationDays: 365 },
 };
 

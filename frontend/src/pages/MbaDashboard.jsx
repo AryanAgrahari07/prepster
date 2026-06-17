@@ -59,7 +59,7 @@ export default function MbaDashboard() {
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-base text-foreground">Upgrade to Prepster Pro</h3>
             <p className="text-muted-foreground text-sm mt-0.5">
-              Unlock unlimited CAT practice, all consulting tracks, direct job apply, and analytics. Starting ₹299/month.
+              Unlock unlimited CAT practice, all consulting tracks, direct job apply, and analytics. Starting ₹99/month.
             </p>
           </div>
           <Link to="/upgrade" className="shrink-0 w-full sm:w-auto">

@@ -70,7 +70,7 @@ export default function PaywallModal({ isOpen, onClose, message }) {
         {/* Pricing hint */}
         <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 text-center">
           <p className="text-2xl font-bold">₹799<span className="text-base font-normal text-muted-foreground">/year</span></p>
-          <p className="text-xs text-muted-foreground mt-1">or ₹299/month — cancel anytime</p>
+          <p className="text-xs text-muted-foreground mt-1">or ₹99/month — cancel anytime</p>
         </div>
 
         <div className="space-y-2">

@@ -30,7 +30,7 @@ router.post('/create-order', authenticate, async (req, res, next) => {
     const { planId } = req.body;
     let amount = 0;
     
-    if (planId === 'pro_monthly') amount = 299 * 100; // in paise
+    if (planId === 'pro_monthly') amount = 99 * 100; // in paise
     else if (planId === 'pro_annual') amount = 799 * 100;
     else throw new AppError('Invalid plan ID', 400, 4000);
 

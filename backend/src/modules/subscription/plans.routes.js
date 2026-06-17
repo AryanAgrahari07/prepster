@@ -11,7 +11,7 @@ const PLANS = [
   {
     id: 'pro_monthly',
     name: 'Pro Monthly',
-    price: 299,
+    price: 99,
     features: ['Unlimited Practice', 'All Company Tracks', 'Direct Apply to Jobs', 'Performance Analytics', 'Ad-free'],
   },
   {
