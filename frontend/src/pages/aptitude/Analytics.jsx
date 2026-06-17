@@ -18,7 +18,7 @@ export default function AnalyticsDashboard() {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    if (user?.subscription?.plan !== 'pro') {
+    if (!user?.isPro) {
       setLoading(false);
       return;
     }
@@ -29,7 +29,7 @@ export default function AnalyticsDashboard() {
     }).catch(console.error);
   }, [user]);
 
-  if (user?.subscription?.plan !== 'pro') {
+  if (!user?.isPro) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center h-[60vh] bg-secondary/5 rounded-3xl border border-border/50">
         <div className="w-24 h-24 bg-gradient-to-tr from-primary/20 to-blue-500/20 rounded-full flex items-center justify-center mb-6 relative">

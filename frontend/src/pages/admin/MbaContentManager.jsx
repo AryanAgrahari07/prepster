@@ -15,7 +15,7 @@ const TYPES = {
     label: 'GD Topics',
     icon: MessageSquare,
     color: 'text-blue-400',
-    apiBase: '/v1/admin/mba/gd',
+    apiBase: '/admin/mba/gd',
     fields: [
       { key: 'title',      label: 'Title',      type: 'text',   required: true },
       { key: 'category',   label: 'Category',   type: 'select', options: ['social', 'economic', 'political', 'technology', 'environment', 'abstract', 'other'], required: true },
@@ -28,7 +28,7 @@ const TYPES = {
     label: 'PI Questions',
     icon: User,
     color: 'text-purple-400',
-    apiBase: '/v1/admin/mba/pi',
+    apiBase: '/admin/mba/pi',
     fields: [
       { key: 'question',  label: 'Question',   type: 'textarea', required: true },
       { key: 'type',      label: 'Type',       type: 'select', options: ['personal', 'situational', 'competency', 'stress', 'industry'], required: true },
@@ -40,7 +40,7 @@ const TYPES = {
     label: 'Case Studies',
     icon: Briefcase,
     color: 'text-yellow-400',
-    apiBase: '/v1/admin/mba/cases',
+    apiBase: '/admin/mba/cases',
     fields: [
       { key: 'title',     label: 'Title',      type: 'text',    required: true },
       { key: 'sector',    label: 'Sector',     type: 'select',  options: ['consulting', 'fmcg', 'finance', 'technology', 'healthcare', 'retail', 'other'], required: true },
@@ -55,7 +55,7 @@ const TYPES = {
     label: 'WAT Topics',
     icon: PenTool,
     color: 'text-green-400',
-    apiBase: '/v1/admin/mba/wat',
+    apiBase: '/admin/mba/wat',
     fields: [
       { key: 'title',     label: 'Prompt Title', type: 'text',   required: true },
       { key: 'prompt',    label: 'Full Prompt',  type: 'textarea', required: true },
@@ -68,7 +68,7 @@ const TYPES = {
     label: 'Guesstimates',
     icon: Calculator,
     color: 'text-orange-400',
-    apiBase: '/v1/admin/mba/guesstimates',
+    apiBase: '/admin/mba/guesstimates',
     fields: [
       { key: 'title',      label: 'Title',       type: 'text',   required: true },
       { key: 'question',   label: 'Question',    type: 'textarea', required: true },
@@ -84,7 +84,7 @@ const TYPES = {
     label: 'Sectors',
     icon: Map,
     color: 'text-pink-400',
-    apiBase: '/v1/admin/mba/sectors',
+    apiBase: '/admin/mba/sectors',
     fields: [
       { key: 'name',        label: 'Name',        type: 'text',   required: true },
       { key: 'slug',        label: 'Slug',        type: 'text',   required: true },

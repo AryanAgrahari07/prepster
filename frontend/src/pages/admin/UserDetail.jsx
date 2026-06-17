@@ -37,15 +37,36 @@ export default function UserDetail() {
     }
   };
 
+  const [proLoading, setProLoading] = useState(false);
+  const [proError, setProError] = useState('');
+
   const handleGrantPro = async () => {
-    if (!window.confirm('Grant 1 year Pro access?')) return;
+    if (!window.confirm('Grant 1 year Pro access to this user?')) return;
+    setProLoading(true);
+    setProError('');
     try {
       await updateUser(id, { plan: 'pro' });
-      // Refresh to get new dates
       const res = await getUserById(id);
       setData(res.data);
     } catch (err) {
-      console.error(err);
+      setProError(err.response?.data?.error?.message || 'Failed to grant Pro access.');
+    } finally {
+      setProLoading(false);
+    }
+  };
+
+  const handleRevokePro = async () => {
+    if (!window.confirm('Revoke Pro access and downgrade to Free?')) return;
+    setProLoading(true);
+    setProError('');
+    try {
+      await updateUser(id, { plan: 'free' });
+      const res = await getUserById(id);
+      setData(res.data);
+    } catch (err) {
+      setProError(err.response?.data?.error?.message || 'Failed to revoke Pro access.');
+    } finally {
+      setProLoading(false);
     }
   };
 
@@ -142,15 +163,25 @@ export default function UserDetail() {
                     <span className="text-sm font-medium">Expires</span>
                     <span className="text-xs text-muted-foreground">{new Date(user.subscription?.expiresAt).toLocaleDateString()}</span>
                   </div>
+                  <Button onClick={handleRevokePro} className="w-full mt-2" variant="outline" disabled={proLoading}>
+                    {proLoading ? 'Updating…' : 'Revoke Pro Access'}
+                  </Button>
                 </>
               )}
               {user.subscription?.plan !== 'pro' && (
-                <Button onClick={handleGrantPro} className="w-full mt-2" variant="outline">
-                  <Crown className="w-4 h-4 mr-2 text-primary" /> Grant Pro Access
+                <Button onClick={handleGrantPro} className="w-full mt-2" variant="outline" disabled={proLoading}>
+                  <Crown className="w-4 h-4 mr-2 text-primary" />
+                  {proLoading ? 'Granting…' : 'Grant Pro Access'}
                 </Button>
+              )}
+              {proError && (
+                <p className="text-xs text-destructive bg-destructive/10 border border-destructive/20 rounded-lg px-3 py-2 mt-1">
+                  {proError}
+                </p>
               )}
             </div>
           </div>
+
 
           <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-6 shadow-sm">
             <h3 className="font-bold text-destructive border-b border-destructive/20 pb-2 mb-4 flex items-center gap-2">

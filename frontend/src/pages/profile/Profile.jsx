@@ -121,7 +121,7 @@ export default function Profile() {
       }
 
       const res = await api.patch('/users/me', payload);
-      setUser({ ...user, profile: res.data.data.user.profile });
+      setUser({ ...user, profile: res.data.data.user.profile, stream: res.data.data.user.stream });
       
       const resetPayload = { ...payload };
       if (resetPayload.targetCompanies) resetPayload.targetCompanies = resetPayload.targetCompanies.join(', ');

@@ -69,11 +69,11 @@ export default function QuizResult() {
                 <div className="flex-1 space-y-4">
                   <div>
                     <span className="text-xs font-semibold uppercase text-muted-foreground tracking-wider mb-2 block">Question {idx + 1}</span>
-                    <p className="text-base font-medium whitespace-pre-wrap">{qData.text}</p>
+                    <p className="text-base font-medium whitespace-pre-wrap">{qData?.text || 'Question text unavailable (it may have been replaced by the adaptive engine)'}</p>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {qData.options.map((opt) => (
+                    {qData?.options?.map((opt) => (
                       <div 
                         key={opt.label}
                         className={`flex items-center p-3 rounded-lg border ${
@@ -88,10 +88,12 @@ export default function QuizResult() {
                     ))}
                   </div>
 
-                  <div className="bg-primary/5 border border-primary/20 p-4 rounded-lg mt-4">
-                    <p className="text-sm font-semibold text-primary mb-1">Explanation</p>
-                    <p className="text-sm text-muted-foreground">{qData.explanation}</p>
-                  </div>
+                  {qData?.explanation && (
+                    <div className="bg-primary/5 border border-primary/20 p-4 rounded-lg mt-4">
+                      <p className="text-sm font-semibold text-primary mb-1">Explanation</p>
+                      <p className="text-sm text-muted-foreground">{qData.explanation}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { TRACKS } from '@/constants/roadmaps';
-import { ArrowRight, Clock, Briefcase, Map, LayoutList, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Clock, Briefcase, LayoutList } from 'lucide-react';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 import SEO from '@/components/seo/SEO';
 
@@ -20,7 +20,7 @@ export default function Roadmap() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto pb-24 px-4 sm:px-6 lg:px-8 space-y-16 mt-8">
+    <div className="max-w-7xl mx-auto pb-16 px-4 sm:px-6 lg:px-8 space-y-6">
       <SEO 
         title="Tech Career Roadmaps | Prepster" 
         description="Step-by-step career roadmaps for Software Engineering, Frontend, Backend, and Data Science."
@@ -34,17 +34,13 @@ export default function Roadmap() {
           "description": "Step-by-step career roadmaps for Software Engineering, Frontend, Backend, and Data Science."
         }}
       />
-      {/* Clean Hero Section */}
-      <div className="max-w-3xl mx-auto text-center space-y-6">
-        <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-2xl mb-2">
-          <Map className="w-8 h-8 text-primary" strokeWidth={1.5} />
-        </div>
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
+      {/* Page Header — compact, matching CompanyList / AptitudePractice style */}
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
           Career Roadmaps
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-          Step-by-step learning paths curated for modern tech roles. 
-          Follow a structured journey from absolute beginner to job-ready professional.
+        <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+          Step-by-step learning paths curated for modern tech roles. Follow a structured journey from beginner to job-ready.
         </p>
       </div>
 

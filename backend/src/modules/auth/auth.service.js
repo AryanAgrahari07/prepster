@@ -11,6 +11,24 @@ const ACCESS_EXPIRY = process.env.JWT_ACCESS_EXPIRY || '15m';
 const REFRESH_EXPIRY = process.env.JWT_REFRESH_EXPIRY || '7d';
 const REFRESH_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
+// ─── Email Normalizer ─────────────────────────────────────────────────────────
+// Gmail (and Googlemail) ignores dots in the local part of the address, so
+// "aryan.agrahari.52666@gmail.com" === "aryanagrahari52666@gmail.com".
+// We strip dots from the local part for these domains to produce a single
+// canonical address before any DB lookup or user creation.
+const normalizeEmail = (raw) => {
+  if (!raw || typeof raw !== 'string') return raw;
+  const lower = raw.trim().toLowerCase();
+  const [local, domain] = lower.split('@');
+  if (!domain) return lower;
+  if (domain === 'gmail.com' || domain === 'googlemail.com') {
+    // Remove all dots from the local part (Gmail ignores them)
+    return `${local.replace(/\./g, '')}@${domain}`;
+  }
+  return lower;
+};
+
+
 // ─── Token Helpers ────────────────────────────────────────────────────────────
 const generateAccessToken = (userId, role) =>
   jwt.sign({ userId, role }, process.env.JWT_ACCESS_SECRET, { expiresIn: ACCESS_EXPIRY });
@@ -30,6 +48,7 @@ const deleteRefreshToken = async (userId) => {
 
 // ─── Register ─────────────────────────────────────────────────────────────────
 const register = async ({ firstName, lastName, email, password, college, branch, graduationYear }) => {
+  email = normalizeEmail(email);
   const existing = await User.findOne({ email }).lean();
   if (existing) {
     throw new AppError('An account with this email already exists', 409, 4009, 'email');
@@ -63,6 +82,7 @@ const verifyEmail = async (token) => {
 
 // ─── Login ────────────────────────────────────────────────────────────────────
 const login = async ({ email, password }) => {
+  email = normalizeEmail(email);
   const user = await User.findOne({ email, isDeleted: false });
   if (!user) throw AppError.fromAppError(APP_ERRORS.INVALID_TOKEN);
 
@@ -118,6 +138,7 @@ const logout = async (userId) => {
 
 // ─── Forgot Password ──────────────────────────────────────────────────────────
 const forgotPassword = async (email) => {
+  email = normalizeEmail(email);
   const user = await User.findOne({ email, isDeleted: false }).lean();
   if (!user) return null; // Silent fail — don't reveal if email exists
 
@@ -143,6 +164,7 @@ const resetPassword = async (token, newPassword) => {
 
 // ─── Google OAuth upsert ──────────────────────────────────────────────────────
 const findOrCreateGoogleUser = async ({ googleId, email, firstName, lastName, avatar }) => {
+  email = normalizeEmail(email);
   let user = await User.findOne({ $or: [{ googleId }, { email }] });
 
   if (user) {

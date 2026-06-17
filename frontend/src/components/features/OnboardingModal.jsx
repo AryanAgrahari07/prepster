@@ -38,9 +38,7 @@ export default function OnboardingModal() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Redirect or hide if onboarding is already completed
-  if (!user || user.onboardingCompleted) return null;
-
+  // ⚠️ Hooks MUST be called before any early return (Rules of Hooks)
   const { register: regMba, handleSubmit: handleMbaSubmit, formState: { errors: mbaErrors } } = useForm({
     resolver: zodResolver(mbaSchema),
   });
@@ -48,6 +46,9 @@ export default function OnboardingModal() {
   const { register: regEng, handleSubmit: handleEngSubmit, formState: { errors: engErrors } } = useForm({
     resolver: zodResolver(engineeringSchema),
   });
+
+  // Hide if not logged in or onboarding already done
+  if (!user || user.onboardingCompleted) return null;
 
   const onStreamSelect = (selectedStream) => {
     setStream(selectedStream);

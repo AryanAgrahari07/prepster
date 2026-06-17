@@ -9,7 +9,7 @@ import SEO from '@/components/seo/SEO';
 const TYPES = {
   gd: {
     label: 'GD Topic',
-    apiBase: '/v1/admin/mba/gd',
+    apiBase: '/admin/mba/gd',
     fields: [
       { key: 'title',       label: 'Title',       type: 'text',    required: true },
       { key: 'category',    label: 'Category',    type: 'select',  required: true,
@@ -22,7 +22,7 @@ const TYPES = {
   },
   pi: {
     label: 'PI Question',
-    apiBase: '/v1/admin/mba/pi',
+    apiBase: '/admin/mba/pi',
     fields: [
       { key: 'question',    label: 'Question',    type: 'textarea', required: true },
       { key: 'type',        label: 'Type',        type: 'select',   required: true,
@@ -33,7 +33,7 @@ const TYPES = {
   },
   cases: {
     label: 'Case Study',
-    apiBase: '/v1/admin/mba/cases',
+    apiBase: '/admin/mba/cases',
     fields: [
       { key: 'title',       label: 'Title',       type: 'text',    required: true },
       { key: 'sector',      label: 'Sector',      type: 'select',  required: true,
@@ -49,7 +49,7 @@ const TYPES = {
   },
   wat: {
     label: 'WAT Topic',
-    apiBase: '/v1/admin/mba/wat',
+    apiBase: '/admin/mba/wat',
     fields: [
       { key: 'title',         label: 'Prompt Title',   type: 'text',    required: true },
       { key: 'prompt',        label: 'Full Prompt',    type: 'textarea', required: true },
@@ -60,7 +60,7 @@ const TYPES = {
   },
   guesstimates: {
     label: 'Guesstimate',
-    apiBase: '/v1/admin/mba/guesstimates',
+    apiBase: '/admin/mba/guesstimates',
     fields: [
       { key: 'title',       label: 'Title',       type: 'text',   required: true },
       { key: 'question',    label: 'Question',    type: 'textarea', required: true },
@@ -77,7 +77,7 @@ const TYPES = {
   },
   sectors: {
     label: 'Sector',
-    apiBase: '/v1/admin/mba/sectors',
+    apiBase: '/admin/mba/sectors',
     fields: [
       { key: 'name',        label: 'Name',        type: 'text',    required: true },
       { key: 'slug',        label: 'Slug',        type: 'text',    required: true },

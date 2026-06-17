@@ -154,6 +154,9 @@ router.patch('/users/:id', async (req, res, next) => {
         updates['subscription.status'] = 'active';
         updates['subscription.startedAt'] = new Date();
         updates['subscription.expiresAt'] = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+      } else if (req.body.plan === 'free') {
+        updates['subscription.status'] = 'cancelled';
+        updates['subscription.expiresAt'] = null;
       }
     }
     if (req.body.subscriptionStatus) updates['subscription.status'] = req.body.subscriptionStatus;
@@ -161,7 +164,8 @@ router.patch('/users/:id', async (req, res, next) => {
       updates.isDeleted = req.body.isDeleted;
       if (req.body.isDeleted) updates.deletedAt = new Date();
     }
-    const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true }).select('-passwordHash');
+    // Must use $set so dot-notation nested paths (e.g. subscription.plan) are applied correctly
+    const user = await User.findByIdAndUpdate(req.params.id, { $set: updates }, { new: true }).select('-passwordHash');
     if (!user) return res.status(404).json({ success: false, error: { code: 4004, message: 'User not found' } });
     res.json({ success: true, data: { user } });
   } catch (err) { next(err); }
@@ -171,9 +175,11 @@ router.patch('/users/:id', async (req, res, next) => {
 router.delete('/users/:id', async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, {
-      isDeleted: true,
-      deletedAt: new Date(),
-      'subscription.status': 'cancelled',
+      $set: {
+        isDeleted: true,
+        deletedAt: new Date(),
+        'subscription.status': 'cancelled',
+      }
     }, { new: true });
     if (!user) return res.status(404).json({ success: false, error: { code: 4004, message: 'User not found' } });
     res.json({ success: true, message: 'User banned successfully' });
@@ -801,11 +807,14 @@ function mbaList(Model, extraFilter = {}) {
   return async (req, res, next) => {
     try {
       const page  = parseInt(req.query.page)  || 1;
-      const limit = parseInt(req.query.limit) || 20;
+      const limit = parseInt(req.query.limit) || 50;
       const skip  = (page - 1) * limit;
+      // Admin view: show ALL items (active + inactive) unless caller specifies
       const filter = { ...extraFilter };
       if (req.query.difficulty) filter.difficulty = req.query.difficulty;
       if (req.query.category)   filter.category   = req.query.category;
+      // Optional: filter by active status if explicitly requested
+      if (req.query.isActive !== undefined) filter.isActive = req.query.isActive === 'true';
 
       const [items, total] = await Promise.all([
         Model.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
@@ -815,6 +824,7 @@ function mbaList(Model, extraFilter = {}) {
     } catch (err) { next(err); }
   };
 }
+
 
 // ── GD Topics ──────────────────────────────────────────────────────────────────
 router.get('/mba/gd',          mbaList(GdTopic));

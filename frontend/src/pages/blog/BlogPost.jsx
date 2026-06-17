@@ -7,9 +7,9 @@ import SEO from '@/components/seo/SEO';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 
 const getDefaultImage = (slug) => {
-  // Using Picsum with the blog slug as a seed guarantees a unique, 
-  // consistent, high-quality image for every single blog post.
-  return `https://picsum.photos/seed/${slug}/1200/600?grayscale&blur=2`;
+  // Using Picsum with the blog slug as a seed guarantees a unique,
+  // consistent, high-quality colourful image for every single blog post.
+  return `https://picsum.photos/seed/${slug}/1200/600`;
 };
 
 // Very basic Markdown parser for bold, italics, headings, and lists
