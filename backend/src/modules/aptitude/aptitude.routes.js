@@ -130,19 +130,7 @@ router.post('/sessions', authenticate, async (req, res, next) => {
     const { sessionType = SESSION_TYPES.PRACTICE, topic, subTopic, difficulty, limit = 10, companySlug, timeLimitSeconds } = req.body;
 
     // ── Freemium session limit enforcement ──
-    const isPro =
-      req.user.subscription?.plan === PLANS.PRO &&
-      req.user.subscription?.status === 'active' &&
-      new Date(req.user.subscription?.expiresAt) > new Date();
-
     let limitToUse = parseInt(limit) || 10;
-
-    if (!isPro) {
-      // Free users are capped at 10 questions per session max
-      if (limitToUse > 10) {
-        limitToUse = 10;
-      }
-    }
 
     const filter = { isActive: true };
     if (topic) filter.topic = topic;
