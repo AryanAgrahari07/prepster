@@ -78,48 +78,55 @@ function mapTopic(topic, subTopic, tagsArray = []) {
   return TOPICS.QUANTITATIVE; // Absolute fallback
 }
 
+const MBA_COMPANIES_FILE = path.join(SCRAPER_OUT_DIR, 'mba_companies.json');
+
 // ── Seed Companies ────────────────────────────────────────────────────────────
 async function seedCompanies() {
   console.log('\n📌 Seeding Companies...');
 
-  if (!fs.existsSync(COMPANIES_FILE)) {
-    console.log('⚠ companies.json not found at:', COMPANIES_FILE);
-    return;
-  }
-
-  const data = JSON.parse(fs.readFileSync(COMPANIES_FILE, 'utf-8'));
+  const files = [COMPANIES_FILE, MBA_COMPANIES_FILE];
   let upserted = 0;
 
-  for (const comp of data) {
-    await Company.findOneAndUpdate(
-      { slug: comp.slug },
-      {
-        name: comp.name,
-        logo: comp.logo || '',
-        sector: comp.sector || '',
-        hiringProcess: {
-          overview: comp.hiringOverview || '',
-          rounds: (comp.rounds || []).map(r => ({
-            name: r.name,
-            description: r.description,
-            duration: r.duration ? `${r.duration} mins` : '',
-            questionsCount: r.questionCount ? `${r.questionCount} Qs` : ''
-          }))
+  for (const file of files) {
+    if (!fs.existsSync(file)) {
+      console.log('⚠ companies file not found at:', file);
+      continue;
+    }
+
+    const data = JSON.parse(fs.readFileSync(file, 'utf-8'));
+
+    for (const comp of data) {
+      await Company.findOneAndUpdate(
+        { slug: comp.slug },
+        {
+          name: comp.name,
+          logo: comp.logo || '',
+          sector: comp.sector || '',
+          targetStream: comp.targetStream || 'engineering',
+          hiringProcess: {
+            overview: comp.hiringOverview || '',
+            rounds: (comp.rounds || []).map(r => ({
+              name: r.name,
+              description: r.description,
+              duration: r.duration ? `${r.duration} mins` : '',
+              questionsCount: r.questionCount ? `${r.questionCount} Qs` : ''
+            }))
+          },
+          selectionCriteria: {
+            minCGPA: comp.selectionCriteria?.minCGPA || null,
+            tenthPercent: comp.selectionCriteria?.tenth || null,
+            twelfthPercent: comp.selectionCriteria?.twelfth || null,
+            backlogs: comp.selectionCriteria?.backlogs || '',
+            branches: comp.selectionCriteria?.eligibleBranches || [],
+            batchYears: (comp.selectionCriteria?.eligibleBatches || []).map(Number).filter(n => !isNaN(n))
+          },
+          packageInfo: comp.packages || {},
+          isActive: true,
         },
-        selectionCriteria: {
-          minCGPA: comp.selectionCriteria?.minCGPA || null,
-          tenthPercent: comp.selectionCriteria?.tenth || null,
-          twelfthPercent: comp.selectionCriteria?.twelfth || null,
-          backlogs: comp.selectionCriteria?.backlogs || '',
-          branches: comp.selectionCriteria?.eligibleBranches || [],
-          batchYears: (comp.selectionCriteria?.eligibleBatches || []).map(Number).filter(n => !isNaN(n))
-        },
-        packageInfo: comp.packages || {},
-        isActive: true,
-      },
-      { upsert: true, new: true }
-    );
-    upserted++;
+        { upsert: true, new: true }
+      );
+      upserted++;
+    }
   }
   console.log(`✅ Upserted ${upserted} companies.`);
 }

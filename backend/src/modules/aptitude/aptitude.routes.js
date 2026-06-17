@@ -135,13 +135,16 @@ router.post('/sessions', authenticate, async (req, res, next) => {
       req.user.subscription?.status === 'active' &&
       new Date(req.user.subscription?.expiresAt) > new Date();
 
+    let redis, dailyKey, current;
+    let limitToUse = parseInt(limit) || 10;
+
     if (!isPro) {
       // Use Redis counter as the source of truth (faster, and reset by cron)
-      const redis = getRedis();
-      const dailyKey = `daily_q:${req.user._id}`;
-      const current = parseInt(await redis.get(dailyKey) || '0');
+      redis = getRedis();
+      dailyKey = `daily_q:${req.user._id}`;
+      current = parseInt(await redis.get(dailyKey) || '0');
 
-      if (current + parseInt(limit) > FREE_DAILY_QUESTION_LIMIT) {
+      if (current >= FREE_DAILY_QUESTION_LIMIT) {
         throw new AppError(
           `Daily free limit of ${FREE_DAILY_QUESTION_LIMIT} questions reached. Upgrade to Pro for unlimited practice.`,
           403,
@@ -149,9 +152,11 @@ router.post('/sessions', authenticate, async (req, res, next) => {
         );
       }
 
-      // Increment counter (TTL = seconds until midnight IST)
-      const ttl = secondsUntilMidnightIST();
-      await redis.setex(dailyKey, ttl, String(current + parseInt(limit)));
+      // Cap the requested limit to whatever is remaining
+      const remaining = FREE_DAILY_QUESTION_LIMIT - current;
+      if (limitToUse > remaining) {
+        limitToUse = remaining;
+      }
     }
 
     const filter = { isActive: true };
@@ -162,11 +167,17 @@ router.post('/sessions', authenticate, async (req, res, next) => {
 
     const questions = await Question.aggregate([
       { $match: filter },
-      { $sample: { size: parseInt(limit) } },
+      { $sample: { size: limitToUse } },
       { $project: { _id: 1 } }
     ]);
 
     if (questions.length === 0) throw new AppError('No questions found for the selected criteria', 404, 4004);
+
+    if (!isPro) {
+      // Increment counter strictly by the actual number of questions returned
+      const ttl = secondsUntilMidnightIST();
+      await redis.setex(dailyKey, ttl, String(current + questions.length));
+    }
 
     const session = await QuizSession.create({
       userId: req.user._id,
