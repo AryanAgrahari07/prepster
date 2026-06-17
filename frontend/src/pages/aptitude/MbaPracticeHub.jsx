@@ -252,9 +252,19 @@ function SkillCard({ config }) {
 }
 
 // ─── Mock Test Card ───────────────────────────────────────────────────────────
-function MockTestCard({ test, onStart, starting }) {
+function MockTestCard({ test, onStart, starting, isLocked }) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (isLocked) {
+      navigate('/upgrade');
+    } else {
+      onStart(test);
+    }
+  };
+
   return (
-    <div className="app-card p-6 flex flex-col gap-4">
+    <div className={`app-card p-6 flex flex-col gap-4 relative ${isLocked ? 'opacity-90' : ''}`}>
       <div className="flex items-center justify-between">
         <span className="text-3xl">{test.icon}</span>
         <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
@@ -262,7 +272,10 @@ function MockTestCard({ test, onStart, starting }) {
         </span>
       </div>
       <div>
-        <h3 className="font-bold text-base text-card-foreground">{test.title}</h3>
+        <h3 className="font-bold text-base text-card-foreground flex items-center gap-2">
+          {test.title}
+          {isLocked && <Lock className="w-4 h-4 text-muted-foreground" />}
+        </h3>
         <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{test.desc}</p>
       </div>
 
@@ -276,11 +289,15 @@ function MockTestCard({ test, onStart, starting }) {
       </div>
 
       <button
-        onClick={() => onStart(test)}
-        disabled={starting}
-        className="w-full mt-auto py-2.5 rounded-xl text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/15 border border-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        onClick={handleClick}
+        disabled={starting && !isLocked}
+        className={`w-full mt-auto py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+          isLocked
+            ? 'bg-secondary/50 text-muted-foreground border-border hover:bg-secondary/80'
+            : 'text-primary bg-primary/10 hover:bg-primary/15 border border-primary/20'
+        }`}
       >
-        {starting ? 'Starting…' : '▶ Start Mock Test'}
+        {starting && !isLocked ? 'Starting…' : isLocked ? <><Lock className="w-4 h-4" /> Unlock with Pro</> : '▶ Start Mock Test'}
       </button>
     </div>
   );
@@ -431,10 +448,13 @@ export default function MbaPracticeHub() {
                   Placement pattern mocks for top companies. Sectional tests for targeted improvement.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {MBA_MOCK_TESTS.map(test => (
-                    <MockTestCard key={test.id} test={test} onStart={handleStartMock} starting={starting} />
-                  ))}
-                  {!user && <LockedFeatureCard title="More Mock Tests" desc="Login to access all consulting mock tests." />}
+                  {MBA_MOCK_TESTS.map((test, index) => {
+                    const isPro = user?.subscription?.plan === 'pro' && user?.subscription?.status === 'active';
+                    const isLocked = !isPro && index > 0;
+                    return (
+                      <MockTestCard key={test.id} test={test} onStart={handleStartMock} starting={starting} isLocked={isLocked} />
+                    );
+                  })}
                 </div>
                 <div className="mt-8 app-card p-5 border-primary/20 bg-primary/5 flex items-start gap-3">
                   <BookOpen className="w-5 h-5 text-primary shrink-0 mt-0.5" />

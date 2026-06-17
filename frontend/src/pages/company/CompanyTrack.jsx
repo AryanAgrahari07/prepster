@@ -46,13 +46,12 @@ export default function CompanyTrack() {
     });
   }, [slug, navigate]);
 
-  const handleStartMock = async (mockId) => {
+  const handleStartMock = async (mockId, isLocked) => {
     if (!user) {
       toast.error('Please log in to take mock tests');
       return navigate('/auth/login');
     }
-    if (user?.subscription?.plan === 'free') {
-      toast.error('Company mock tests are available for Pro users only. Please upgrade.');
+    if (isLocked) {
       return navigate('/upgrade');
     }
     try {
@@ -189,32 +188,39 @@ export default function CompanyTrack() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
-            {mockTests.map(mock => (
-              <div key={mock.id} className="bg-background border border-border rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-primary/40 transition-all flex flex-col group">
-                <div className="flex justify-between items-start mb-3 sm:mb-4">
-                  <div className="p-2 sm:p-2.5 bg-primary/10 text-primary rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform">
-                    {mock.type === 'quick' ? <Zap className="w-4 h-4 sm:w-6 sm:h-6" /> : <PlayCircle className="w-4 h-4 sm:w-6 sm:h-6" />}
+            {mockTests.map((mock, index) => {
+              const isPro = user?.subscription?.plan === 'pro' && user?.subscription?.status === 'active';
+              const isLocked = !isPro && index > 0;
+              return (
+                <div key={mock.id} className={`bg-background border border-border rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm transition-all flex flex-col group ${isLocked ? 'opacity-90' : 'hover:shadow-md hover:border-primary/40'}`}>
+                  <div className="flex justify-between items-start mb-3 sm:mb-4">
+                    <div className="p-2 sm:p-2.5 bg-primary/10 text-primary rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform">
+                      {mock.type === 'quick' ? <Zap className="w-4 h-4 sm:w-6 sm:h-6" /> : <PlayCircle className="w-4 h-4 sm:w-6 sm:h-6" />}
+                    </div>
+                    <span className="text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-secondary text-muted-foreground">
+                      {mock.type === 'quick' ? 'Quick Prep' : 'Full Length'}
+                    </span>
                   </div>
-                  <span className="text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-secondary text-muted-foreground">
-                    {mock.type === 'quick' ? 'Quick Prep' : 'Full Length'}
-                  </span>
+                  <h3 className="text-base sm:text-lg font-bold text-foreground flex items-center gap-2">
+                    {mock.name}
+                    {isLocked && <Lock className="w-4 h-4 text-muted-foreground" />}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1 mb-4 sm:mb-6 flex-1">{mock.description}</p>
+                  <div className="flex items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-medium text-muted-foreground mb-4 sm:mb-6">
+                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {mock.durationMinutes} mins</span>
+                    <span className="flex items-center gap-1"><Target className="w-3.5 h-3.5" /> {mock.questionCount} Qs</span>
+                  </div>
+                  <Button
+                    onClick={() => handleStartMock(mock.id, isLocked)}
+                    isLoading={starting === mock.id}
+                    disabled={(starting !== null && starting !== mock.id) || (starting && !isLocked)}
+                    className={`w-full transition-all font-semibold text-sm ${isLocked ? 'bg-secondary/50 text-muted-foreground border-border hover:bg-secondary/80' : 'bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground border border-primary/20'}`}
+                  >
+                    {starting && !isLocked ? 'Starting…' : isLocked ? <><Lock className="w-4 h-4 mr-2" /> Unlock with Pro</> : `Start ${mock.type === 'quick' ? 'Practice' : 'Mock Test'}`}
+                  </Button>
                 </div>
-                <h3 className="text-base sm:text-lg font-bold text-foreground">{mock.name}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1 mb-4 sm:mb-6 flex-1">{mock.description}</p>
-                <div className="flex items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-medium text-muted-foreground mb-4 sm:mb-6">
-                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {mock.durationMinutes} mins</span>
-                  <span className="flex items-center gap-1"><Target className="w-3.5 h-3.5" /> {mock.questionCount} Qs</span>
-                </div>
-                <Button
-                  onClick={() => handleStartMock(mock.id)}
-                  isLoading={starting === mock.id}
-                  disabled={starting !== null && starting !== mock.id}
-                  className="w-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground border border-primary/20 transition-all font-semibold text-sm"
-                >
-                  Start {mock.type === 'quick' ? 'Practice' : 'Mock Test'}
-                </Button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

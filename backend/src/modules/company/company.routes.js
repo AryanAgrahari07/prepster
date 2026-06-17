@@ -78,8 +78,8 @@ router.get('/:slug/questions', authenticate, requirePro, async (req, res, next) 
   } catch (err) { next(err); }
 });
 
-// ─── GET /v1/companies/:slug/mock-tests (Pro only) ───────────────────────────
-router.get('/:slug/mock-tests', authenticate, requirePro, async (req, res, next) => {
+// ─── GET /v1/companies/:slug/mock-tests ───────────────────────────────────────
+router.get('/:slug/mock-tests', authenticate, async (req, res, next) => {
   try {
     const company = await Company.findOne({ slug: req.params.slug, isActive: true })
       .select('name slug')
@@ -112,9 +112,15 @@ router.get('/:slug/mock-tests', authenticate, requirePro, async (req, res, next)
   } catch (err) { next(err); }
 });
 
-// ─── POST /v1/companies/:slug/mock-tests/:id/start (Pro only) ─────────────────
-router.post('/:slug/mock-tests/:mockId/start', authenticate, requirePro, async (req, res, next) => {
+// ─── POST /v1/companies/:slug/mock-tests/:id/start ────────────────────────────
+router.post('/:slug/mock-tests/:mockId/start', authenticate, async (req, res, next) => {
   try {
+    const isPro = req.user.subscription?.plan === 'pro' && req.user.subscription?.status === 'active' && new Date(req.user.subscription?.expiresAt) > new Date();
+    const isFirstMock = req.params.mockId.endsWith('-mock-1');
+    
+    if (!isPro && !isFirstMock) {
+      throw new AppError('This mock test is available for Pro users only. Please upgrade.', 403, 4003);
+    }
     const company = await Company.findOne({ slug: req.params.slug, isActive: true })
       .select('name slug')
       .lean();

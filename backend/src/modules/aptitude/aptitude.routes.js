@@ -129,33 +129,18 @@ router.post('/sessions', authenticate, async (req, res, next) => {
   try {
     const { sessionType = SESSION_TYPES.PRACTICE, topic, subTopic, difficulty, limit = 10, companySlug, timeLimitSeconds } = req.body;
 
-    // ── Freemium daily limit enforcement ──
+    // ── Freemium session limit enforcement ──
     const isPro =
       req.user.subscription?.plan === PLANS.PRO &&
       req.user.subscription?.status === 'active' &&
       new Date(req.user.subscription?.expiresAt) > new Date();
 
-    let redis, dailyKey, current;
     let limitToUse = parseInt(limit) || 10;
 
     if (!isPro) {
-      // Use Redis counter as the source of truth (faster, and reset by cron)
-      redis = getRedis();
-      dailyKey = `daily_q:${req.user._id}`;
-      current = parseInt(await redis.get(dailyKey) || '0');
-
-      if (current >= FREE_DAILY_QUESTION_LIMIT) {
-        throw new AppError(
-          `Daily free limit of ${FREE_DAILY_QUESTION_LIMIT} questions reached. Upgrade to Pro for unlimited practice.`,
-          403,
-          4002
-        );
-      }
-
-      // Cap the requested limit to whatever is remaining
-      const remaining = FREE_DAILY_QUESTION_LIMIT - current;
-      if (limitToUse > remaining) {
-        limitToUse = remaining;
+      // Free users are capped at 10 questions per session max
+      if (limitToUse > 10) {
+        limitToUse = 10;
       }
     }
 
@@ -172,12 +157,6 @@ router.post('/sessions', authenticate, async (req, res, next) => {
     ]);
 
     if (questions.length === 0) throw new AppError('No questions found for the selected criteria', 404, 4004);
-
-    if (!isPro) {
-      // Increment counter strictly by the actual number of questions returned
-      const ttl = secondsUntilMidnightIST();
-      await redis.setex(dailyKey, ttl, String(current + questions.length));
-    }
 
     const session = await QuizSession.create({
       userId: req.user._id,
