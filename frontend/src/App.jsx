@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import useAuthStore from './store/authStore';
 import { useEffect } from 'react';
 import Toaster from './components/ui/Toaster';
+import AnalyticsTracker from './components/AnalyticsTracker';
 
 // Auth pages
 import Login from './pages/auth/Login';
@@ -146,6 +147,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <ErrorBoundary>
+        <AnalyticsTracker />
         <Toaster />
         <Routes>
           {/* ── Public Routes ── */}
