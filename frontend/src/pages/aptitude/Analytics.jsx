@@ -99,6 +99,7 @@ export default function AnalyticsDashboard() {
     Correct: val.correct,
   }));
 
+  
   const readinessData = Object.entries(analytics.companyReadiness || {}).map(([key, val]) => ({
     name: key.toUpperCase(),
     Score: val
