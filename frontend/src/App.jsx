@@ -11,6 +11,7 @@ const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
 const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
 const AuthVerified = lazy(() => import('./pages/auth/AuthVerified'));
 const GoogleSuccess = lazy(() => import('./pages/auth/GoogleSuccess'));
+const VerifyOtp = lazy(() => import('./pages/auth/VerifyOtp'));
 
 // Layout
 import AppLayout from './components/layout/AppLayout';
@@ -167,6 +168,7 @@ function App() {
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth/reset-password" element={<ResetPassword />} />
           <Route path="/auth/verified" element={<AuthVerified />} />
+          <Route path="/auth/verify-otp" element={<VerifyOtp />} />
           <Route path="/auth/google/success" element={<GoogleSuccess />} />
 
           {/* ── App Layout (Handles both Public & Protected Routes) ── */}

@@ -207,4 +207,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   findOrCreateGoogleUser,
+  generateAccessToken,
+  generateRefreshToken,
+  storeRefreshToken,
 };
