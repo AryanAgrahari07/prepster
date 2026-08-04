@@ -33,8 +33,9 @@ const resetPasswordRules = [
     .matches(/[0-9]/).withMessage('Password must contain a number'),
 ];
 
-const verifyEmailRules = [
-  query('token').notEmpty().withMessage('Verification token is required'),
+const verifyOtpRules = [
+  body('userId').notEmpty().withMessage('User ID is required'),
+  body('otp').isLength({ min: 6, max: 6 }).withMessage('OTP must be 6 digits'),
 ];
 
 module.exports = {
@@ -42,5 +43,5 @@ module.exports = {
   loginRules,
   forgotPasswordRules,
   resetPasswordRules,
-  verifyEmailRules,
+  verifyOtpRules,
 };

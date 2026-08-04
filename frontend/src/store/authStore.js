@@ -83,6 +83,13 @@ const useAuthStore = create(
         return res.data;
       },
 
+      verifyOtp: async (userId, otp) => {
+        const res = await api.post('/auth/verify-otp', { userId, otp });
+        // The endpoint returns success but no tokens (since we don't have password to auto-login).
+        // Frontend will redirect to login upon success.
+        return res.data;
+      },
+
       logout: async (localOnly = false) => {
         if (!localOnly) {
           try {

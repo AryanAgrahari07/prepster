@@ -33,18 +33,17 @@ const send = async (to, subject, html) => {
 };
 
 // ─── Email Templates ──────────────────────────────────────────────────────────
-const sendVerificationEmail = async (user, token) => {
-  // Build backend URL from API_URL env var, or fall back to PORT-based localhost
-  const apiBase = process.env.API_URL || `http://localhost:${process.env.PORT || 8080}`;
-  const backendUrl = `${apiBase}/v1/auth/verify-email?token=${token}`;
+const sendOtpEmail = async (user, otp) => {
   const firstName = user.profile?.firstName || 'there';
   await send(
     user.email,
     'Verify your Prepster account',
     `<h2>Hi ${firstName}! 👋</h2>
-     <p>Thanks for signing up. Click below to verify your email:</p>
-     <a href="${backendUrl}" style="background:#6366f1;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;">Verify Email</a>
-     <p>Link expires in 24 hours.</p>
+     <p>Thanks for signing up. Your 6-digit verification code is:</p>
+     <div style="background:#f3f4f6;color:#111827;padding:16px 24px;border-radius:8px;font-size:32px;font-weight:bold;letter-spacing:8px;text-align:center;margin:24px 0;">
+       ${otp}
+     </div>
+     <p>This code expires in 10 minutes.</p>
      <p>– Team Prepster</p>`
   );
 };
@@ -134,7 +133,7 @@ const sendRenewalReminderEmail = async (user, daysLeft, expiresAt) => {
 };
 
 module.exports = {
-  sendVerificationEmail,
+  sendOtpEmail,
   sendPasswordResetEmail,
   sendProActivationEmail,
   sendPaymentFailedEmail,

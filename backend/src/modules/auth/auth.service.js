@@ -62,22 +62,31 @@ const register = async ({ firstName, lastName, email, password, college, branch,
     profile: { firstName: firstName || '', lastName: lastName || '', college, branch, graduationYear },
   });
 
-  // Generate email verification token (stored in Redis for 24h)
-  const verifyToken = crypto.randomBytes(32).toString('hex');
+  // Generate 6-digit email verification OTP (stored in Redis for 10m)
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const redis = getRedis();
-  await redis.setex(REDIS_KEYS.emailVerify(verifyToken), 86400, user._id.toString());
+  await redis.setex(REDIS_KEYS.emailVerify(user._id.toString()), 600, otp);
 
-  return { user, verifyToken };
+  return { user, otp };
 };
 
-// ─── Verify Email ─────────────────────────────────────────────────────────────
-const verifyEmail = async (token) => {
+// ─── Verify OTP ─────────────────────────────────────────────────────────────
+const verifyOtp = async (userId, otp) => {
   const redis = getRedis();
-  const userId = await redis.get(REDIS_KEYS.emailVerify(token));
-  if (!userId) throw new AppError('Verification link is invalid or has expired', 400, 4011);
+  const storedOtp = await redis.get(REDIS_KEYS.emailVerify(userId));
+  
+  if (!storedOtp) {
+    throw new AppError('OTP has expired. Please request a new one.', 400, 4011);
+  }
+  
+  if (storedOtp !== otp) {
+    throw new AppError('Invalid OTP. Please try again.', 400, 4011);
+  }
 
-  await User.findByIdAndUpdate(userId, { isEmailVerified: true });
-  await redis.del(REDIS_KEYS.emailVerify(token));
+  const user = await User.findByIdAndUpdate(userId, { isEmailVerified: true }, { new: true });
+  await redis.del(REDIS_KEYS.emailVerify(userId));
+  
+  return user;
 };
 
 // ─── Login ────────────────────────────────────────────────────────────────────
@@ -191,7 +200,7 @@ const findOrCreateGoogleUser = async ({ googleId, email, firstName, lastName, av
 
 module.exports = {
   register,
-  verifyEmail,
+  verifyOtp,
   login,
   refreshTokens,
   logout,

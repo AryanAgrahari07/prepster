@@ -16,7 +16,7 @@ const {
   loginRules,
   forgotPasswordRules,
   resetPasswordRules,
-  verifyEmailRules,
+  verifyOtpRules,
 } = require('./auth.validators');
 const { findOrCreateGoogleUser } = require('./auth.service');
 
@@ -53,8 +53,8 @@ if (process.env.GOOGLE_CLIENT_ID) {
 // POST /v1/auth/register
 router.post('/register', registerLimiter, registerRules, validate, authController.register);
 
-// GET /v1/auth/verify-email?token=xxx
-router.get('/verify-email', verifyEmailRules, validate, authController.verifyEmail);
+// POST /v1/auth/verify-otp
+router.post('/verify-otp', verifyOtpRules, validate, authController.verifyOtp);
 
 // POST /v1/auth/login
 router.post('/login', loginLimiter, loginRules, validate, authController.login);

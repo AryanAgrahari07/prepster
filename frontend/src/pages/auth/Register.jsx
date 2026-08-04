@@ -47,8 +47,8 @@ export default function Register() {
       setServerError('');
       setSuccessMsg('');
       const res = await registerUser(data);
-      setSuccessMsg(res.message || 'Account created! Please check your email.');
-      setTimeout(() => navigate('/auth/login'), 3000);
+      setSuccessMsg(res.message || 'Account created! Please verify your email.');
+      setTimeout(() => navigate('/auth/verify-otp', { state: { userId: res.data.userId, email: res.data.email } }), 1500);
     } catch (err) {
       setServerError(err.response?.data?.error?.message || 'Failed to create account.');
     }
