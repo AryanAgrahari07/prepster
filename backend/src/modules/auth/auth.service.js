@@ -103,7 +103,9 @@ const login = async ({ email, password }) => {
   if (!isMatch) throw new AppError('Invalid email or password', 401, 4001);
 
   if (!user.isEmailVerified) {
-    throw new AppError('Please verify your email before logging in. Check your inbox for the verification link.', 403, 4014);
+    const err = new AppError('Your email is not verified yet. Please enter the OTP sent to your inbox.', 403, 4014);
+    err.data = { userId: user._id, email: user.email };
+    throw err;
   }
 
   await User.findByIdAndUpdate(user._id, { lastLoginAt: new Date() });

@@ -35,7 +35,15 @@ export default function Login() {
       const from = location.state?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
     } catch (err) {
-      setServerError(err.response?.data?.error?.message || 'Failed to login. Please try again.');
+      const errData = err.response?.data?.error;
+      // If email not verified, redirect them to OTP page automatically
+      if (errData?.code === 4014 && errData?.data?.userId) {
+        navigate('/auth/verify-otp', { 
+          state: { userId: errData.data.userId, email: errData.data.email } 
+        });
+        return;
+      }
+      setServerError(errData?.message || 'Failed to login. Please try again.');
     }
   };
 

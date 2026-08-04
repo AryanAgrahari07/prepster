@@ -75,6 +75,7 @@ const errorHandler = (err, req, res, next) => {
       code: appCode,
       message,
       field: err.field || null,
+      data: err.data || null,
     },
   });
 };
