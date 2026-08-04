@@ -76,7 +76,7 @@ export default function Contact() {
       {/* Hero */}
       <section className="relative pt-24 pb-12 px-4 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px]" />
+          <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.1)_0%,transparent_70%)] rounded-full" />
         </div>
 
         <div className="max-w-4xl mx-auto text-center relative">

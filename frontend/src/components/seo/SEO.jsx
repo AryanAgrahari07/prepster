@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 const SITE_URL = 'https://prepster.online';
 const SITE_NAME = 'Prepster';
 const DEFAULT_DESCRIPTION = 'India\'s #1 placement preparation platform. Practice 25,000+ aptitude questions, company-specific prep tracks for TCS, Infosys, Wipro & more, and apply to curated fresher jobs. Free for students.';
-const DEFAULT_OG_IMAGE = 'https://prepster.online/logo.png';
+const DEFAULT_OG_IMAGE = 'https://prepster.online/logo.svg';
 
 /**
  * Enhanced SEO component for Prepster.

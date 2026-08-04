@@ -134,7 +134,7 @@ export default function Privacy() {
       {/* Hero */}
       <section className="relative pt-24 pb-12 px-4 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-20%] left-[-10%] w-[40%] h-[40%] bg-primary/8 rounded-full blur-[120px]" />
+          <div className="absolute top-[-20%] left-[-10%] w-[40%] h-[40%] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.08)_0%,transparent_70%)] rounded-full" />
         </div>
 
         <div className="max-w-3xl mx-auto text-center relative">

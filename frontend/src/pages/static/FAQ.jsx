@@ -34,12 +34,12 @@ const FAQ_DATA = [
   {
     category: 'general',
     question: 'What is Prepster?',
-    answer: 'Prepster is India\'s #1 placement preparation platform built specifically for engineering and MBA students. It combines adaptive aptitude practice (25,000+ questions), company-specific preparation tracks (100+ companies), and a curated job feed — all in one platform. Think of it as PrepInsta + Naukri, purpose-built for students.',
+    answer: 'Prepster is India\'s #1 comprehensive placement preparation platform built specifically for engineering and MBA students. Our platform integrates an adaptive aptitude test engine (with 25,000+ quantitative aptitude, logical reasoning, and verbal questions), in-depth company-specific preparation tracks (for TCS NQT, Infosys, Wipro, Accenture, and 100+ others), and a curated entry-level fresher job feed. Whether you are preparing for campus placements, technical interview rounds, or off-campus drives, Prepster is the ultimate toolkit.',
   },
   {
     category: 'general',
     question: 'Who is Prepster for?',
-    answer: 'Prepster is designed for Indian engineering and MBA students (2nd–4th year) who are preparing for campus and off-campus placements. Whether you\'re from a Tier 1, 2, or 3 college, Prepster gives you the same quality of preparation resources.',
+    answer: 'Prepster is designed for Indian engineering (B.Tech/B.E/BCA) and MBA students (2nd–4th year) actively preparing for campus placements and off-campus fresher jobs. Whether you\'re from a Tier 1, 2, or 3 college, Prepster equips you with the exact previous year placement papers, GD/PI mock interviews, and coding logic preparation you need to land top software engineering or management roles.',
   },
   {
     category: 'general',
@@ -207,7 +207,7 @@ export default function FAQ() {
       {/* Hero */}
       <section className="relative pt-24 pb-12 px-4 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-20%] left-[20%] w-[40%] h-[40%] bg-primary/8 rounded-full blur-[120px]" />
+          <div className="absolute top-[-20%] left-[20%] w-[40%] h-[40%] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.08)_0%,transparent_70%)] rounded-full" />
         </div>
 
         <div className="max-w-4xl mx-auto text-center relative">
@@ -300,7 +300,7 @@ export default function FAQ() {
         <div className="max-w-3xl mx-auto">
           <SectionReveal>
             <div className="relative overflow-hidden rounded-3xl border border-border/30 bg-gradient-to-br from-primary/15 via-purple-500/10 to-blue-500/15 p-10 text-center">
-              <div className="absolute top-0 left-1/4 w-60 h-60 bg-primary/10 rounded-full blur-[100px]" />
+              <div className="absolute top-0 left-1/4 w-60 h-60 bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.1)_0%,transparent_70%)] rounded-full" />
               <div className="relative">
                 <h2 className="font-display text-2xl md:text-3xl font-bold mb-3">Still have questions?</h2>
                 <p className="text-muted-foreground mb-6 max-w-md mx-auto">

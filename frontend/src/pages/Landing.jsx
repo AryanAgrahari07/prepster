@@ -51,19 +51,22 @@ function MouseGlow() {
   const springY = useSpring(y, { stiffness: 50, damping: 20 });
 
   useEffect(() => {
-    const handler = (e) => { x.set(e.clientX); y.set(e.clientY); };
-    window.addEventListener('mousemove', handler);
+    const handler = (e) => { 
+      // Offset by 300 to center the 600px circle on the cursor
+      x.set(e.clientX - 300); 
+      y.set(e.clientY - 300); 
+    };
+    window.addEventListener('mousemove', handler, { passive: true });
     return () => window.removeEventListener('mousemove', handler);
   }, [x, y]);
 
   return (
     <motion.div
-      className="pointer-events-none fixed inset-0 z-30 hidden lg:block"
+      className="pointer-events-none fixed top-0 left-0 z-30 hidden lg:block w-[600px] h-[600px] rounded-full will-change-transform"
       style={{
-        background: useTransform(
-          [springX, springY],
-          ([px, py]) => `radial-gradient(600px circle at ${px}px ${py}px, rgba(139,92,246,0.06), transparent 60%)`
-        ),
+        x: springX,
+        y: springY,
+        background: 'radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 60%)'
       }}
     />
   );
@@ -76,9 +79,10 @@ function AuroraOrb({ className = '' }) {
   return (
     <div className={`absolute pointer-events-none ${className}`}>
       <div className="relative w-full h-full">
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-600/30 via-blue-500/20 to-cyan-400/30 blur-[80px] animate-pulse-glow" />
-        <div className="absolute inset-[15%] rounded-full bg-gradient-to-tr from-purple-500/25 to-pink-500/20 blur-[60px] animate-pulse-glow" style={{ animationDelay: '1.5s' }} />
-        <div className="absolute inset-[30%] rounded-full bg-gradient-to-bl from-blue-400/20 to-indigo-500/25 blur-[40px] animate-float" />
+        {/* Replaced heavy blur-[Xpx] with native radial-gradient for 60FPS performance */}
+        <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(124,58,237,0.25)_0%,transparent_70%)] animate-pulse-glow will-change-transform" />
+        <div className="absolute inset-[15%] rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.2)_0%,transparent_70%)] animate-pulse-glow will-change-transform" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute inset-[30%] rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.15)_0%,transparent_70%)] animate-float will-change-transform" />
       </div>
     </div>
   );
@@ -489,7 +493,7 @@ export default function Landing() {
       <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? 'border-b border-border/50 bg-background/70 backdrop-blur-2xl shadow-lg shadow-black/5' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <img src="/logo.png" alt="Prepster" className="w-9 h-9 object-contain dark:brightness-[10] dark:saturate-0 group-hover:scale-110 transition-transform" />
+            <img src="/logo.svg" alt="Prepster" fetchpriority="high" className="w-9 h-9 object-contain dark:brightness-[10] dark:saturate-0 group-hover:scale-110 transition-transform" />
             <span className="text-xl font-bold tracking-tight font-display">Prepster</span>
           </Link>
 
@@ -616,16 +620,15 @@ export default function Landing() {
               </span>
             </motion.h1>
 
-            {/* Typing subline */}
             <motion.div
               initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{ duration: 0.7, delay: 0.35 }}
               className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-4"
             >
-              <span className="text-foreground/90 font-medium">25,000+ questions</span> ·{' '}
-              <span className="text-foreground/90 font-medium">100+ company tracks</span> ·{' '}
-              <span className="text-foreground/90 font-medium">Curated jobs</span>
+              <h2 className="text-foreground/90 font-medium inline">Aptitude Preparation</h2> ·{' '}
+              <h2 className="text-foreground/90 font-medium inline">MBA Interview Mocks</h2> ·{' '}
+              <h2 className="text-foreground/90 font-medium inline">Off-Campus Fresher Jobs</h2>
             </motion.div>
 
             <motion.p
@@ -634,9 +637,9 @@ export default function Landing() {
               transition={{ duration: 0.7, delay: 0.45 }}
               className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-10"
             >
-              The complete placement toolkit for{' '}
+              India's comprehensive placement toolkit for{' '}
               <TypingText
-                texts={['Engineering students', 'MBA students', 'Tier 2/3 college students', 'Campus placement prep']}
+                texts={['Engineering students cracking TCS/Infosys', 'MBA students preparing for GD & PI', 'Tier 2 & 3 college placements', 'Campus & Off-Campus job hunting']}
                 className="text-primary font-semibold"
               />
             </motion.p>
@@ -759,7 +762,7 @@ export default function Landing() {
 
       {/* ═══════════════ FEATURES ═══════════════ */}
       <section className="py-20 md:py-28 px-4 relative">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/[0.03] rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.03)_0%,transparent_70%)] rounded-full pointer-events-none" />
 
         <div className="max-w-6xl mx-auto relative">
           <SectionReveal className="text-center mb-16">
@@ -779,7 +782,7 @@ export default function Landing() {
                 <TiltCard>
                   <div className="group relative rounded-3xl border border-border/30 bg-card/20 backdrop-blur-sm p-5 sm:p-7 overflow-hidden h-full hover:border-border/60 transition-all duration-500">
                     {/* Corner glow */}
-                    <div className={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${feature.gradient} rounded-full blur-[60px] opacity-0 group-hover:opacity-20 transition-opacity duration-700`} />
+                    <div className={`absolute -top-20 -right-20 w-40 h-40 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_0%,transparent_70%)] rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-700`} />
 
                     <div className="relative z-10">
                       {/* Icon */}
@@ -852,7 +855,7 @@ export default function Landing() {
 
       {/* ═══════════════ PRICING ═══════════════ */}
       <section className="py-20 md:py-28 px-4 relative" id="pricing">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/[0.03] rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.03)_0%,transparent_70%)] rounded-full pointer-events-none" />
 
         <div className="max-w-5xl mx-auto relative">
           <SectionReveal className="text-center mb-16">
@@ -1000,7 +1003,7 @@ export default function Landing() {
 
       {/* ═══════════════ TESTIMONIALS ═══════════════ */}
       <section className="py-20 md:py-28 px-4 relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/[0.03] rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.03)_0%,transparent_70%)] rounded-full pointer-events-none" />
 
         <div className="max-w-6xl mx-auto relative">
           <SectionReveal className="text-center mb-16">
@@ -1057,8 +1060,8 @@ export default function Landing() {
             <div className="relative overflow-hidden rounded-[2rem] border border-border/30">
               {/* Background layers */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-purple-500/10 to-blue-500/20" />
-              <div className="absolute top-0 left-[20%] w-[500px] h-[500px] bg-primary/15 rounded-full blur-[120px]" />
-              <div className="absolute bottom-0 right-[20%] w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px]" />
+              <div className="absolute top-0 left-[20%] w-[500px] h-[500px] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.15)_0%,transparent_70%)] rounded-full" />
+              <div className="absolute bottom-0 right-[20%] w-[400px] h-[400px] bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1)_0%,transparent_70%)] rounded-full" />
               {/* Dot pattern */}
               <div className="absolute inset-0 opacity-[0.03]" style={{
                 backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)',
@@ -1116,7 +1119,7 @@ export default function Landing() {
             {/* Brand */}
             <div className="md:col-span-1">
               <div className="flex items-center gap-2.5 mb-4">
-                <img src="/logo.png" alt="Prepster" className="w-8 h-8 object-contain dark:brightness-[10] dark:saturate-0" />
+                <img src="/logo.svg" alt="Prepster" loading="lazy" className="w-8 h-8 object-contain dark:brightness-[10] dark:saturate-0" />
                 <span className="font-display font-bold text-lg">Prepster</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">

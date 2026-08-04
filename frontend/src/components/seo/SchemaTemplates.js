@@ -10,7 +10,7 @@
 
 const SITE_URL = 'https://prepster.online';
 const SITE_NAME = 'Prepster';
-const LOGO_URL = `${SITE_URL}/logo.png`;
+const LOGO_URL = `${SITE_URL}/logo.svg`;
 
 // ─── Organization (brand entity) ──────────────────────────────────────────────
 export const organizationSchema = () => ({

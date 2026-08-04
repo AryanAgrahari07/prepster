@@ -75,8 +75,8 @@ export default function About() {
       {/* Hero */}
       <section className="relative pt-24 pb-16 px-4 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/8 rounded-full blur-[100px]" />
+          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.1)_0%,transparent_70%)] rounded-full" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.08)_0%,transparent_70%)] rounded-full" />
         </div>
 
         <div className="max-w-4xl mx-auto text-center relative">
@@ -150,7 +150,7 @@ export default function About() {
 
       {/* Values */}
       <section className="py-20 px-4 relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.05)_0%,transparent_70%)] rounded-full pointer-events-none" />
         <div className="max-w-6xl mx-auto relative">
           <SectionReveal className="text-center mb-16">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-primary mb-4 block">Our Values</span>
@@ -210,7 +210,7 @@ export default function About() {
         <div className="max-w-3xl mx-auto">
           <SectionReveal>
             <div className="relative overflow-hidden rounded-3xl border border-border/30 bg-gradient-to-br from-primary/15 via-purple-500/10 to-blue-500/15 p-10 md:p-14 text-center">
-              <div className="absolute top-0 left-1/4 w-60 h-60 bg-primary/15 rounded-full blur-[100px]" />
+              <div className="absolute top-0 left-1/4 w-60 h-60 bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.15)_0%,transparent_70%)] rounded-full" />
               <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 relative">
                 Join the Prepster family
               </h2>

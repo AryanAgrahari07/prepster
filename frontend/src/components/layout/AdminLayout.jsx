@@ -90,7 +90,7 @@ export default function AdminLayout() {
       <div className={`flex items-center h-16 border-b border-border px-3 shrink-0 ${collapsed && !mobile ? 'justify-center' : 'justify-between'}`}>
         {(!collapsed || mobile) && (
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Prepster" className="w-8 h-8 object-contain dark:brightness-[10] dark:saturate-0" />
+            <img src="/logo.svg" alt="Prepster" className="w-8 h-8 object-contain dark:brightness-[10] dark:saturate-0" />
             <div>
               <p className="text-sm font-bold leading-tight">Prepster</p>
               <p className="text-xs text-primary font-medium leading-tight">Admin Panel</p>
@@ -98,7 +98,7 @@ export default function AdminLayout() {
           </div>
         )}
         {collapsed && !mobile && (
-          <img src="/logo.png" alt="Prepster" className="w-8 h-8 object-contain dark:brightness-[10] dark:saturate-0" />
+          <img src="/logo.svg" alt="Prepster" className="w-8 h-8 object-contain dark:brightness-[10] dark:saturate-0" />
         )}
         {!mobile && (
           <button

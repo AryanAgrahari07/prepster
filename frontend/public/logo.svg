@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="prepsterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+  </defs>
+  <path d="M256 48l192 104v192L256 464 64 344V152L256 48z" fill="url(#prepsterGradient)" />
+  <path d="M256 96l144 78v144L256 408 112 318V174L256 96z" fill="#ffffff" opacity="0.1" />
+  <path d="M344 216l-88 120-48-56" stroke="#ffffff" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

@@ -64,7 +64,7 @@ export default function Register() {
         <div className="text-center">
           <div className="flex justify-center mb-6">
             <Link to="/" className="flex items-center gap-2.5 group">
-                <img src="/logo.png" alt="Prepster" className="w-10 h-10 object-contain dark:brightness-[10] dark:saturate-0 group-hover:scale-110 transition-transform" />
+                <img src="/logo.svg" alt="Prepster" className="w-10 h-10 object-contain dark:brightness-[10] dark:saturate-0 group-hover:scale-110 transition-transform" />
                 <span className="text-2xl font-bold tracking-tight font-display text-foreground">Prepster</span>
               </Link>
           </div>
