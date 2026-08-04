@@ -283,7 +283,7 @@ export default function AppLayout() {
       {/* Logo */}
       <div className="flex h-16 items-center justify-between px-5 border-b border-border shrink-0">
         <Link to="/" className="text-lg font-bold text-foreground flex items-center gap-2.5">
-          <img src="/logo.svg" alt="Prepster" className="w-8 h-8 object-contain dark:brightness-[10] dark:saturate-0" />
+          <img src="/logo.png" alt="Prepster" className="w-8 h-8 object-contain dark:brightness-[10] dark:saturate-0" />
           Prepster
         </Link>
         <button
@@ -486,7 +486,7 @@ export default function AppLayout() {
               <Menu className="h-5 w-5" />
             </button>
             <Link to="/" className="text-base sm:text-lg font-bold text-foreground flex items-center gap-1.5 sm:gap-2 truncate">
-              <img src="/logo.svg" alt="Prepster" className="w-6 h-6 sm:w-7 sm:h-7 object-contain shrink-0 dark:brightness-[10] dark:saturate-0" />
+              <img src="/logo.png" alt="Prepster" className="w-6 h-6 sm:w-7 sm:h-7 object-contain shrink-0 dark:brightness-[10] dark:saturate-0" />
               <span className="truncate">Prepster</span>
             </Link>
           </div>

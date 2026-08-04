@@ -14,7 +14,7 @@ export default function StaticLayout({ children }) {
       <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/70 backdrop-blur-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <img src="/logo.svg" alt="Prepster" className="w-9 h-9 object-contain dark:brightness-[10] dark:saturate-0 group-hover:scale-110 transition-transform" />
+            <img src="/logo.png" alt="Prepster" className="w-9 h-9 object-contain dark:brightness-[10] dark:saturate-0 group-hover:scale-110 transition-transform" />
             <span className="text-xl font-bold tracking-tight font-display">Prepster</span>
           </Link>
 
@@ -49,7 +49,7 @@ export default function StaticLayout({ children }) {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2.5">
-              <img src="/logo.svg" alt="Prepster" className="w-7 h-7 object-contain dark:brightness-[10] dark:saturate-0" />
+              <img src="/logo.png" alt="Prepster" className="w-7 h-7 object-contain dark:brightness-[10] dark:saturate-0" />
               <span className="font-display font-bold">Prepster</span>
             </div>
 

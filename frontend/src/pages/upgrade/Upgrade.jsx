@@ -158,7 +158,7 @@ export default function Upgrade() {
         currency,
         name: 'Prepster',
         description: `Upgrade to Prepster Pro (${stream === 'mba' ? 'MBA' : 'Engineering'})`,
-        image: 'https://prepster.in/logo.svg',
+        image: 'https://prepster.in/logo.png',
         order_id: orderId,
         handler: async function (response) {
           await verifyPayment(response, planId);

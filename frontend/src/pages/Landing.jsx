@@ -493,7 +493,7 @@ export default function Landing() {
       <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? 'border-b border-border/50 bg-background/70 backdrop-blur-2xl shadow-lg shadow-black/5' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <img src="/logo.svg" alt="Prepster" fetchpriority="high" className="w-9 h-9 object-contain dark:brightness-[10] dark:saturate-0 group-hover:scale-110 transition-transform" />
+            <img src="/logo.png" alt="Prepster" fetchpriority="high" className="w-9 h-9 object-contain dark:brightness-[10] dark:saturate-0 group-hover:scale-110 transition-transform" />
             <span className="text-xl font-bold tracking-tight font-display">Prepster</span>
           </Link>
 
@@ -1119,7 +1119,7 @@ export default function Landing() {
             {/* Brand */}
             <div className="md:col-span-1">
               <div className="flex items-center gap-2.5 mb-4">
-                <img src="/logo.svg" alt="Prepster" loading="lazy" className="w-8 h-8 object-contain dark:brightness-[10] dark:saturate-0" />
+                <img src="/logo.png" alt="Prepster" loading="lazy" className="w-8 h-8 object-contain dark:brightness-[10] dark:saturate-0" />
                 <span className="font-display font-bold text-lg">Prepster</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
