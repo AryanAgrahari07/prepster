@@ -28,6 +28,12 @@ api.interceptors.response.use(
       hasToken
     ) {
       originalRequest._retry = true;
+
+      // Clear the stale access token from store before attempting refresh.
+      // This prevents the same expired token from being re-attached to the
+      // retried request if the interceptor fires again before the store updates.
+      useAuthStore.setState({ accessToken: null, isAuthenticated: false });
+
       try {
         const res = await axios.post(
           `${import.meta.env.VITE_API_URL || '/v1'}/auth/refresh`,
@@ -39,7 +45,14 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        useAuthStore.getState().logout(true); // Force logout on refresh failure
+        // Refresh failed — clear session state but do NOT force logout() here
+        // (which calls the API and may itself 401). Just wipe local state.
+        useAuthStore.setState({
+          user: null,
+          accessToken: null,
+          isAuthenticated: false,
+          isHydrated: true,
+        });
         return Promise.reject(refreshError);
       }
     }
@@ -115,6 +128,15 @@ const useAuthStore = create(
             token = res.data.data.accessToken;
             set({ accessToken: token, isAuthenticated: true });
           }
+
+          // Skip fetching profile if we already have user data in memory.
+          // This avoids a redundant round-trip (e.g. right after GoogleSuccess
+          // already fetched and hydrated the profile).
+          if (get().user) {
+            set({ isHydrated: true, isAuthenticated: true });
+            return;
+          }
+
           // Only fetch profile if we have a valid token
           const profileRes = await api.get('/users/me');
           set({ user: profileRes.data.data.user, isHydrated: true, isAuthenticated: true });
