@@ -4,6 +4,7 @@ import { getTopics, startSession } from '@/api/aptitude';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, Clock, FileText, BookOpen, Lock } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 import { SUBTOPIC_LABELS } from '@/constants';
 import useAuthStore from '@/store/authStore';
@@ -290,21 +291,25 @@ export default function PracticeHub() {
   return (
     <>
       <SEO 
-        title="Aptitude & Technical Practice Hub | Prepster" 
-        description="Practice 5000+ aptitude and core CS questions. Take full mock tests to simulate company placement exams." 
+        title="Aptitude Practice Questions for Campus Placements 2026 | Prepster" 
+        description="Practice 25,000+ aptitude questions with step-by-step solutions for TCS, Infosys, Wipro & more. Free daily practice. Start preparing for placements today!" 
         keywords="aptitude practice, quantitative aptitude, logical reasoning, data structures, placement mock tests"
-        url="https://prepster.in/aptitude"
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "Course",
-          "name": "Placement Aptitude & CS Preparation",
-          "description": "Comprehensive practice material for campus placements including quantitative aptitude, logical reasoning, verbal ability, and core CS subjects.",
-          "provider": {
-            "@type": "Organization",
-            "name": "Prepster",
-            "sameAs": "https://prepster.in"
-          }
-        }}
+        schema={[
+          schemas.itemList({
+            name: "Aptitude Practice Topics",
+            description: "List of all aptitude and technical practice topics for placement preparation.",
+            url: "/aptitude",
+            items: Object.entries(APTITUDE_TOPICS).map(([key, topic]) => ({
+              name: topic.label,
+              url: `/aptitude/topic/${key}`,
+              description: topic.desc
+            })).concat(Object.entries(CS_TOPICS).map(([key, topic]) => ({
+              name: topic.label,
+              url: `/aptitude/topic/${key}`,
+              description: topic.desc
+            })))
+          })
+        ]}
       />
       <div className="space-y-8">
         {/* Header */}

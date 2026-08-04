@@ -6,6 +6,7 @@ import { Building2, ArrowLeft, Target, GraduationCap, Briefcase, PlayCircle, Clo
 import useAuthStore from '@/store/authStore';
 import toast from '@/utils/toast';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import SubmitExperienceModal from './SubmitExperienceModal';
 
 export default function CompanyTrack() {
@@ -99,16 +100,19 @@ export default function CompanyTrack() {
         title={`${company.name} Placement Preparation & Mock Tests | Prepster`}
         description={`Master the ${company.name} hiring process. Access previous year placement papers, round-by-round interview guides, and specific mock tests.`}
         keywords={`${company.name} NQT, ${company.name} mock test, ${company.name} recruitment process, ${company.name} placement papers, ${company.name} interview questions`}
-        url={`https://prepster.in/companies/${slug}`}
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          "itemListElement": [{
-            "@type": "ListItem", "position": 1, "name": "Companies", "item": "https://prepster.in/companies"
-          }, {
-            "@type": "ListItem", "position": 2, "name": company.name, "item": `https://prepster.in/companies/${slug}`
-          }]
-        }}
+        schema={[
+          schemas.course({
+            name: `${company.name} Placement Preparation Track`,
+            description: `Complete guide and mock tests for ${company.name} recruitment process.`,
+            url: `/companies/${slug}`,
+            provider: company.name,
+            questionCount: totalQuestions
+          }),
+          schemas.breadcrumbs([
+            { name: "Companies", url: "/companies" },
+            { name: company.name }
+          ])
+        ]}
       />
 
       {/* Back link */}

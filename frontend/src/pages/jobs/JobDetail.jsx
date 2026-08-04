@@ -8,6 +8,7 @@ import { Building, MapPin, Briefcase, Calendar, GraduationCap, CheckCircle2, Zap
 import useAuthStore from '@/store/authStore';
 import toast from '@/utils/toast';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -69,38 +70,22 @@ export default function JobDetail() {
       <SEO 
         title={`${job.title} at ${job.companyName} | Prepster`} 
         description={`Apply for ${job.title} at ${job.companyName}. Location: ${job.location || 'Remote'}. Eligibility: ${job.eligibility?.batchYears?.join(', ')} batch.`}
-        url={`https://prepster.in/jobs/${job._id}`}
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "JobPosting",
-          "title": job.title,
-          "description": job.description,
-          "datePosted": new Date(job.createdAt).toISOString(),
-          "validThrough": new Date(new Date(job.createdAt).getTime() + 30*24*60*60*1000).toISOString(),
-          "employmentType": job.type?.toUpperCase() || "FULL_TIME",
-          "hiringOrganization": {
-            "@type": "Organization",
-            "name": job.companyName,
-            "logo": job.companyLogo || ""
-          },
-          "jobLocation": {
-            "@type": "Place",
-            "address": {
-              "@type": "PostalAddress",
-              "addressLocality": job.location || "Remote"
-            }
-          },
-          "baseSalary": job.ctc ? {
-            "@type": "MonetaryAmount",
-            "currency": job.ctc.currency || "INR",
-            "value": {
-              "@type": "QuantitativeValue",
-              "minValue": job.ctc.min * 100000,
-              "maxValue": job.ctc.max * 100000,
-              "unitText": "YEAR"
-            }
-          } : undefined
-        }}
+        schema={[
+          schemas.jobPosting({
+            title: job.title,
+            description: job.description,
+            companyName: job.companyName,
+            companyLogo: job.companyLogo,
+            location: job.location,
+            workMode: job.workMode,
+            type: job.type,
+            ctc: job.ctc,
+            datePosted: new Date(job.createdAt).toISOString(),
+            validThrough: new Date(new Date(job.createdAt).getTime() + 30*24*60*60*1000).toISOString(),
+            url: `/jobs/${job._id}`,
+            batchYears: job.eligibility?.batchYears || []
+          })
+        ]}
       />
       <Link to="/jobs" className="text-sm text-muted-foreground hover:text-foreground">← Back to Jobs</Link>
       

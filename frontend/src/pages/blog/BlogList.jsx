@@ -4,6 +4,7 @@ import { getBlogs } from '@/api/blog';
 import { Button } from '@/components/ui/Button';
 import { Clock, Tag as TagIcon } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 
 const getDefaultImage = (slug) => {
@@ -45,14 +46,13 @@ export default function BlogList() {
         title="Prepster Blog | Placement Tips & Interview Guides" 
         description="Read the latest tips on cracking campus placements, aptitude tests, and technical interviews."
         keywords="placement tips, interview guides, campus placement blog, tech interview experiences, aptitude prep"
-        url="https://prepster.in/blogs"
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          "name": "Prepster Blog",
-          "url": "https://prepster.in/blogs",
-          "description": "Read the latest tips on cracking campus placements, aptitude tests, and technical interviews."
-        }}
+        schema={[
+          schemas.collectionPage({
+            name: "Prepster Blog",
+            description: "Read the latest tips on cracking campus placements, aptitude tests, and technical interviews.",
+            url: "/blogs"
+          })
+        ]}
       />
 
       <div className="text-center space-y-4 pt-8">

@@ -1,0 +1,20 @@
+{
+  "name": "Prepster — Placement Preparation Platform",
+  "short_name": "Prepster",
+  "description": "India's #1 placement preparation platform for engineering & MBA students. Practice aptitude, prepare company-wise, and apply to jobs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"]
+}

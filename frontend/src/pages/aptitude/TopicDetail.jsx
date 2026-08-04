@@ -6,6 +6,8 @@ import { SUBTOPIC_LABELS } from '@/constants';
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import toast from '@/utils/toast';
 import useAuthStore from '@/store/authStore';
+import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 
 export default function TopicDetail() {
   const { topicId } = useParams();
@@ -71,7 +73,28 @@ export default function TopicDetail() {
   }
 
   return (
-    <div className="space-y-10 pb-12">
+    <>
+      {config && (
+        <SEO 
+          title={`${config.label} Practice Questions | Prepster`}
+          description={`Practice ${config.label} questions for campus placements. Step-by-step solutions for ${topicData?.count || 'all'} questions.`}
+          schema={[
+            schemas.course({
+              name: `${config.label} Preparation`,
+              description: config.desc,
+              url: `/aptitude/topic/${topicId}`,
+              questionCount: topicData?.count || 0
+            }),
+            schemas.quiz({
+              name: `${config.label} Quiz`,
+              description: `Practice session for ${config.label}`,
+              url: `/aptitude/topic/${topicId}`,
+              questionCount: topicData?.count || 0
+            })
+          ]}
+        />
+      )}
+      <div className="space-y-10 pb-12">
       {/* Header */}
       <div className="space-y-6">
         <button
@@ -187,5 +210,6 @@ export default function TopicDetail() {
         </div>
       )}
     </div>
+    </>
   );
 }

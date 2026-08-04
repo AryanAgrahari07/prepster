@@ -4,6 +4,7 @@ import { getBlogBySlug } from '@/api/blog';
 import { ArrowLeft, Clock, Tag as TagIcon, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 
 const getDefaultImage = (slug) => {
@@ -107,21 +108,27 @@ export default function BlogPost() {
       <SEO 
         title={`${blog.title} | Prepster Blog`} 
         description={(blog.excerpt || blog.content || '').substring(0, 150) + '...'} 
-        image={blog.coverImage}
-        url={`https://prepster.in/blogs/${blog.slug}`}
+        ogImage={blog.coverImage || getDefaultImage(blog.slug)}
+        canonical={`https://prepster.online/blogs/${blog.slug}`}
         keywords={blog.tags ? blog.tags.join(', ') : 'placement blog, tech interviews, prepster'}
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "Article",
-          "headline": blog.title,
-          "image": blog.coverImage ? [blog.coverImage] : [],
-          "datePublished": new Date(blog.createdAt).toISOString(),
-          "dateModified": new Date(blog.updatedAt || blog.createdAt).toISOString(),
-          "author": [{
-            "@type": "Person",
-            "name": blog.author?.profile?.firstName ? `${blog.author.profile.firstName} ${blog.author.profile.lastName}` : "Prepster Team"
-          }]
+        article={{
+          publishedTime: new Date(blog.createdAt).toISOString(),
+          modifiedTime: new Date(blog.updatedAt || blog.createdAt).toISOString(),
+          author: blog.author?.profile?.firstName ? `${blog.author.profile.firstName} ${blog.author.profile.lastName}` : "Prepster Team",
+          tags: blog.tags || []
         }}
+        schema={[
+          schemas.article({
+            headline: blog.title,
+            description: (blog.excerpt || blog.content || '').substring(0, 150),
+            url: `/blogs/${blog.slug}`,
+            image: blog.coverImage || getDefaultImage(blog.slug),
+            datePublished: new Date(blog.createdAt).toISOString(),
+            dateModified: new Date(blog.updatedAt || blog.createdAt).toISOString(),
+            author: blog.author?.profile?.firstName ? `${blog.author.profile.firstName} ${blog.author.profile.lastName}` : "Prepster Team",
+            tags: blog.tags || []
+          })
+        ]}
       />
 
       <Link to="/blogs" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">

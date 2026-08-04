@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 
 /* ═══════════════════════════════════════════
@@ -473,15 +474,13 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <SEO
-        title="Get Placed. Not Just Prepared."
+        title="Prepster — #1 Placement Preparation Platform for Engineering & MBA Students"
+        description="India's #1 placement preparation platform. Practice 25,000+ aptitude questions, company-specific prep tracks for TCS, Infosys, Wipro & more, and apply to curated fresher jobs. Free for students."
         keywords="placement preparation, aptitude mock tests, company specific prep, fresher jobs, tech interview prep, Prepster"
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          "name": "Prepster",
-          "url": "https://prepster.in",
-          "description": "Prepare for your campus placements with company-specific tracks, aptitude mock tests, and curated job feeds."
-        }}
+        schema={[
+          schemas.organization(),
+          schemas.website()
+        ]}
       />
 
       <MouseGlow />

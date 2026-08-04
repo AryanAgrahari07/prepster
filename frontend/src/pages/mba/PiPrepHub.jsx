@@ -4,6 +4,7 @@ import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Target, Loader2, ArrowRight, Save, Eye, EyeOff } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { motion } from 'framer-motion';
 import toast from '@/utils/toast';
 import { useNavigate } from 'react-router-dom';
@@ -66,7 +67,17 @@ export default function PiPrepHub() {
 
   return (
     <div className="space-y-8">
-      <SEO title="Personal Interview Prep | Prepster" description="Practice HR and behavioral questions with the STAR framework." />
+      <SEO 
+        title="Personal Interview Prep | Prepster" 
+        description="Practice HR and behavioral questions with the STAR framework."
+        schema={[
+          schemas.course({
+            name: "Personal Interview Preparation",
+            description: "Practice HR and behavioral questions with the STAR framework.",
+            url: "/mba/pi"
+          })
+        ]}
+      />
       
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">PI Preparation Hub</h1>

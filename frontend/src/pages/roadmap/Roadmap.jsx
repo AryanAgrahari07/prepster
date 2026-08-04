@@ -4,6 +4,7 @@ import { TRACKS } from '@/constants/roadmaps';
 import { ArrowRight, Clock, Briefcase, LayoutList } from 'lucide-react';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 
 export default function Roadmap() {
   const containerVariants = {
@@ -25,14 +26,13 @@ export default function Roadmap() {
         title="Tech Career Roadmaps | Prepster" 
         description="Step-by-step career roadmaps for Software Engineering, Frontend, Backend, and Data Science."
         keywords="software engineering roadmap, frontend developer roadmap, backend developer roadmap, data science career path, tech career guides"
-        url="https://prepster.in/roadmap"
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          "name": "Tech Career Roadmaps",
-          "url": "https://prepster.in/roadmap",
-          "description": "Step-by-step career roadmaps for Software Engineering, Frontend, Backend, and Data Science."
-        }}
+        schema={[
+          schemas.collectionPage({
+            name: "Tech Career Roadmaps",
+            url: "/roadmap",
+            description: "Step-by-step career roadmaps for Software Engineering, Frontend, Backend, and Data Science."
+          })
+        ]}
       />
       {/* Page Header — compact, matching CompanyList / AptitudePractice style */}
       <div>

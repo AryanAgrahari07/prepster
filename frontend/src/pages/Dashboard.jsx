@@ -15,6 +15,7 @@ const SESSION_TYPE_LABELS = {
   'company-mock': 'Company Mock',
 };
 
+
 export default function Dashboard() {
   const { user } = useAuthStore();
   const [stats, setStats] = useState(null);

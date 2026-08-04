@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 
 const SectionReveal = ({ children, className = '', delay = 0 }) => (
   <motion.div
@@ -198,7 +199,9 @@ export default function FAQ() {
         title="Frequently Asked Questions"
         description="Find answers to common questions about Prepster — pricing, features, account, and more."
         keywords="prepster faq, placement preparation questions, prepster help, prepster pricing faq"
-        url="https://prepster.in/faq"
+        schema={[
+          schemas.faqPage(FAQ_DATA)
+        ]}
       />
 
       {/* Hero */}

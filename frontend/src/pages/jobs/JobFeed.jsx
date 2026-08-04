@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Briefcase, MapPin, Building, Search, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { AdPlaceholder } from '@/components/ui/AdPlaceholder';
 
 const TYPE_COLORS = {
@@ -55,14 +56,18 @@ export default function JobFeed() {
         title="Jobs & Opportunities | Prepster" 
         description="Browse and apply to the latest job openings, fresher roles, and internships curated for tech students." 
         keywords="fresher jobs, internships, remote software jobs, entry level tech jobs, off-campus placements"
-        url="https://prepster.in/jobs"
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          "name": "Prepster Job Feed",
-          "url": "https://prepster.in/jobs",
-          "description": "Browse and apply to the latest job openings, fresher roles, and internships curated for tech students."
-        }}
+        schema={[
+          schemas.itemList({
+            name: "Prepster Job Feed",
+            description: "Browse and apply to the latest job openings, fresher roles, and internships curated for tech students.",
+            url: "/jobs",
+            items: jobs.map(j => ({
+              name: j.title,
+              description: j.companyName,
+              url: `/jobs/${j._id}`
+            }))
+          })
+        ]}
       />
       <motion.div 
         initial={{ opacity: 0, y: 10 }}

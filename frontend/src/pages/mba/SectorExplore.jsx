@@ -3,6 +3,7 @@ import { getSectors } from '@/api/mba';
 import { Button } from '@/components/ui/Button';
 import { Loader2, Briefcase, ChevronRight, CheckCircle2, TrendingUp, Building2, Map } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { motion } from 'framer-motion';
 
 export default function SectorExplore() {
@@ -23,7 +24,17 @@ export default function SectorExplore() {
 
   return (
     <div className="space-y-8">
-      <SEO title="MBA Sectors | Prepster" description="Explore different MBA career paths, roles, and key skills required." />
+      <SEO 
+        title="MBA Sectors | Prepster" 
+        description="Explore different MBA career paths, roles, and key skills required." 
+        schema={[
+          schemas.course({
+            name: "MBA Sector Exploration",
+            description: "Explore different MBA career paths, roles, and key skills required.",
+            url: "/mba/sectors"
+          })
+        ]}
+      />
       
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Sector Exploration</h1>

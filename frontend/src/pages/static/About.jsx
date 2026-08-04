@@ -70,7 +70,6 @@ export default function About() {
         title="About Us"
         description="Learn about Prepster by Dinz Software — India's #1 placement preparation platform built for engineering and MBA students."
         keywords="about prepster, dinz software, placement preparation platform, edtech india"
-        url="https://prepster.in/about"
       />
 
       {/* Hero */}

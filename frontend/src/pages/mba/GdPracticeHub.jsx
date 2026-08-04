@@ -4,6 +4,7 @@ import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { MessageSquare, Users, Star, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from '@/utils/toast';
 import { useNavigate } from 'react-router-dom';
@@ -64,7 +65,17 @@ export default function GdPracticeHub() {
 
   return (
     <div className="space-y-8">
-      <SEO title="Group Discussion Prep | Prepster" description="Practice GD topics for MBA placements." />
+      <SEO 
+        title="Group Discussion Prep | Prepster" 
+        description="Practice GD topics for MBA placements." 
+        schema={[
+          schemas.course({
+            name: "Group Discussion Preparation",
+            description: "Practice GD topics for MBA placements.",
+            url: "/mba/gd"
+          })
+        ]}
+      />
       
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Group Discussion Hub</h1>

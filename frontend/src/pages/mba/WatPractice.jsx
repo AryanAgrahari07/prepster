@@ -4,6 +4,7 @@ import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Loader2, ArrowRight, Save, Clock, PenTool } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { motion } from 'framer-motion';
 import toast from '@/utils/toast';
 import { useNavigate } from 'react-router-dom';
@@ -101,7 +102,17 @@ export default function WatPractice() {
 
   return (
     <div className="space-y-8">
-      <SEO title="WAT Practice | Prepster" description="Written Ability Test preparation for MBA interviews." />
+      <SEO 
+        title="WAT Practice | Prepster" 
+        description="Written Ability Test preparation for MBA interviews." 
+        schema={[
+          schemas.course({
+            name: "Written Ability Test (WAT) Preparation",
+            description: "Written Ability Test preparation for MBA interviews.",
+            url: "/mba/wat"
+          })
+        ]}
+      />
       
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">WAT Practice</h1>

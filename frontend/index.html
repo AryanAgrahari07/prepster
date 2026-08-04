@@ -1,21 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
     <meta name="author" content="Prepster">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="google-adsense-account" content="ca-pub-2716132520469565">
-    <title>Prepster — Placement Preparation & Opportunities</title>
+    
+    <!-- Fallback meta for non-JS crawlers (react-helmet-async will override per page) -->
+    <title>Prepster — #1 Placement Preparation Platform for Engineering & MBA Students</title>
+    <meta name="description" content="India's #1 placement preparation platform. Practice 25,000+ aptitude questions, company-specific prep tracks for TCS, Infosys, Wipro & more, and apply to curated fresher jobs. Free for students.">
+    <link rel="canonical" href="https://prepster.online/">
+    
+    <!-- Open Graph Fallbacks -->
+    <meta property="og:title" content="Prepster — Placement Preparation & Opportunities">
+    <meta property="og:description" content="India's #1 placement preparation platform. Practice 25,000+ aptitude questions, company-specific prep tracks, and apply to curated fresher jobs.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://prepster.online/">
+    <meta property="og:image" content="https://prepster.online/logo.png">
+    <meta property="og:site_name" content="Prepster">
+    <meta property="og:locale" content="en_IN">
+    
+    <!-- hreflang for India-specific English -->
+    <link rel="alternate" hreflang="en-in" href="https://prepster.online/">
+    <link rel="alternate" hreflang="x-default" href="https://prepster.online/">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Organization JSON-LD (always present, even without JS execution) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "@id": "https://prepster.online/#organization",
+      "name": "Prepster",
+      "url": "https://prepster.online",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://prepster.online/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "description": "India's #1 placement preparation platform for engineering and MBA students. Aptitude practice, company-specific tracks, and curated job feeds.",
+      "foundingDate": "2024",
+      "founder": {
+        "@type": "Organization",
+        "name": "Dinz Software Pvt. Ltd."
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "support@prepster.in",
+        "contactType": "customer support",
+        "availableLanguage": ["English", "Hindi"]
+      }
+    }
+    </script>
+    
+    <!-- WebSite JSON-LD with SearchAction (enables sitelinks search box) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://prepster.online/#website",
+      "name": "Prepster",
+      "url": "https://prepster.online",
+      "description": "Placement preparation platform for Indian engineering and MBA students.",
+      "publisher": { "@id": "https://prepster.online/#organization" },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://prepster.online/aptitude?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <!-- Google AdSense (async, non-blocking) -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2716132520469565" crossorigin="anonymous"></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <!-- Google Fonts: Inter (full weight range) -->
+    
+    <!-- Razorpay (defer to avoid render-blocking) -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js" async defer></script>
+    
+    <!-- Google Fonts: Preconnect + Preload for faster rendering -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- DNS Prefetch for API and CDN domains -->
+    <link rel="dns-prefetch" href="https://api.prepster.online">
+    <link rel="dns-prefetch" href="https://res.cloudinary.com">
   </head>
   <body class="bg-background text-foreground font-sans antialiased">
     <div id="root"></div>

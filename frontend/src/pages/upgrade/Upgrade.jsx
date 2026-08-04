@@ -213,7 +213,7 @@ export default function Upgrade() {
 
   return (
     <>
-      <SEO title="Upgrade to Pro | Prepster" description="Unlock unlimited practice, company tracks, and direct job applications with Prepster Pro." />
+      <SEO title="Upgrade to Pro | Prepster" description="Unlock unlimited practice, company tracks, and direct job applications with Prepster Pro." keywords="prepster pro, upgrade prepster, premium placement prep" />
       <div className="max-w-6xl mx-auto py-8 sm:py-12 space-y-12">
         
         {/* Header */}

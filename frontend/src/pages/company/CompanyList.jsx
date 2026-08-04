@@ -6,6 +6,7 @@ import { Search, Building2, ArrowRight, Package, GraduationCap, Briefcase } from
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { useState, useMemo } from 'react';
 import useAuthStore from '@/store/authStore';
 
@@ -96,14 +97,17 @@ export default function CompanyList() {
         title={seo.title}
         description={seo.description}
         keywords="TCS NQT preparation, Infosys mock test, McKinsey case interview, BCG consulting prep, company specific placement prep"
-        url="https://prepster.in/companies"
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          "name": "Company Preparation Tracks",
-          "url": "https://prepster.in/companies",
-          "description": seo.description,
-        }}
+        schema={[
+          schemas.itemList({
+            name: "Company Preparation Tracks",
+            description: seo.description,
+            url: "/companies",
+            items: filteredCompanies.map(c => ({
+              name: c.name,
+              url: `/companies/${c.slug}`
+            }))
+          })
+        ]}
       />
       <motion.div
         initial={{ opacity: 0, y: 10 }}

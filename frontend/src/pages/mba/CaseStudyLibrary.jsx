@@ -5,6 +5,7 @@ import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Briefcase, Loader2, Lock, ArrowRight, BookOpen, Star, FileText } from 'lucide-react';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { motion } from 'framer-motion';
 import toast from '@/utils/toast';
 
@@ -70,7 +71,17 @@ export default function CaseStudyLibrary() {
 
   return (
     <div className="space-y-8">
-      <SEO title="Case Study Library | Prepster" description="Solve business case studies for consulting and product management." />
+      <SEO 
+        title="Case Study Library | Prepster" 
+        description="Solve business case studies for consulting and product management." 
+        schema={[
+          schemas.course({
+            name: "Business Case Studies",
+            description: "Solve business case studies for consulting and product management.",
+            url: "/mba/cases"
+          })
+        ]}
+      />
       
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Case Study Library</h1>

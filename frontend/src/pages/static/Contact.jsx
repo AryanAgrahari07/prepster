@@ -69,9 +69,8 @@ export default function Contact() {
     <div>
       <SEO
         title="Contact Us"
-        description="Get in touch with the Prepster team. We're here to help with your placement preparation questions."
-        keywords="contact prepster, prepster support, placement help, prepster email"
-        url="https://prepster.in/contact"
+        description="Get in touch with the Prepster team. We're here to help you with your placement preparation journey."
+        keywords="contact prepster, prepster support, dinz software contact"
       />
 
       {/* Hero */}

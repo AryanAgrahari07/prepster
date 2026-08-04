@@ -1,108 +1,108 @@
 import { Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import useAuthStore from './store/authStore';
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import Toaster from './components/ui/Toaster';
 import AnalyticsTracker from './components/AnalyticsTracker';
 
 // Auth pages
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import ResetPassword from './pages/auth/ResetPassword';
-import AuthVerified from './pages/auth/AuthVerified';
-import GoogleSuccess from './pages/auth/GoogleSuccess';
+const Login = lazy(() => import('./pages/auth/Login'));
+const Register = lazy(() => import('./pages/auth/Register'));
+const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
+const AuthVerified = lazy(() => import('./pages/auth/AuthVerified'));
+const GoogleSuccess = lazy(() => import('./pages/auth/GoogleSuccess'));
 
 // Layout
 import AppLayout from './components/layout/AppLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 
 // Profile & Settings
-import Profile from './pages/profile/Profile';
-import Resume from './pages/profile/Resume';
-import Settings from './pages/profile/Settings';
-import SavedItems from './pages/profile/SavedItems';
+const Profile = lazy(() => import('./pages/profile/Profile'));
+const Resume = lazy(() => import('./pages/profile/Resume'));
+const Settings = lazy(() => import('./pages/profile/Settings'));
+const SavedItems = lazy(() => import('./pages/profile/SavedItems'));
 
 // Aptitude
-import PracticeHub from './pages/aptitude/PracticeHub';
-import QuizSession from './pages/aptitude/QuizSession';
-import AnalyticsDashboard from './pages/aptitude/Analytics';
-import Leaderboard from './pages/aptitude/Leaderboard';
-import QuizResult from './pages/aptitude/QuizResult';
-import DailyChallenge from './pages/aptitude/DailyChallenge';
-import TopicDetail from './pages/aptitude/TopicDetail';
+const PracticeHub = lazy(() => import('./pages/aptitude/PracticeHub'));
+const QuizSession = lazy(() => import('./pages/aptitude/QuizSession'));
+const AnalyticsDashboard = lazy(() => import('./pages/aptitude/Analytics'));
+const Leaderboard = lazy(() => import('./pages/aptitude/Leaderboard'));
+const QuizResult = lazy(() => import('./pages/aptitude/QuizResult'));
+const DailyChallenge = lazy(() => import('./pages/aptitude/DailyChallenge'));
+const TopicDetail = lazy(() => import('./pages/aptitude/TopicDetail'));
 
 // Roadmap
-import Roadmap from './pages/roadmap/Roadmap';
-import RoadmapDetail from './pages/roadmap/RoadmapDetail';
+const Roadmap = lazy(() => import('./pages/roadmap/Roadmap'));
+const RoadmapDetail = lazy(() => import('./pages/roadmap/RoadmapDetail'));
 
 // MBA
-import GdPracticeHub from './pages/mba/GdPracticeHub';
-import PiPrepHub from './pages/mba/PiPrepHub';
-import CaseStudyLibrary from './pages/mba/CaseStudyLibrary';
-import WatPractice from './pages/mba/WatPractice';
-import SectorExplore from './pages/mba/SectorExplore';
-import GuesstimatePractice from './pages/mba/GuesstimatePractice';
-import MbaAnalytics from './pages/mba/MbaAnalytics';
-import MockInterviewSession from './pages/mba/MockInterviewSession';
+const GdPracticeHub = lazy(() => import('./pages/mba/GdPracticeHub'));
+const PiPrepHub = lazy(() => import('./pages/mba/PiPrepHub'));
+const CaseStudyLibrary = lazy(() => import('./pages/mba/CaseStudyLibrary'));
+const WatPractice = lazy(() => import('./pages/mba/WatPractice'));
+const SectorExplore = lazy(() => import('./pages/mba/SectorExplore'));
+const GuesstimatePractice = lazy(() => import('./pages/mba/GuesstimatePractice'));
+const MbaAnalytics = lazy(() => import('./pages/mba/MbaAnalytics'));
+const MockInterviewSession = lazy(() => import('./pages/mba/MockInterviewSession'));
 
 // Companies
-import CompanyList from './pages/company/CompanyList';
-import CompanyTrack from './pages/company/CompanyTrack';
-import ExperienceDetail from './pages/company/ExperienceDetail';
+const CompanyList = lazy(() => import('./pages/company/CompanyList'));
+const CompanyTrack = lazy(() => import('./pages/company/CompanyTrack'));
+const ExperienceDetail = lazy(() => import('./pages/company/ExperienceDetail'));
 
 // Jobs
-import JobFeed from './pages/jobs/JobFeed';
-import JobDetail from './pages/jobs/JobDetail';
-import Applications from './pages/jobs/Applications';
+const JobFeed = lazy(() => import('./pages/jobs/JobFeed'));
+const JobDetail = lazy(() => import('./pages/jobs/JobDetail'));
+const Applications = lazy(() => import('./pages/jobs/Applications'));
 
 // Employer
-import EmployerDashboard from './pages/employer/EmployerDashboard';
-import JobApplicants from './pages/employer/JobApplicants';
-import PostJob from './pages/employer/PostJob';
-import EditJob from './pages/employer/EditJob';
+const EmployerDashboard = lazy(() => import('./pages/employer/EmployerDashboard'));
+const JobApplicants = lazy(() => import('./pages/employer/JobApplicants'));
+const PostJob = lazy(() => import('./pages/employer/PostJob'));
+const EditJob = lazy(() => import('./pages/employer/EditJob'));
 
 // Subscription
-import Upgrade from './pages/upgrade/Upgrade';
+const Upgrade = lazy(() => import('./pages/upgrade/Upgrade'));
 
 // Admin
 import AdminLayout from './components/layout/AdminLayout';
-import AdminOverview from './pages/admin/AdminOverview';
-import QuestionBank from './pages/admin/QuestionBank';
-import QuestionEditor from './pages/admin/QuestionEditor';
-import BulkImport from './pages/admin/BulkImport';
-import UserManagement from './pages/admin/UserManagement';
-import UserDetail from './pages/admin/UserDetail';
-import CompanyManager from './pages/admin/CompanyManager';
-import CompanyEditor from './pages/admin/CompanyEditor';
-import CompanyQuestionBank from './pages/admin/CompanyQuestionBank';
-import MockTestManager from './pages/admin/MockTestManager';
-import MockTestEditor from './pages/admin/MockTestEditor';
-import JobManager from './pages/admin/JobManager';
-import JobEditor from './pages/admin/JobEditor';
-import ApplicationsManager from './pages/admin/ApplicationsManager';
-import SubscriptionManager from './pages/admin/SubscriptionManager';
-import CouponManager from './pages/admin/CouponManager';
-import Announcements from './pages/admin/Announcements';
-import BlogManager from './pages/admin/BlogManager';
-import BlogEditor from './pages/admin/BlogEditor';
-import MbaContentManager from './pages/admin/MbaContentManager';
-import MbaContentEditor from './pages/admin/MbaContentEditor';
+const AdminOverview = lazy(() => import('./pages/admin/AdminOverview'));
+const QuestionBank = lazy(() => import('./pages/admin/QuestionBank'));
+const QuestionEditor = lazy(() => import('./pages/admin/QuestionEditor'));
+const BulkImport = lazy(() => import('./pages/admin/BulkImport'));
+const UserManagement = lazy(() => import('./pages/admin/UserManagement'));
+const UserDetail = lazy(() => import('./pages/admin/UserDetail'));
+const CompanyManager = lazy(() => import('./pages/admin/CompanyManager'));
+const CompanyEditor = lazy(() => import('./pages/admin/CompanyEditor'));
+const CompanyQuestionBank = lazy(() => import('./pages/admin/CompanyQuestionBank'));
+const MockTestManager = lazy(() => import('./pages/admin/MockTestManager'));
+const MockTestEditor = lazy(() => import('./pages/admin/MockTestEditor'));
+const JobManager = lazy(() => import('./pages/admin/JobManager'));
+const JobEditor = lazy(() => import('./pages/admin/JobEditor'));
+const ApplicationsManager = lazy(() => import('./pages/admin/ApplicationsManager'));
+const SubscriptionManager = lazy(() => import('./pages/admin/SubscriptionManager'));
+const CouponManager = lazy(() => import('./pages/admin/CouponManager'));
+const Announcements = lazy(() => import('./pages/admin/Announcements'));
+const BlogManager = lazy(() => import('./pages/admin/BlogManager'));
+const BlogEditor = lazy(() => import('./pages/admin/BlogEditor'));
+const MbaContentManager = lazy(() => import('./pages/admin/MbaContentManager'));
+const MbaContentEditor = lazy(() => import('./pages/admin/MbaContentEditor'));
 
 // Blog (Public)
-import BlogList from './pages/blog/BlogList';
-import BlogPost from './pages/blog/BlogPost';
+const BlogList = lazy(() => import('./pages/blog/BlogList'));
+const BlogPost = lazy(() => import('./pages/blog/BlogPost'));
 
 // Landing & Dashboard
-import Landing from './pages/Landing';
-import Dashboard from './pages/Dashboard';
+const Landing = lazy(() => import('./pages/Landing'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 // Static Pages
-import About from './pages/static/About';
-import Contact from './pages/static/Contact';
-import Privacy from './pages/static/Privacy';
-import Terms from './pages/static/Terms';
-import FAQ from './pages/static/FAQ';
-import NotFound from './pages/static/NotFound';
+const About = lazy(() => import('./pages/static/About'));
+const Contact = lazy(() => import('./pages/static/Contact'));
+const Privacy = lazy(() => import('./pages/static/Privacy'));
+const Terms = lazy(() => import('./pages/static/Terms'));
+const FAQ = lazy(() => import('./pages/static/FAQ'));
+const NotFound = lazy(() => import('./pages/static/NotFound'));
 import StaticLayout from './components/layout/StaticLayout';
 
 // ─── Placeholders ─────────────────────────────────────────────────────────────
@@ -149,7 +149,12 @@ function App() {
       <ErrorBoundary>
         <AnalyticsTracker />
         <Toaster />
-        <Routes>
+        <Suspense fallback={
+          <div className="flex h-screen w-full items-center justify-center bg-background">
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        }>
+          <Routes>
           {/* ── Public Routes ── */}
           <Route path="/" element={<Landing />} />
           <Route path="/about" element={<StaticLayout><About /></StaticLayout>} />
@@ -290,7 +295,8 @@ function App() {
 
           {/* Fallback */}
           <Route path="*" element={<NotFound />} />
-        </Routes>
+          </Routes>
+        </Suspense>
       </ErrorBoundary>
     </div>
   );

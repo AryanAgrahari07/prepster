@@ -77,6 +77,9 @@ app.get('/health', async (req, res) => {
 // ─── Global Rate Limit on all /v1 routes ─────────────────────────────────────
 app.use('/v1', apiLimiter);
 
+// ─── SEO Routes (Sitemap, robots) ──────────────────────────────────────────────
+app.use('/', require('./modules/seo/seo.routes'));
+
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use('/v1/auth', require('./modules/auth/auth.routes'));
 app.use('/v1/users', require('./modules/user/user.routes'));

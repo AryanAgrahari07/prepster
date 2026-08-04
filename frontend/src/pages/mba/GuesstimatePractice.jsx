@@ -3,6 +3,7 @@ import { getGuesstimates, getGuesstimatById } from '@/api/mba';
 import useAuthStore from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import SEO from '@/components/seo/SEO';
+import { schemas } from '@/components/seo/SchemaTemplates';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Loader2, BarChart2, ArrowRight, Lock, CheckCircle2,
@@ -93,8 +94,15 @@ export default function GuesstimatePractice() {
   return (
     <div className="space-y-8">
       <SEO
-        title="Guesstimate Practice | Prepster MBA"
-        description="Practice market-sizing and Fermi estimation problems commonly asked in consulting and FMCG interviews."
+        title="Guesstimates & Market Sizing | Prepster"
+        description="Master guesstimate questions and market sizing cases for consulting interviews."
+        schema={[
+          schemas.course({
+            name: "Guesstimates Preparation",
+            description: "Master guesstimate questions and market sizing cases for consulting interviews.",
+            url: "/mba/guesstimates"
+          })
+        ]}
       />
 
       {/* Header */}

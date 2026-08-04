@@ -1,13 +1,77 @@
+# ═══════════════════════════════════════════════════
+# Prepster — robots.txt
+# Placement Preparation Platform for Students
+# ═══════════════════════════════════════════════════
+
+# ── Default Crawlers ──────────────────────────────
 User-agent: *
 Allow: /
-Allow: /blogs
-Allow: /jobs
-Allow: /companies
 Allow: /aptitude
+Allow: /aptitude/topic/
+Allow: /companies
+Allow: /companies/
+Allow: /jobs
+Allow: /jobs/
+Allow: /blogs
+Allow: /blogs/
 Allow: /roadmap
-Disallow: /admin
-Disallow: /profile
-Disallow: /auth
+Allow: /roadmap/
+Allow: /mba/gd
+Allow: /mba/pi
+Allow: /mba/cases
+Allow: /mba/wat
+Allow: /mba/sectors
+Allow: /mba/guesstimates
+Allow: /about
+Allow: /contact
+Allow: /faq
+Allow: /privacy
+Allow: /terms
+Allow: /upgrade
 
-# Sitemap
-Sitemap: https://prepster.in/sitemap.xml
+# Protected/private routes — do not crawl
+Disallow: /admin
+Disallow: /admin/
+Disallow: /profile
+Disallow: /profile/
+Disallow: /auth
+Disallow: /auth/
+Disallow: /settings
+Disallow: /saved
+Disallow: /applications
+Disallow: /employer
+Disallow: /employer/
+Disallow: /dashboard
+Disallow: /aptitude/session/
+Disallow: /aptitude/results/
+Disallow: /aptitude/analytics
+Disallow: /aptitude/leaderboard
+Disallow: /aptitude/daily
+Disallow: /mba/analytics
+Disallow: /mba/mock-interview
+
+# ── AI Crawlers (allow for GEO) ───────────────────
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# ── Sitemaps ──────────────────────────────────────
+Sitemap: https://prepster.online/sitemap.xml
+Sitemap: https://prepster.online/sitemap-static.xml
+Sitemap: https://prepster.online/sitemap-blogs.xml
+Sitemap: https://prepster.online/sitemap-companies.xml
+Sitemap: https://prepster.online/sitemap-jobs.xml
